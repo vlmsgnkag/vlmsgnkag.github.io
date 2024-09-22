@@ -1,0 +1,78 @@
+@import url(bootstrap.min.css);
+@import url(swiper.min.css);
+@import url('https://fonts.googleapis.com/css?family=Pattaya|Righteous&display=swap');
+@import url('https://fonts.googleapis.com/css?family=Rowdies|Monomaniac+One|ZCOOL+QingKe+HuangYou|Concert One&display=swap');
+@import url(../icons/icomoon.css);
+* {
+  /* cursor: url(https://upload.thanhdieu.com/b23d1d.png), default; */
+  -webkit-user-select:none;
+    -moz-user-select:none;
+    -ms-user-select:none;
+    user-select:none;
+}
+body {
+  margin: 0; 
+}
+::-webkit-scrollbar {
+  width: 3px;
+  height: 1px;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: rgb(108, 14, 230);
+}
+
+::-webkit-scrollbar-track {
+  -webkit-box-shadow: inset 0 0 5px rgba(0, 255, 221, 0.2);
+  background: #f6f6f6;
+}
+.icon {
+  background-size: contain;
+  background-repeat: no-repeat;
+  display: inline-block;
+  line-height: 0;
+  flex-shrink: 0;
+}
+.icon__size-16 {
+  height: 16px;
+  width: 16px;
+}
+.icon__size-18 {
+  height: 18px;
+  width: 18px;
+}
+.icon__size-24 {
+  height: 24px;
+  width: 24px;
+}
+.icon__size-32 {
+  height: 32px;
+  width: 32px;
+}
+.icon__size-48 {
+  height: 48px;
+  width: 48px;
+}
+.icon__size-56 {
+  height: 56px;
+  width: 56px;
+}
+.icon__size-64 {
+  height: 64px;
+  width: 64px;
+}
+.icon__calendar {
+  background-image: url(./icons/icon-calendar.svg);
+}
+.icon__location {
+  background-image: url(./icons/icon-location.svg);
+}
+.icon__envelope {
+  background-image: url(./icons/icon-envelope.svg);
+}
+.icon__phone {
+  background-image: url(./icons/icon-phone.svg);
+}
+.icon__skype {
+  background-image: url(./icons/icon-skype.svg);
+}
