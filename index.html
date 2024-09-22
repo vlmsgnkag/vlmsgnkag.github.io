@@ -3,9 +3,10 @@
   <title>Hack Lien Quan</title>
 <body class="Border" onLoad="onCreate()">
   <div class="BlurWebs">
-  <div class="Topnav">
-  <a style="color:blue;">
-  <span id="fps">60.0</span> FPS</a></div>
+  <div class="Topnav"> 
+  <a class="Active">HOME</a> 
+  <a style="color:rgb(199, 78, 78);">
+  <span id="fps">120.0</span> FPS</a></div>
   <br>
   <style>
     html,body{cursor:url("https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjac-SGqqBNOf8R-yQBGf8rXc_3Mko7Jk_Vf-3mtmVeE3EiU4oaRG-3lS1CqQ5XgWXpBspTaSriDXGF73L3m9V0c0K07iDq1r7XyLXpsEqU3VF2O6mT-gZkqsJimuxi8gLvOQtxhGXx8Y9a/s0/mouse-f1.png"), auto;}
@@ -27,7 +28,7 @@
   <div class="flex-both-center flex-wrap mt-16">
 	<audio id="myAudio">
   <source src="music.ogg" type="audio/ogg">
-  <source src="./random.html" type="audio/mpeg">
+  <source src="https:/thanhdieu.com/files/random-music.php" type="audio/mpeg">
 </audio>
 <button class="glow-on-hover" onclick="playAudio()" type="button">Play Music </button>&nbsp;&nbsp;
 <button class="glow-on-hover" onclick="pauseAudio()" type="button">Stop Music</button> 
@@ -94,6 +95,8 @@ function pauseAudio() {
 </script>
 <script type="text/javascript" src="./Css-Javascript/p.js"></script>
 <script type="text/javascript" src="./Css-Javascript/hoa-roi.js"></script>
-<script type="text/javascript" src="https://raw.githubusercontent.com/WusThanhDieu/Source-Profile-Html-Animation-V4/refs/heads/main/thanhdieuft-javascript/index.js"></script>
+<script type="text/javascript" src="./Css-Javascript/fps.js"></script>
 <script type="text/javascript">var fps = document.getElementById("fps");var startTime = Date.now();var frame = 0;function tick(){var time = Date.now();frame++;if(time - startTime > 1000){fps.innerHTML = (frame / ((time - startTime) / 1000)).toFixed(1);startTime = time;frame = 0;}window.requestAnimationFrame(tick);}tick();</script>
+
+
 </body><div class="troywell-avia"></div><div class="troywell-caa"></div></html>
