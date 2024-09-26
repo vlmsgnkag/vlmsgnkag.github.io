@@ -24,7 +24,7 @@ const music_list = [
     {
         img : 'images/1.jpg',
         name : 'Anh Tự Do Nhưng Cô Đơn',
-        artist : 'Trung Quân x Hà Nhi',
+        artist : 'Trung Quân x Quân A.P',
         music : 'music/1.mp3'
     },
     {
@@ -38,6 +38,18 @@ const music_list = [
         name : 'Nổi Gió lên',
         artist : 'Phan Như Thùy',
         music : 'music/3.mp3'
+    },
+    {
+        img : 'https://photo-resize-zmp3.zadn.vn/w600_r1x1_jpeg/cover/8/0/6/7/80677a86fdcee35d96f0047c7addcc7c.jpg',
+        name : 'Lời Xin Lỗi Vụng Vế',
+        artist : 'Quân A.P',
+        music : 'music/8.mp3'
+    },
+    {
+        img : 'https://photo-resize-zmp3.zadn.vn/w600_r1x1_jpeg/covers/0/d/0d1fe0b30a319e56dce058a2b30f37d7_1503588020.jpg',
+        name : 'Chiều Hôm Ấy',
+        artist : 'JayKii',
+        music : 'music/7.mp3'
     },
     {
         img : 'https://avatar-ex-swe.nixcdn.com/song/2022/12/20/5/6/7/f/1671530957863_640.jpg',
