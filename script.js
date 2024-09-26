@@ -55,7 +55,7 @@ const music_list = [
         img : 'https://avatar-ex-swe.nixcdn.com/song/2022/12/20/5/6/7/f/1671530957863_640.jpg',
         name : 'Một Đời',
         artist : '14 Casper & Bon Nghiêm (feat. buitruonglinh)',
-        music : 'music/3.mp3'
+        music : 'music/5.mp3'
     },
     {
         img : 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTXI5HRPjNaZnQMxi_KfozckVB7yHTVDVK0Fw&s',
