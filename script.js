@@ -70,11 +70,17 @@ const music_list = [
         music : 'music/8.mp3'
     },
     {
+        img : 'https://i.ytimg.com/vi/rJabgOChWiM/maxresdefault.jpg',
+        name : 'Khóa Ly Biệt',
+        artist : 'Anh Tú',
+        music : 'music/18.mp3'
+    },
+    {
         img : 'https://photo-resize-zmp3.zadn.vn/w600_r1x1_jpeg/covers/0/d/0d1fe0b30a319e56dce058a2b30f37d7_1503588020.jpg',
         name : 'Chiều Hôm Ấy',
         artist : 'JayKii',
         music : 'music/7.mp3'
-    },
+    },  
     {
         img : 'https://i1.sndcdn.com/artworks-9IDCoI1xQjS7Y1Tr-0JZWFQ-t500x500.jpg',
         name : 'Vùng Kí Ức (feat. Hippohappy)',
