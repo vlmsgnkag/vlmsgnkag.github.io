@@ -34,6 +34,30 @@ const music_list = [
         music : 'music/2.mp3'
     },
     {
+        img : 'https://photo-resize-zmp3.zadn.vn/w600_r1x1_jpeg/cover/f/8/1/e/f81efd92fa9a3d52eb37f3b867ab9d32.jpg',
+        name : 'Bông Hoa Đẹp Nhất',
+        artist : 'Quân A.P',
+        music : 'music/9.mp3'
+    },
+    {
+        img : 'https://photo-resize-zmp3.zadn.vn/w600_r1x1_jpeg/cover/d/f/e/1/dfe1b0ba17097b5aae480926155482ec.jpg',
+        name : 'Lưu Luyến Sau Chia Tay',
+        artist : 'Try92 ft. Kai06',
+        music : 'music/10.mp3'
+    },
+    {
+        img : 'https://photo-resize-zmp3.zadn.vn/w600_r1x1_jpeg/cover/d/4/a/c/d4acc6335d41bd7164173312c6123706.jpg',
+        name : 'Exit Sign',
+        artist : 'HIEUTHUHAI',
+        music : 'music/12.mp3'
+    },
+    {
+        img : 'https://avatar-ex-swe.nixcdn.com/song/2024/04/10/4/e/b/2/1712722848851_640.jpg',
+        name : 'Tội Cho Em',
+        artist : 'Hà Nhi',
+        music : 'music/11.mp3'
+    },
+    {
         img : 'https://photo-resize-zmp3.zadn.vn/w600_r1x1_jpeg/cover/d/2/e/c/d2ec072766d5af25fdeec55be78c6f79.jpg',
         name : 'Nổi Gió lên',
         artist : 'Phan Như Thùy',
@@ -52,10 +76,34 @@ const music_list = [
         music : 'music/7.mp3'
     },
     {
+        img : 'https://i1.sndcdn.com/artworks-9IDCoI1xQjS7Y1Tr-0JZWFQ-t500x500.jpg',
+        name : 'Vùng Kí Ức (feat. Hippohappy)',
+        artist : 'Chillies',
+        music : 'music/13.mp3'
+    },
+    {
+        img : 'https://i1.sndcdn.com/artworks-000125406918-vc8ej9-t500x500.jpg',
+        name : 'Âm Thầm Bên Em',
+        artist : 'Son Tung M-TP',
+        music : 'music/14.mp3'
+    },
+    {
+        img : 'https://photo-resize-zmp3.zadn.vn/w600_r1x1_jpeg/cover/5/4/8/e/548ebf004852b5e6887fb3f8861115c1.jpg',
+        name : 'Bạn Đời',
+        artist : 'KARIK (FT. GDUCKY)',
+        music : 'music/15.mp3'
+    },
+    {
         img : 'https://avatar-ex-swe.nixcdn.com/song/2022/12/20/5/6/7/f/1671530957863_640.jpg',
         name : 'Một Đời',
         artist : '14 Casper & Bon Nghiêm (feat. buitruonglinh)',
         music : 'music/5.mp3'
+    },
+    {
+    img : 'https://images.genius.com/2d677ae351848c873d72d7747cd592a4.1000x1000x1.jpg',
+    name : 'Ngày Đầu Sau Chia Tay',
+    artist : 'ĐỨC PHÚC x KHẮC HƯNG',
+    music : 'music/5.mp3'
     },
     {
         img : 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTXI5HRPjNaZnQMxi_KfozckVB7yHTVDVK0Fw&s',
