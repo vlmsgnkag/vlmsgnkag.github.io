@@ -88,6 +88,12 @@ const music_list = [
         music : 'music/14.mp3'
     },
     {
+        img : 'https://kenh14cdn.com/zoom/594_371/203336854389633024/2020/11/18/photo1605678635310-16056786358041011136893.png',
+        name : 'Chim Sẻ Và Dâu Tây',
+        artist : 'Dế Choắt (DC), Wowy, NAOMI',
+        music : 'music/17.mp3'
+    },
+    {
         img : 'https://photo-resize-zmp3.zadn.vn/w600_r1x1_jpeg/cover/5/4/8/e/548ebf004852b5e6887fb3f8861115c1.jpg',
         name : 'Bạn Đời',
         artist : 'KARIK (FT. GDUCKY)',
