@@ -82,6 +82,18 @@ const music_list = [
         music : 'music/7.mp3'
     },  
     {
+        img : 'https://photo-resize-zmp3.zadn.vn/w600_r1x1_jpeg/cover/c/5/4/d/c54df0e46c902b5b43602c57c2b77df4.jpg',
+        name : '24H',
+        artist : 'Lyly, Magazine',
+        music : 'music/19.mp3'
+    },  
+    {
+        img : 'https://i.scdn.co/image/ab67616d00001e021be0834566aefd6c0ea9e9c4',
+        name : 'Hẹn Một Mai',
+        artist : 'Bùi Anh Tuấn',
+        music : 'music/20.mp3'
+    },  
+    {
         img : 'https://i1.sndcdn.com/artworks-9IDCoI1xQjS7Y1Tr-0JZWFQ-t500x500.jpg',
         name : 'Vùng Kí Ức (feat. Hippohappy)',
         artist : 'Chillies',
