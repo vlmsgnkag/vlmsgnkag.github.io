@@ -33,6 +33,12 @@ const music_list = [
         artist : 'Trung Quân',
         music : 'music/2.mp3'
     },
+        {
+        img : 'https://phunuvietnam.mediacdn.vn/media/news/eb530d951695112cf80ff651371ceb38/3.jpg',
+        name : 'Chờ Anh Nhé',
+        artist : 'Hoàng Dũng',
+        music : 'music/22.mp3'
+    },
     {
         img : 'https://photo-resize-zmp3.zadn.vn/w600_r1x1_jpeg/cover/f/8/1/e/f81efd92fa9a3d52eb37f3b867ab9d32.jpg',
         name : 'Bông Hoa Đẹp Nhất',
