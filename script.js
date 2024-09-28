@@ -127,7 +127,7 @@ const music_list = [
     img : 'https://images.genius.com/2d677ae351848c873d72d7747cd592a4.1000x1000x1.jpg',
     name : 'Ngày Đầu Sau Chia Tay',
     artist : 'ĐỨC PHÚC x KHẮC HƯNG',
-    music : 'music/5.mp3'
+    music : 'music/16.mp3'
     },
     {
         img : 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTXI5HRPjNaZnQMxi_KfozckVB7yHTVDVK0Fw&s',
