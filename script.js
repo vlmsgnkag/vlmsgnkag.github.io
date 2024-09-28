@@ -27,6 +27,12 @@ const music_list = [
         artist : 'Trung Quân x Quân A.P',
         music : 'music/1.mp3'
     },
+        {
+        img : 'https://photo-resize-zmp3.zadn.vn/w600_r1x1_jpeg/cover/1/c/3/b/1c3b6283e28b9030d8f6410b210bd765.jpg',
+        name : 'bao tiền một mớ bình yên?',
+        artist : '14 Casper & Bon Nghiêm',
+        music : 'music/23.mp3'
+    },
     {
         img : 'images/3.jpg',
         name : 'Cánh Đồng Yêu Thương',
