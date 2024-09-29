@@ -57,6 +57,12 @@ const music_list = [
         artist : 'AMEE x B RAY',
         music : 'music/21.mp3'
     },
+           {
+        img : 'https://photo-resize-zmp3.zadn.vn/w600_r1x1_jpeg/cover/d/e/5/7/de5758f237bb5588e729cdced3a76265.jpg',
+        name : 'Mãi Mãi Không Phải Anh',
+        artist : 'Thanh Bình',
+        music : 'music/24.mp3'
+    },
     {
         img : 'https://photo-resize-zmp3.zadn.vn/w600_r1x1_jpeg/cover/d/f/e/1/dfe1b0ba17097b5aae480926155482ec.jpg',
         name : 'Lưu Luyến Sau Chia Tay',
