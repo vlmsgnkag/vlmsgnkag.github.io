@@ -64,7 +64,7 @@ const music_list = [
         music : 'music/24.mp3'
     },
                {
-        img : 'https://photo-resize-zmp3.zadn.vn/w600_r1x1_jpeg/cover/d/e/5/7/de5758f237bb5588e729cdced3a76265.jpg',
+        img : 'https://photo-resize-zmp3.zadn.vn/w600_r1x1_jpeg/cover/9/7/f/a/97fa122b55eefd723d7b97f887ee8786.jpg',
         name : 'Hết Thương Cạn Nhớ',
         artist : 'Duc Phuc',
         music : 'music/25.mp3'
