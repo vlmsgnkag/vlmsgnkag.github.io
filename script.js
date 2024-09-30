@@ -28,6 +28,12 @@ const music_list = [
         music : 'music/1.mp3'
     },
         {
+        img : 'https://photo-resize-zmp3.zmdcdn.me/w240_r1x1_jpeg/cover/7/8/9/1/7891192272603151346a5e22f0fb532d.jpg',
+        name : 'Nàng Thơ x Trời Giấu Trời Mang Đi',
+        artist : 'AMEE & Hoàng Dũng',
+        music : 'music/26.mp3'
+    },
+        {
         img : 'https://photo-resize-zmp3.zadn.vn/w600_r1x1_jpeg/cover/1/c/3/b/1c3b6283e28b9030d8f6410b210bd765.jpg',
         name : 'bao tiền một mớ bình yên?',
         artist : '14 Casper & Bon Nghiêm',
