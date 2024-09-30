@@ -39,6 +39,12 @@ const music_list = [
         artist : 'Quân A.P',
         music : 'music/31.mp3'
     },
+             {
+        img : 'https://photo-resize-zmp3.zadn.vn/w600_r1x1_jpeg/covers/4/f/4f33a5712c26714f0a1e7177d0b4129d_1509608464.jpg',
+        name : 'Em Ngày Xưa Khác Rồi',
+        artist : 'Hiền Hồ',
+        music : 'music/32.mp3'
+    },
         {
         img : 'https://photo-resize-zmp3.zadn.vn/w600_r1x1_jpeg/cover/1/c/3/b/1c3b6283e28b9030d8f6410b210bd765.jpg',
         name : 'bao tiền một mớ bình yên?',
