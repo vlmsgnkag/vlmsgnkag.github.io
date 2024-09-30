@@ -39,6 +39,18 @@ const music_list = [
         artist : '14 Casper & Bon Nghiêm',
         music : 'music/23.mp3'
     },
+            {
+        img : 'https://photo-resize-zmp3.zadn.vn/w600_r1x1_jpeg/covers/c/c/ccba0ba0430c375e16e95309cd534c09_1492130923.jpg',
+        name : 'Yêu Là "Tha Thu"',
+        artist : 'OnlyC',
+        music : 'music/29.mp3'
+    },
+                {
+        img : 'https://photo-resize-zmp3.zadn.vn/w600_r1x1_jpeg/covers/c/c/ccba0ba0430c375e16e95309cd534c09_1492130923.jpg',
+        name : 'CÔ ĐƠN TRÊN SOFA',
+        artist : 'Hồ Ngọc Hà x Tăng Duy Tân',
+        music : 'music/30.mp3'
+    },
     {
         img : 'images/3.jpg',
         name : 'Cánh Đồng Yêu Thương',
