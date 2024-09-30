@@ -33,6 +33,12 @@ const music_list = [
         artist : 'AMEE & Hoàng Dũng',
         music : 'music/26.mp3'
     },
+         {
+        img : 'https://photo-resize-zmp3.zadn.vn/w600_r1x1_jpeg/cover/5/6/5/1/5651a16e61472b25af4af405a8c3df2c.jpg',
+        name : 'Còn Gì Đau Hơn Chữ Đã Từng',
+        artist : 'Quân A.P',
+        music : 'music/31.mp3'
+    },
         {
         img : 'https://photo-resize-zmp3.zadn.vn/w600_r1x1_jpeg/cover/1/c/3/b/1c3b6283e28b9030d8f6410b210bd765.jpg',
         name : 'bao tiền một mớ bình yên?',
@@ -46,7 +52,7 @@ const music_list = [
         music : 'music/29.mp3'
     },
                 {
-        img : 'https://photo-resize-zmp3.zadn.vn/w600_r1x1_jpeg/covers/c/c/ccba0ba0430c375e16e95309cd534c09_1492130923.jpg',
+        img : 'https://i.ytimg.com/vi/u7ScW1kCgS0/maxresdefault.jpg',
         name : 'CÔ ĐƠN TRÊN SOFA',
         artist : 'Hồ Ngọc Hà x Tăng Duy Tân',
         music : 'music/30.mp3'
