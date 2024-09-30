@@ -51,6 +51,12 @@ const music_list = [
         artist : 'Hoàng Dũng',
         music : 'music/22.mp3'
     },
+        {
+        img : 'https://photo-resize-zmp3.zadn.vn/w600_r1x1_jpeg/cover/0/b/b/5/0bb55eaf1f19451a075759258eab718d.jpg',
+        name : 'Rồi Người Thương Cũng Hóa Người Dưng',
+        artist : 'Hiền Hồ',
+        music : 'music/28.mp3'
+    },
     {
         img : 'https://photo-resize-zmp3.zadn.vn/w600_r1x1_jpeg/cover/f/8/1/e/f81efd92fa9a3d52eb37f3b867ab9d32.jpg',
         name : 'Bông Hoa Đẹp Nhất',
