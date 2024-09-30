@@ -58,6 +58,12 @@ const music_list = [
         music : 'music/21.mp3'
     },
            {
+        img : 'https://avatar-ex-swe.nixcdn.com/song/2018/01/26/1/8/9/0/1516930244148_640.jpg',
+        name : 'LẠ LÙNG',
+        artist : 'Vũ.',
+        music : 'music/27.mp3'
+    },
+           {
         img : 'https://photo-resize-zmp3.zadn.vn/w600_r1x1_jpeg/cover/8/b/6/0/8b60c63bca80097a24b834bdb2400bf2.jpg',
         name : 'Mãi Mãi Không Phải Anh',
         artist : 'Thanh Bình',
