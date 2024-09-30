@@ -75,6 +75,12 @@ const music_list = [
         artist : 'Hoàng Dũng',
         music : 'music/22.mp3'
     },
+      {
+        img : 'https://photo-resize-zmp3.zadn.vn/w600_r1x1_jpeg/cover/b/8/5/3/b85394026ee63615034fc1ae1dd8d356.jpg',
+        name : 'Mơ',
+        artist : 'Vũ Cát Tường',
+        music : 'music/33.mp3'
+    },
         {
         img : 'https://photo-resize-zmp3.zadn.vn/w600_r1x1_jpeg/cover/0/b/b/5/0bb55eaf1f19451a075759258eab718d.jpg',
         name : 'Rồi Người Thương Cũng Hóa Người Dưng',
