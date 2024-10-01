@@ -39,6 +39,12 @@ const music_list = [
         artist : 'Trung Quân x Quân A.P',
         music : 'music/1.mp3'
     },
+                        {
+        img : 'https://i.ytimg.com/vi/tAaUbRt6jqM/maxresdefault.jpg',
+        name : 'Thương Em Là Điều Anh Không Thể Ngờ',
+        artist : 'Noo Phước Thịnh',
+        music : 'music/36.mp3'
+    },
         {
         img : 'https://photo-resize-zmp3.zmdcdn.me/w240_r1x1_jpeg/cover/7/8/9/1/7891192272603151346a5e22f0fb532d.jpg',
         name : 'Nàng Thơ x Trời Giấu Trời Mang Đi',
