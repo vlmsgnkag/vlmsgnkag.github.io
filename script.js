@@ -135,6 +135,12 @@ const music_list = [
         artist : 'Duc Phuc',
         music : 'music/25.mp3'
     },
+      {
+        img : 'https://photo-resize-zmp3.zadn.vn/w600_r1x1_jpeg/covers/6/e/6e7b90d96728c9ce1b4c2a104d622784_1507799020.jpg',
+        name : 'Chạm Khẽ Tim Anh Một Chút Thôi',
+        artist : 'Noo Phước Thịnh',
+        music : 'music/4.mp3'
+    }
     {
         img : 'https://photo-resize-zmp3.zadn.vn/w600_r1x1_jpeg/cover/d/f/e/1/dfe1b0ba17097b5aae480926155482ec.jpg',
         name : 'Lưu Luyến Sau Chia Tay',
@@ -231,12 +237,6 @@ const music_list = [
         artist : 'Hà Nhi',
         music : 'music/6.mp3'
     },
-    {
-        img : 'https://photo-resize-zmp3.zadn.vn/w600_r1x1_jpeg/covers/6/e/6e7b90d96728c9ce1b4c2a104d622784_1507799020.jpg',
-        name : 'Chạm Khẽ Tim Anh Một Chút Thôi',
-        artist : 'Noo Phước Thịnh',
-        music : 'music/4.mp3'
-    }
 ];
 
 loadTrack(track_index);
