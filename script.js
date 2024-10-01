@@ -21,6 +21,12 @@ let isRandom = false;
 let updateTimer;
 
 const music_list = [
+                    {
+        img : 'https://i.scdn.co/image/ab67616d0000b273dd5a801c2def0e15beae8548',
+        name : 'Gặp Nhưng Không Ở Lại',
+        artist : 'Hiền Hồ Ft. Vương Anh Tú',
+        music : 'music/34.mp3'
+    },
     {
         img : 'images/1.jpg',
         name : 'Anh Tự Do Nhưng Cô Đơn',
