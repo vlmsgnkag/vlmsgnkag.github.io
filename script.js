@@ -140,7 +140,7 @@ const music_list = [
         name : 'Chạm Khẽ Tim Anh Một Chút Thôi',
         artist : 'Noo Phước Thịnh',
         music : 'music/4.mp3'
-    }
+    },
     {
         img : 'https://photo-resize-zmp3.zadn.vn/w600_r1x1_jpeg/cover/d/f/e/1/dfe1b0ba17097b5aae480926155482ec.jpg',
         name : 'Lưu Luyến Sau Chia Tay',
