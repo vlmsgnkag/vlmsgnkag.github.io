@@ -51,6 +51,12 @@ const music_list = [
         artist : 'AMEE & Hoàng Dũng',
         music : 'music/26.mp3'
     },
+       {
+        img : 'https://photo-resize-zmp3.zmdcdn.me/w256_r1x1_jpeg/covers/3/2/3221f5d6cb0c1d3edc1d29b6bde2c76c_1475120354.jpg',
+        name : 'Mình Là Gì Của Nhau',
+        artist : 'Lou Hoàng',
+        music : 'music/37.mp3'
+    },
          {
         img : 'https://photo-resize-zmp3.zadn.vn/w600_r1x1_jpeg/cover/5/6/5/1/5651a16e61472b25af4af405a8c3df2c.jpg',
         name : 'Còn Gì Đau Hơn Chữ Đã Từng',
