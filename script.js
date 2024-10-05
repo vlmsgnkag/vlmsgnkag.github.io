@@ -45,6 +45,13 @@ const music_list = [
         artist : 'DUONG DOMIC x PHAP KIEU x RHYDER',
         music : 'music/43.mp3'
     },
+  
+    {
+        img : 'https://photo-resize-zmp3.zadn.vn/w600_r1x1_jpeg/cover/d/4/a/c/d4acc6335d41bd7164173312c6123706.jpg',
+        name : 'Exit Sign',
+        artist : 'HIEUTHUHAI',
+        music : 'music/12.mp3'
+    },
       {
         img : 'https://photo-resize-zmp3.zadn.vn/w600_r1x1_jpeg/cover/2/9/0/6/2906681d4b764cd4677342b66813f25d.jpg',
         name : 'Bánh Mì Không',
@@ -189,12 +196,6 @@ const music_list = [
         name : 'Lưu Luyến Sau Chia Tay',
         artist : 'Try92 ft. Kai06',
         music : 'music/10.mp3'
-    },
-    {
-        img : 'https://photo-resize-zmp3.zadn.vn/w600_r1x1_jpeg/cover/d/4/a/c/d4acc6335d41bd7164173312c6123706.jpg',
-        name : 'Exit Sign',
-        artist : 'HIEUTHUHAI',
-        music : 'music/12.mp3'
     },
     {
         img : 'https://avatar-ex-swe.nixcdn.com/song/2024/04/10/4/e/b/2/1712722848851_640.jpg',
