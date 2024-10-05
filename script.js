@@ -39,6 +39,12 @@ const music_list = [
         artist : 'Hook x COOLKID x ft. RHYDER',
         music : 'music/41.mp3'
     },
+             {
+        img : 'https://bloganchoi.com/wp-content/uploads/2024/07/hao-quang-lyrics-anh-trai-say-hi-2.jpg',
+        name : 'Hào Quang',
+        artist : 'DUONG DOMIC x PHAP KIEU x RHYDER',
+        music : 'music/43.mp3'
+    }
       {
         img : 'https://photo-resize-zmp3.zadn.vn/w600_r1x1_jpeg/cover/2/9/0/6/2906681d4b764cd4677342b66813f25d.jpg',
         name : 'Bánh Mì Không',
