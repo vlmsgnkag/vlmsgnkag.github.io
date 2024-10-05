@@ -39,6 +39,13 @@ const music_list = [
         artist : 'ĐạtG x DuUyên',
         music : 'music/38.mp3'
     },
+  
+      {
+        img : 'https://photo-resize-zmp3.zadn.vn/w600_r1x1_jpeg/cover/7/9/3/c/793cb0dc6bf49c1640db7726dcab3504.jpg',
+        name : 'CHO MÌNH EM',
+        artist : 'BINZ x ĐEN',
+        music : 'music/39.mp3'
+    },
     {
         img : 'images/1.jpg',
         name : 'Anh Tự Do Nhưng Cô Đơn',
