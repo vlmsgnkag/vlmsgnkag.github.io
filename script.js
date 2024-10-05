@@ -33,6 +33,12 @@ const music_list = [
         artist : 'Hòa Minzy',
         music : 'music/35.mp3'
     },
+           {
+        img : 'https://photo-resize-zmp3.zadn.vn/w600_r1x1_jpeg/cover/3/2/6/8/3268b5a7ef8bc57a0efc516c35bb24c3.jpg',
+        name : 'Sau Cơn Mưa',
+        artist : 'COOLKID x ft. RHYDER',
+        music : 'music/41.mp3'
+    },
       {
         img : 'https://photo-resize-zmp3.zadn.vn/w600_r1x1_jpeg/cover/2/9/0/6/2906681d4b764cd4677342b66813f25d.jpg',
         name : 'Bánh Mì Không',
