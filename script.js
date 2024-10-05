@@ -44,7 +44,7 @@ const music_list = [
         name : 'Hào Quang',
         artist : 'DUONG DOMIC x PHAP KIEU x RHYDER',
         music : 'music/43.mp3'
-    }
+    },
       {
         img : 'https://photo-resize-zmp3.zadn.vn/w600_r1x1_jpeg/cover/2/9/0/6/2906681d4b764cd4677342b66813f25d.jpg',
         name : 'Bánh Mì Không',
