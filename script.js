@@ -58,6 +58,12 @@ const music_list = [
         artist : 'Da LAB',
         music : 'music/40.mp3'
     },
+     {
+        img : 'https://avatar-ex-swe.nixcdn.com/song/2017/12/06/8/d/5/c/1512535669177_640.jpg',
+        name : 'Đường Một Chiều',
+        artist : 'Huỳnh Tú ft. Magazine',
+        music : 'music/42.mp3'
+    },
     {
         img : 'images/1.jpg',
         name : 'Anh Tự Do Nhưng Cô Đơn',
