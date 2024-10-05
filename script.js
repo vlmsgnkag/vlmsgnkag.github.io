@@ -46,6 +46,12 @@ const music_list = [
         artist : 'BINZ x ĐEN',
         music : 'music/39.mp3'
     },
+           {
+        img : 'https://photo-resize-zmp3.zmdcdn.me/w600_r300x169_jpeg/thumb_video/4/f/f/c/4ffc46e45505ee9cdfa872d1e01b6ac1.jpg',
+        name : 'Thanh Xuân',
+        artist : 'Da LAB',
+        music : 'music/40.mp3'
+    },
     {
         img : 'images/1.jpg',
         name : 'Anh Tự Do Nhưng Cô Đơn',
