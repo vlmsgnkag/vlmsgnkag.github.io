@@ -33,6 +33,12 @@ const music_list = [
         artist : 'Hòa Minzy',
         music : 'music/35.mp3'
     },
+      {
+        img : 'images/1.jpg',
+        name : 'Bánh Mì Không',
+        artist : 'ĐạtG x DuUyên',
+        music : 'music/38.mp3'
+    },
     {
         img : 'images/1.jpg',
         name : 'Anh Tự Do Nhưng Cô Đơn',
