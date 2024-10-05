@@ -49,7 +49,7 @@ const music_list = [
         img : 'https://photo-resize-zmp3.zadn.vn/w600_r1x1_jpeg/cover/c/e/1/d/ce1d992dca4e00a80d41dc7eda42582a.jpg',
         name : 'đứa nào làm em buồn?',
         artist : 'PHÚC DU x Ft. Hoàng Dũng',
-        music : 'music/43.mp3'
+        music : 'music/44.mp3'
     },
     {
         img : 'https://photo-resize-zmp3.zadn.vn/w600_r1x1_jpeg/cover/d/4/a/c/d4acc6335d41bd7164173312c6123706.jpg',
