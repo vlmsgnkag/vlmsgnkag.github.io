@@ -36,7 +36,7 @@ const music_list = [
            {
         img : 'https://photo-resize-zmp3.zadn.vn/w600_r1x1_jpeg/cover/3/2/6/8/3268b5a7ef8bc57a0efc516c35bb24c3.jpg',
         name : 'Sau Cơn Mưa',
-        artist : 'COOLKID x ft. RHYDER',
+        artist : 'Hook x COOLKID x ft. RHYDER',
         music : 'music/41.mp3'
     },
       {
