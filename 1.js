@@ -17,7 +17,7 @@ const songTitle = document.getElementById('song-title');new Vue({
           name: "Co Tat Ca Nhung Thieu Anh",
           artist: "Vocal Huong Ly",
           cover: "https://i.pinimg.com/originals/bb/80/94/bb80944d27b353f34d8c8777ec3b2b99.gif",
-          source: "https://d.top4top.io/m_3201hkbci1.mp3",
+          source: "https://audio.jukehost.co.uk/epsHvtLJtxhp0oN8X7vGa0rVJWtuYZNq",
           url: "https://youtu.be/l38C4YQjkV0?si=hvZvOs-jCyrmcH5U",
           favorited: true
         },
@@ -25,7 +25,7 @@ const songTitle = document.getElementById('song-title');new Vue({
           name: "Phố Đã Lên Đèn",
           artist: "Thanh Phong Remix",
           cover: "https://i.pinimg.com/originals/31/4f/8d/314f8d0289c133eb37038e7cfe319c5e.gif",
-          source: "https://i.top4top.io/m_32014gke91.mp3",
+          source: "https://audio.jukehost.co.uk/LenScpahuX1tr0gyPfm9nW006ZrN0hF6",
           url: "https://youtu.be/bhlMOw-RGZo?si=-ZaMf23Uh7_uxVHO",
           favorited: true
         },
@@ -34,7 +34,7 @@ const songTitle = document.getElementById('song-title');new Vue({
           name: "Anh Tự Do Nhưng Cô Đơn",
           artist: "TRUNG QUÂN x ĐẠT G",
           cover: "https://i.pinimg.com/originals/90/09/5e/90095e765e512e2504b32ca92ec923f3.gif",
-          source: "https://e.top4top.io/m_32010l8mo1.mp3",
+          source: "https://audio.jukehost.co.uk/tuAUEGxHhTrpGmBow0ZIwr1VoohSd4uY",
           url: "https://youtu.be/MEnLvSuApU8?si=7oBa_2MLl80Wv3ER",
           favorited: true
         },
@@ -43,7 +43,7 @@ const songTitle = document.getElementById('song-title');new Vue({
           name: "Cao Ốc 20",
           artist: "Huy PT Remix",
           cover: "https://i.pinimg.com/originals/4b/a5/80/4ba5804e93e89d900ddbf1246c3fb996.gif",
-          source: "https://j.top4top.io/m_3201mkh0q1.mp3",
+          source: "https://audio.jukehost.co.uk/KPCGgPCiBqU90rtnvfhVyfcU9hdHgHuz",
           url: "https://www.youtube.com/watch?v=FWYrRSWabIs ",
           favorited: true
         },
@@ -51,7 +51,7 @@ const songTitle = document.getElementById('song-title');new Vue({
           name: "Mất Anh Rồi ",
           artist: "Thanh Phong Feat OC.A-Mix",
           cover: "https://i.pinimg.com/originals/de/1f/b9/de1fb999abdab67558677730135290c2.gif",
-          source: "https://c.top4top.io/m_3201hbhdh1.mp3",
+          source: "https://audio.jukehost.co.uk/dGNwmbhB03BUfH0QK1R01Ze57uoVnjml",
           url: "https://www.youtube.com/watch?v=fvmPsv3K8ZE",
           favorited: true
         },
@@ -59,7 +59,7 @@ const songTitle = document.getElementById('song-title');new Vue({
           name: "Chẳng Cần Lý Do",
           artist: "Thái Hoàng Remix",
           cover: "https://i.pinimg.com/originals/9b/39/20/9b39208281412ef7200414d820fc5306.gif",
-          source: "https://k.top4top.io/m_3201jcqlt1.mp3",
+          source: "https://audio.jukehost.co.uk/Rv6kQKJyi2j7GP3joIvDAbwNLq9J4tL3",
           url: "https://youtu.be/71sm9o-QZiI?si=VrTW2e5Cv7Swe66A",
           favorited: true
         },
@@ -67,7 +67,7 @@ const songTitle = document.getElementById('song-title');new Vue({
           name: "Chắc Vì Mình Chưa Tốt",
           artist: "Huy PT",
           cover: "https://i.pinimg.com/originals/a6/8d/97/a68d97362758b9320cdcc2b0d1c1f110.gif",
-          source: "https://i.top4top.io/m_3201i0aan1.mp3",
+          source: "https://audio.jukehost.co.uk/3OVnXTM2m9pmwUBnWCtB9bxdheJPCirC",
           url: "https://www.youtube.com/watch?v=m-fuWC80KTk",
           favorited: true
         },
@@ -75,7 +75,7 @@ const songTitle = document.getElementById('song-title');new Vue({
           name: "Sóng Gió",
           artist: "Thai Hai FULL Bao Teng _ KUNZZ FIXX",
           cover: "https://i.pinimg.com/originals/19/b8/f2/19b8f2ad4abc49d70950081156095b54.gif",
-          source: "https://e.top4top.io/m_320131rbn1.mp3",
+          source: "https://audio.jukehost.co.uk/BnN2a9MlqsEyJR7bxaq7X5O0dZPHmdCb",
           url: "https://www.youtube.com/watch?v=j8U06veqxdU",
           favorited: true
         },
@@ -83,7 +83,7 @@ const songTitle = document.getElementById('song-title');new Vue({
           name: "Cho Em Gần Anh Thêm Chút Nữa",
           artist: "Thái Hoàng Remix",
           cover: "https://i.pinimg.com/originals/06/72/a7/0672a744d287ee7af00ff6518338946c.gif",
-          source: "https://e.top4top.io/m_3201frggj1.mp3",
+          source: "https://audio.jukehost.co.uk/QjSFFYOG06n8SIIGe0SujmEdukK6LpUG",
           url: "https://www.youtube.com/watch?v=CLdHmTWVp2w",
           favorited: true
         },
@@ -91,7 +91,7 @@ const songTitle = document.getElementById('song-title');new Vue({
           name: "Có Anh Ở Đây Rồi",
           artist: "Theron x Ness",
           cover: "https://i.pinimg.com/originals/8b/f3/db/8bf3db3f2eb386e95ab8a63c1ea3d956.gif",
-          source: "https://g.top4top.io/m_3201t6gd11.mp3",
+          source: "https://audio.jukehost.co.uk/eDnbzDIJF3YkfPeUYVTgPukRT6HZZmEs",
           url: "https://www.youtube.com/watch?v=oOTDzseGKhU",
           favorited: true
         },
@@ -99,7 +99,7 @@ const songTitle = document.getElementById('song-title');new Vue({
           name: "HÔM QUA TÔI ĐÃ KHÓC",
           artist: "NATRA FT NAM MILO REMIX",
           cover: "https://i.pinimg.com/originals/08/de/07/08de07fc3421d5f843bae8e4f4e12f21.gif",
-          source: "https://a.top4top.io/m_3201nnvas1.mp3",
+          source: "https://audio.jukehost.co.uk/gVAMoZaoUkTZmBCSqfb0ASBkqALojoqG",
           url: "https://www.youtube.com/watch?v=QRplerGCPOc",
           favorited: true
         },
@@ -107,7 +107,7 @@ const songTitle = document.getElementById('song-title');new Vue({
           name: "Tay Trái Chỉ Trăng",
           artist: "VRW Remix",
           cover: "https://i.pinimg.com/originals/94/8d/4a/948d4ac2a7d012b5d2e5d1aa32db19aa.gif",
-          source: "https://i.top4top.io/m_3201mop8l1.mp3",
+          source: "https://audio.jukehost.co.uk/ttUaxVoPJ2tDwbHZAMF50YVl2EunL4FK",
           url: "https://www.youtube.com/watch?v=ATPulcGQ2SE",
           favorited: true
         },
@@ -115,7 +115,7 @@ const songTitle = document.getElementById('song-title');new Vue({
           name: "Trúc Xinh",
           artist: "Theron x Nevi Remix",
           cover: "https://i.pinimg.com/originals/e3/00/1f/e3001f8a2169edd1a99f2fc7cecb3657.gif",
-          source: "https://f.top4top.io/m_32011zg3o1.mp3",
+          source: "https://audio.jukehost.co.uk/NRCZWqvD9gnIAwrG3tkhOtsLrWLPfnpc",
           url: "https://www.youtube.com/watch?v=N0ort7baD0o",
           favorited: true
         },
@@ -123,7 +123,7 @@ const songTitle = document.getElementById('song-title');new Vue({
           name: "Giá Như Đời Làm Gì Có Giá Như",
           artist: "Truzg Remix",
           cover: "https://i.pinimg.com/originals/4d/c7/38/4dc738d5c5d122722f29d68773f8f46b.gif",
-          source: "https://c.top4top.io/m_3201m7dsi1.mp3",
+          source: "https://audio.jukehost.co.uk/aRxNp9KYw6v9vl8q8qjNcysMQMu97qUb",
           url: "https://www.youtube.com/watch?v=Mgz_ZKsPoBMs",
           favorited: true
         }
