@@ -303,6 +303,7 @@ body {
 .album-info__track {
   font-weight: 400;
   font-size: 17px;
+  font-family: Courier, monospace;
   opacity: 0.7;
   line-height: 1.3em;
   min-height: 52px;
