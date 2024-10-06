@@ -4,8 +4,7 @@
         }
       }
 body {
-  background: #dfe7ef;
-  font-family: "Bitter", serif;
+  background-image: url(https://media.giphy.com/media/U3qYN8S0j3bpK/giphy.gif);
 }
 
 * {
@@ -37,7 +36,7 @@ body {
 }
 
 .player {
-  background: #eef3f7;
+  background: #FFFAFA;
   width: 410px;
   min-height: 480px;
   box-shadow: 0px 15px 35px -5px rgba(50, 88, 130, 0.32);
