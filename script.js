@@ -69,6 +69,12 @@ const music_list = [
         artist : 'PHÍ PHƯƠNG ANH ft. RIN9',
         music : 'music/45.mp3'
     },
+          {
+        img : 'https://i.ytimg.com/vi/35iQw6K_ty8/sddefault.jpg?v=657ac566',
+        name : 'Hư không',
+        artist : 'Kha',
+        music : 'music/46.mp3'
+    },
   
       {
         img : 'https://photo-resize-zmp3.zadn.vn/w600_r1x1_jpeg/cover/7/9/3/c/793cb0dc6bf49c1640db7726dcab3504.jpg',
