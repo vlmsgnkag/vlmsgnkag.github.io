@@ -58,13 +58,13 @@ const music_list = [
         music : 'music/12.mp3'
     },
       {
-        img : 'https://photo-resize-zmp3.zadn.vn/w600_r1x1_jpeg/cover/b/7/b/5/b7b5b99e4aa374702ce8ee64858a9bbb.jpg',
+        img : 'https://photo-resize-zmp3.zadn.vn/w600_r1x1_jpeg/cover/2/9/0/6/2906681d4b764cd4677342b66813f25d.jpg',
         name : 'Bánh Mì Không',
         artist : 'ĐạtG x DuUyên',
         music : 'music/38.mp3'
     },
         {
-        img : 'https://photo-resize-zmp3.zadn.vn/w600_r1x1_jpeg/cover/2/9/0/6/2906681d4b764cd4677342b66813f25d.jpg',
+        img : 'https://photo-resize-zmp3.zadn.vn/w600_r1x1_jpeg/cover/b/7/b/5/b7b5b99e4aa374702ce8ee64858a9bbb.jpg',
         name : 'Răng Khôn',
         artist : 'PHÍ PHƯƠNG ANH ft. RIN9',
         music : 'music/45.mp3'
