@@ -152,8 +152,8 @@ const songTitle = document.getElementById('song-title');new Vue({
           favorited: true
         },
         {
-          name: "Đừng làm trái tim anh đau",
-          artist: "TNT remix",
+          name: "KHÓ VẼ NỤ CƯỜI ",
+          artist: "THANH PHONG FT OC.A-MIX. Airi",
           cover: "https://i.pinimg.com/originals/02/4f/5e/024f5eb6bf544c26046d499d2fc11e68.gif",
           source: "https://audio.jukehost.co.uk/MtslVyosXT0Hid7UFvnK06sbkO19NVIj",
           url: "https://www.youtube.com/watch?v=abPmZCZZrFA",
