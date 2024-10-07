@@ -152,11 +152,11 @@ const songTitle = document.getElementById('song-title');new Vue({
           favorited: true
         },
         {
-          name: "Xin Lỗi Vì Đã Xuất Hiện",
-          artist: "Vũ Duy Khánh x AM",
+          name: "Đừng làm trái tim anh đau",
+          artist: "TNT remix",
           cover: "https://i.pinimg.com/originals/02/4f/5e/024f5eb6bf544c26046d499d2fc11e68.gif",
-          source: "https://audio.jukehost.co.uk/T7pOiZ4rsMjK3404zgK4WG8iAVyx10s4",
-          url: "https://www.youtube.com/watch?v=Hgd-F2sQHos",
+          source: "https://audio.jukehost.co.uk/MtslVyosXT0Hid7UFvnK06sbkO19NVIj",
+          url: "https://www.youtube.com/watch?v=abPmZCZZrFA",
           favorited: true
         },
         {
