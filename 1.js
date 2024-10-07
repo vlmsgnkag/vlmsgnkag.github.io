@@ -147,7 +147,7 @@ const songTitle = document.getElementById('song-title');new Vue({
           name: "Nếu Ví Anh Như",
           artist: "Đông x Thazh Remix",
           cover: "https://i.pinimg.com/originals/ab/da/25/abda25d2c253502e0d7a4d1f4cc2ff9d.gif",
-          source: "https://audio.jukehost.co.uk/HuAzvAwRQrVxOHuvWvhlnKF6XHIROLcJ",
+          source: "https://audio.jukehost.co.uk/8MikUtfYQeP1TOctXEct5qFJduwxr8wK",
           url: "https://youtu.be/ad-0wi7TTd0?si=S_KJuMqG4v6ErixI",
           favorited: true
         },
