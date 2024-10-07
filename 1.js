@@ -160,11 +160,11 @@ const songTitle = document.getElementById('song-title');new Vue({
           favorited: true
         },
         {
-          name: "Nếu Em Còn Tồn Tại",
-          artist: "Thereon Remix",
+          name: "Đảo Nghịch",
+          artist: "Đông x Thazh-Remix",
           cover: "https://i.pinimg.com/originals/8f/c8/0a/8fc80a295bc270456dbd28306c4e8853.gif",
-          source: "https://audio.jukehost.co.uk/T7pOiZ4rsMjK3404zgK4WG8iAVyx10s4",
-          url: "https://www.youtube.com/watch?v=ehVXZamNEfo",
+          source: "https://audio.jukehost.co.uk/1FPTzi3eQAC7C778ahCOXGVQWIH6qAbm",
+          url: "https://www.youtube.com/watch?v=zKxZ-DttK-4",
           favorited: true
         },
         {
