@@ -152,10 +152,10 @@ const songTitle = document.getElementById('song-title');new Vue({
           favorited: true
         },
         {
-          name: "KHÓ VẼ NỤ CƯỜI ",
-          artist: "THANH PHONG FT OC.A-MIX. Airi",
+          name: "Đừng Làm Trái Tim Anh Đau ",
+          artist: "TNT remix",
           cover: "https://i.pinimg.com/originals/02/4f/5e/024f5eb6bf544c26046d499d2fc11e68.gif",
-          source: "https://audio.jukehost.co.uk/MtslVyosXT0Hid7UFvnK06sbkO19NVIj",
+          source: "https://audio.jukehost.co.uk/7By4e4Fa0CGHsdd36Hg9hyizHoxsmpdn",
           url: "https://www.youtube.com/watch?v=abPmZCZZrFA",
           favorited: true
         },
