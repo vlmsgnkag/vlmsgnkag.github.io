@@ -75,6 +75,12 @@ const music_list = [
         artist : 'PHÍ PHƯƠNG ANH ft. RIN9',
         music : 'music/45.mp3'
     },
+               {
+        img : 'https://photo-resize-zmp3.zmdcdn.me/w600_r300x169_jpeg/thumb_video/c/1/3/7/c1379c25604f69307458316809a9dfd1.jpg',
+        name : 'CHẠM ĐÁY NỖI ĐAU',
+        artist : 'MR. SIRO Singer: ERIK',
+        music : 'music/48.mp3'
+    },
           {
         img : 'https://i.ytimg.com/vi/35iQw6K_ty8/sddefault.jpg?v=657ac566',
         name : 'Hư không',
