@@ -70,6 +70,12 @@ const music_list = [
         music : 'music/38.mp3'
     },
         {
+        img : 'https://avatar-ex-swe.nixcdn.com/song/2017/11/29/0/6/1/1/1511950269534_640.jpg',
+        name : 'SAU TẤT CẢ',
+        artist : 'ERIK ',
+        music : 'music/50.mp3'
+    },
+        {
         img : 'https://photo-resize-zmp3.zadn.vn/w600_r1x1_jpeg/cover/b/7/b/5/b7b5b99e4aa374702ce8ee64858a9bbb.jpg',
         name : 'Răng Khôn',
         artist : 'PHÍ PHƯƠNG ANH ft. RIN9',
