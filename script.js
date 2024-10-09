@@ -75,6 +75,12 @@ const music_list = [
         artist : 'PHÍ PHƯƠNG ANH ft. RIN9',
         music : 'music/45.mp3'
     },
+         {
+        img : 'https://photo-resize-zmp3.zadn.vn/w600_r1x1_jpeg/covers/1/6/1648b6e7471b456f8aa2f9f19c93e5be_1488428433.jpg',
+        name : 'Em Không Là Duy Nhất ',
+        artist : 'Tóc Tiên',
+        music : 'music/49.mp3'
+    },
                {
         img : 'https://photo-resize-zmp3.zmdcdn.me/w600_r300x169_jpeg/thumb_video/c/1/3/7/c1379c25604f69307458316809a9dfd1.jpg',
         name : 'CHẠM ĐÁY NỖI ĐAU',
