@@ -51,6 +51,12 @@ const music_list = [
         artist : 'PHÚC DU x Ft. Hoàng Dũng',
         music : 'music/44.mp3'
     },
+                 {
+        img : 'https://photo-resize-zmp3.zmdcdn.me/w600_r300x169_jpeg/thumb_video/b/9/c/c/b9cc1774407511337b67287497278c28.jpg',
+        name : 'KHÔNG SAO MÀ EM ĐÂY RỒI',
+        artist : 'SUNI HẠ LINH ft. Lou Hoàng',
+        music : 'music/47.mp3'
+    },
     {
         img : 'https://photo-resize-zmp3.zadn.vn/w600_r1x1_jpeg/cover/d/4/a/c/d4acc6335d41bd7164173312c6123706.jpg',
         name : 'Exit Sign',
