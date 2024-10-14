@@ -27,6 +27,12 @@ const music_list = [
         artist : 'Hiền Hồ Ft. Vương Anh Tú',
         music : 'music/34.mp3'
     },
+  {
+        img : 'https://i1.sndcdn.com/artworks-J0g0RJ6MJ9MzzTbI-5wgDig-t500x500.jpg',
+        name : 'Già Cùng Nhau Là Được',
+        artist : 'Tùng TeA ( Prod. VoVanDuc. )',
+        music : 'music/53.mp3'
+    },
      {
         img : 'https://photo-resize-zmp3.zadn.vn/w600_r1x1_jpeg/cover/6/8/5/0/68504ec952508fae9b33a8dae069e25b.jpg',
         name : 'KHONG THE SAY',
