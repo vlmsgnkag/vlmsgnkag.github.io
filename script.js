@@ -69,6 +69,12 @@ const music_list = [
         artist : 'HIEUTHUHAI',
         music : 'music/12.mp3'
     },
+          {
+        img : 'https://avatar-ex-swe.nixcdn.com/song/2017/08/07/c/b/1/e/1502073702719_640.jpg',
+        name : 'Ngày Mai Em Đi',
+        artist : 'TOULIVER X LÊ HIẾU X SOOBIN HOÀNG SƠN',
+        music : 'music/52.mp3'
+    },
       {
         img : 'https://photo-resize-zmp3.zadn.vn/w600_r1x1_jpeg/cover/2/9/0/6/2906681d4b764cd4677342b66813f25d.jpg',
         name : 'Bánh Mì Không',
