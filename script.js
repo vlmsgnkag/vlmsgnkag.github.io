@@ -27,6 +27,12 @@ const music_list = [
         artist : 'Hiền Hồ Ft. Vương Anh Tú',
         music : 'music/34.mp3'
     },
+     {
+        img : 'https://photo-resize-zmp3.zadn.vn/w600_r1x1_jpeg/cover/6/8/5/0/68504ec952508fae9b33a8dae069e25b.jpg',
+        name : 'KHONG THE SAY',
+        artist : 'HIEUTHUHAI',
+        music : 'music/51.mp3'
+    },
                       {
         img : 'https://photo-resize-zmp3.zadn.vn/w600_r1x1_jpeg/cover/2/6/4/7/2647844cdbd9360beb32a6ca7da1ab7e.jpg',
         name : 'Rời Bỏ',
