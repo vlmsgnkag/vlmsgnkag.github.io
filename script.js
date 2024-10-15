@@ -45,6 +45,13 @@ const music_list = [
         artist : 'HIEUTHUHAI',
         music : 'music/51.mp3'
     },
+  
+         {
+        img : 'https://photo-resize-zmp3.zadn.vn/w600_r1x1_jpeg/cover/1/5/b/3/15b30c80a45aa94fd776d4aea892af9f.jpg',
+        name : 'Em Này',
+        artist : 'Nguyễn Minh Cường',
+        music : 'music/55.mp3'
+    },
                       {
         img : 'https://photo-resize-zmp3.zadn.vn/w600_r1x1_jpeg/cover/2/6/4/7/2647844cdbd9360beb32a6ca7da1ab7e.jpg',
         name : 'Rời Bỏ',
