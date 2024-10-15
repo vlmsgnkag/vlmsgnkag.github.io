@@ -45,6 +45,12 @@ const music_list = [
         artist : 'GIGI HƯƠNG GIANG',
         music : 'music/56.mp3'
     },
+         {
+        img : 'hhttps://photo-resize-zmp3.zadn.vn/w600_r1x1_jpeg/cover/3/f/5/8/3f588b3f74b49a8b2c70bc771df103bd.jpg',
+        name : 'Có Như Không Có',
+        artist : 'Hiền Hồ',
+        music : 'music/57.mp3'
+    },
      {
         img : 'https://photo-resize-zmp3.zadn.vn/w600_r1x1_jpeg/cover/6/8/5/0/68504ec952508fae9b33a8dae069e25b.jpg',
         name : 'KHONG THE SAY',
