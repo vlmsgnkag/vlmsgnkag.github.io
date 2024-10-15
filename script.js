@@ -39,6 +39,12 @@ const music_list = [
         artist : 'HOÀNG TÔN',
         music : 'music/54.mp3'
     },
+         {
+        img : 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ_84EBwJrvjf59LesGCNuu-b7SC00dUKxe3A&s',
+        name : 'Thương Anh Hơn Tình Yêu',
+        artist : 'GIGI HƯƠNG GIANG',
+        music : 'music/56.mp3'
+    },
      {
         img : 'https://photo-resize-zmp3.zadn.vn/w600_r1x1_jpeg/cover/6/8/5/0/68504ec952508fae9b33a8dae069e25b.jpg',
         name : 'KHONG THE SAY',
