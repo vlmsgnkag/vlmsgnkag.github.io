@@ -33,6 +33,12 @@ const music_list = [
         artist : 'Tùng TeA ( Prod. VoVanDuc. )',
         music : 'music/53.mp3'
     },
+         {
+        img : 'https://photo-resize-zmp3.zmdcdn.me/w600_r300x169_jpeg/thumb_video/7/3/735b69259492a8ccf8a52f0b26f932e9_1506397139.jpg',
+        name : 'YÊU EM RẤT NHIỀU',
+        artist : 'HOÀNG TÔN',
+        music : 'music/54.mp3'
+    },
      {
         img : 'https://photo-resize-zmp3.zadn.vn/w600_r1x1_jpeg/cover/6/8/5/0/68504ec952508fae9b33a8dae069e25b.jpg',
         name : 'KHONG THE SAY',
