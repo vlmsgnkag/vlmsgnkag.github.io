@@ -1,0 +1,231 @@
+:root {
+    --black: #4D4C59;
+    --purple: #6C63FF;
+    --light-grey: #C8C8C8;
+    --text-color: #9C9AB6;
+  }
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    height: 100vh;
+    font-family: 'Poppins', sans-serif;
+}
+
+.bg {
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+    margin-top: 60px;
+}
+
+#top {
+    width: 100%;
+}
+
+.container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+.container h1 {
+    font-size: 36px;
+    color: #6C63FF;
+    font-weight: bold;
+    letter-spacing: 5px;
+    margin-bottom: 19px;
+}
+
+#theNames {
+    list-style: none;
+    display: flex;
+    font-size: 14px;
+    font-weight: 300;
+    color: #C8C8C8;
+}
+
+#theNames > li:first-child {
+    margin: 0 100px 0 30px;
+}
+
+#theNames > li:nth-child(3) {
+    margin: 0 80px 0 90px ;
+}
+
+#theNumbers {
+    list-style: none;
+    display: flex;
+    font-size: 72px;
+    font-weight: 400;
+    color: #4D4C59;
+}
+
+#theNumbers > li {
+    margin-right: 20px;
+}
+
+.container p {
+    color: #9C9AB6;
+    font-size: 14px;
+    font-weight: 400;
+    margin-bottom: 31px;
+}
+
+.container input {
+    padding: 16px 32px;
+    border-radius: 10px;
+    outline: none;
+    border: none;
+    cursor: pointer;
+    background-color: rgb(108, 99, 255);
+    color: #FFF;
+    font-size: 16px;
+    font-weight: 400;
+}
+
+.container input:hover {
+    opacity: .8;
+    color: #C8C8C8;
+}
+
+#bottom {
+    width: 100%;
+}
+
+.loginBox {
+    position: absolute;
+    top: 200px;
+    left: 770px;
+    width: 450px;
+    height: 500px;
+    border-radius: 5px;
+    box-shadow: 2px 2px 2px 1px rgba(0, 0, 0, 0.292);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    color: #6C63FF;
+    z-index: 0;
+    overflow: hidden;  
+}
+
+.loginBox::before {
+    content: '';
+    position: absolute;
+    z-index: -2;
+    left: -50%;
+    top: -50%;
+    width: 200%;
+    height: 200%;
+    background-color: #1a232a;
+    background-repeat: no-repeat;
+    background-position: 0 0;
+    background-image: conic-gradient(transparent, rgba(168, 239, 255, 1), transparent 30%);
+    animation: rotate 4s linear infinite;
+}
+
+.loginBox::after {
+    content: '';
+    position: absolute;
+    z-index: -1;
+    left: 6px;
+    top: 6px;
+    width: calc(100% - 12px);
+    height: calc(100% - 12px);
+    background: rgb(21, 21, 21);
+    border-radius: 5px;
+}
+
+@keyframes rotate {
+	100% {
+		transform: rotate(1turn);
+	}
+}
+
+.loginBox > h2 {
+    color: #fFF;
+    font-size: 36px;
+    font-weight: bold;
+    text-shadow: 1px 1px 5px ;
+    top: 20px;
+    position: absolute;
+}
+
+.loginBox label:nth-child(2) {
+    position: absolute;
+    top: 125px;
+    left: 45px;
+    font-size: 14px;
+    font-weight: 500;
+    padding: 0px 40px;
+    color: #FFF;
+    border-radius: 5px;
+    background-color: rgba(107, 99, 255, 0.774);
+}
+
+.campusOne {
+    position: absolute;
+    top: 155px;
+    left: 45px;
+    width: 80%;
+    padding: 5px;
+    background-color: rgb(21, 21, 21);
+    color: #FFF;
+    border: none;  
+    outline: none;
+    box-shadow: 0px 2px 0px rgba(168, 239, 255, 1);
+}
+
+.loginBox label:nth-child(4) {
+    position: absolute;
+    top: 220px;
+    left: 45px;
+    font-size: 14px;
+    font-weight: 500;
+    padding: 0px 40px;
+    color: #FFF;
+    border-radius: 5px;
+    background-color: rgba(107, 99, 255, 0.774);
+}
+
+.campusTwo {
+    position: absolute;
+    top: 250px;
+    left: 45px;
+    width: 80%;
+    padding: 5px;
+    background-color: rgb(21, 21, 21);
+    color: #FFF;
+    border: none;  
+    outline: none;
+    box-shadow: 0px 2px 0px rgba(168, 239, 255, 1);
+}
+
+#btn {
+    position: absolute;
+    bottom: 80px;
+    padding: 16px 36px ;
+    background-color: rgb(21, 21, 21);
+    border: 2px solid rgba(168, 239, 255, 1);
+    color: #FFF;
+    cursor: pointer;
+}
+
+#btn:hover {
+    opacity: .8;
+    text-shadow: 0px 0px 20px white;
+}
+
+.hideElement {
+    visibility: hidden;
+}
+
+.blurElement {
+    filter: blur(4px);
+}
