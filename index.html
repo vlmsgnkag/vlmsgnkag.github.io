@@ -1,55 +1,61 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500&display=swap" rel="stylesheet">
-
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Countdown</title>
-    <link rel="stylesheet" href="2.css">
-</head>
-<body>
-    <main >
-        <img id="top" src="./images/top-image.svg" alt="">
-        <div class="bg">
-            <div class="container ">
-                <div>
-                    <h1>Thi tốt nghiệp THPTQG 2025</h1>
-                    <ul id="theNames">
-                        <li>Dias</li>
-                        <li>Horas</li>
-                        <li>Minutos</li>
-                        <li>Segundos</li>
-                    </ul>
-                    <ul id="theNumbers">
-                        <li>240</li>
-                        <li>:</li>
-                        <li>08</li>
-                        <li>:</li>
-                        <li>41</li>
-                        <li>:</li>
-                        <li>30</li>
-                    </ul>
-                    <p>Đăng kí thông báo khi tới ngày</p>
-                    <input id="btnSubscribe" type="button" value="Đăng Kí">
-                </div>
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Profile Card</title>
+    <link rel="stylesheet" href="style.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Ubuntu:wght@300;400;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css"
+    />
+  </head>
+  <body>
+    <div class="container">
+      <div class="card">
+        <div class="card-top">
+          <div class="card-top-img">
+            <img src="https://i.pinimg.com/736x/d7/3a/f9/d73af981ee8e07f68ad6bdf58bbbc235.jpg" />
+            <div class="verified">
+              <i class="fa-solid fa-check"></i>
             </div>
-            <img id="rocket" src="./images/rocket.svg" alt="">
+          </div>
         </div>
-        <img id="bottom" src="./images/bottom-image.svg" alt="">
+        <button type="button" class="card-btn">
+          <span class="plus">+</span>
+          <span class="btn-text">Contact Me</span>
+        </button>
+        <div class="card-bottom">
+          <h1>Le Minh Vo</h1>
+          <h3>PRODUCT DESIGNER</h3>
+          <div class="social-media">
+            <div class="social-info">
+              <i class="fa-brands fa-linkedin-in"></i>
+              <span class="num">15.7K</span>
+              <span class="followers">Followers</span>
+            </div>
+            <div class="social-info">
+              <i class="fa-brands fa-instagram"></i>
+              <span class="num">55.9K</span>
+              <span class="followers">Followers</span>
+            </div>
+            <div class="social-info">
+              <i class="fa-brands fa-facebook-f"></i>
+              <span class="num">32.5K</span>
+              <span class="followers">Followers</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
 
-        <div class="loginBox hideElement" >
-            <h2>Thông Tin</h2>
-            <label for="campusOne">Tên</label>
-            <input autocomplete="off" name="campusOne" class="campusOne" type="text" required placeholder="Nome">
-            <label campusTwo>Mail:</label>
-            <input autocomplete="off" name="campusTwo" class="campusTwo" type="text" required placeholder="E-Mail">
-            <input id="btn" type="button" value="Gửi">
-        </div>
-    </main>
-    <script src="2.js"></script>
-</body>
+    <script src="script.js"></script>
+  </body>
 </html>
