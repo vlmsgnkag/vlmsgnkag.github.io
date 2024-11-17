@@ -124,5 +124,16 @@ playButton.addEventListener("click", playRandomSong);
 
 // Tự động phát nhạc khi tải trang
 window.addEventListener("load", () => {
-    playRandomSong();
+    // Tương thích với trình duyệt yêu cầu tương tác trước khi phát âm thanh
+    const playPromise = audio.play();
+    if (playPromise !== undefined) {
+        playPromise
+            .then(() => {
+                playRandomSong(); // Phát bài ngẫu nhiên
+            })
+            .catch(() => {
+                console.log("Phát nhạc tự động bị chặn. Nhấn nút để bắt đầu!");
+            });
+    }
 });
+
