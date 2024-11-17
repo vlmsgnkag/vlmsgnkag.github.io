@@ -115,3 +115,6 @@ function playRandomSong() {
 
 // Gán sự kiện cho nút
 playButton.addEventListener("click", playRandomSong);
+
+window.addEventListener("load", playRandomSong);
+
