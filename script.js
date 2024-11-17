@@ -65,6 +65,8 @@ const songs = [
     { src: "music/63.mp3", image: "https://i.pinimg.com/236x/ef/b9/22/efb922cc0678c546eaa375d60d51bcb7.jpg" },
     { src: "music/64.mp3", image: "https://i.pinimg.com/236x/cf/0f/21/cf0f21e4a44f17467660e04c5a6aad5e.jpg" },
     { src: "music/65.mp3", image: "https://i.pinimg.com/474x/bb/cc/08/bbcc08af5806d982bab5c20537575714.jpg" },
+    { src: "music/66.mp3", image: "https://i.pinimg.com/736x/ef/38/ba/ef38ba33c09582459d86548f8e9a3f49.jpg" },
+    { src: "music/67.mp3", image: "https://i.pinimg.com/474x/62/a5/e4/62a5e4451b32f1d9ace7c319d419cbea.jpg" }
 
     // Thêm các bài nhạc và ảnh tương ứng ở đây
 ];
