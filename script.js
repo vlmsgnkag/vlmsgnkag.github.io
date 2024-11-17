@@ -56,7 +56,16 @@ const songs = [
     { src: "music/54.mp3", image: "https://i.pinimg.com/236x/29/43/07/294307032a4fa5894bb64b97dcf94755.jpg" },
     { src: "music/55.mp3", image: "https://i.pinimg.com/236x/d9/ce/c1/d9cec1d5ccc81225c27c37a371c09521.jpg" },
     { src: "music/56.mp3", image: "https://i.pinimg.com/236x/bb/55/04/bb55049e34a47845add5253c9b85f1bb.jpg" },
-    { src: "music/57.mp3", image: "https://i.pinimg.com/474x/82/50/3a/82503aaeee413929ada0e92ded5f18e8.jpg" }
+    { src: "music/57.mp3", image: "https://i.pinimg.com/474x/82/50/3a/82503aaeee413929ada0e92ded5f18e8.jpg" },
+    { src: "music/58.mp3", image: "https://i.pinimg.com/474x/3c/a5/9c/3ca59c87b2d1d4afcf0d27c4683d94b5.jpg" },
+    { src: "music/59.mp3", image: "https://i.pinimg.com/236x/7b/11/fd/7b11fdb62a0e4ab598aa5cb96c9026c9.jpg" },
+    { src: "music/60.mp3", image: "https://i.pinimg.com/474x/8d/eb/f8/8debf858206842da23fd31574416428e.jpg" },
+    { src: "music/61.mp3", image: "https://i.pinimg.com/236x/0e/ca/8b/0eca8b61ff85eba45e102ed5ca48385d.jpg" },
+    { src: "music/62.mp3", image: "https://i.pinimg.com/236x/90/b3/1a/90b31a45447f556306ca8cbf853054f1.jpg" },
+    { src: "music/63.mp3", image: "https://i.pinimg.com/236x/ef/b9/22/efb922cc0678c546eaa375d60d51bcb7.jpg" },
+    { src: "music/64.mp3", image: "https://i.pinimg.com/236x/cf/0f/21/cf0f21e4a44f17467660e04c5a6aad5e.jpg" },
+    { src: "music/65.mp3", image: "https://i.pinimg.com/474x/bb/cc/08/bbcc08af5806d982bab5c20537575714.jpg" },
+
     // Thêm các bài nhạc và ảnh tương ứng ở đây
 ];
 
@@ -136,4 +145,3 @@ window.addEventListener("load", () => {
             });
     }
 });
-
