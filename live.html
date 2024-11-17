@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ANTIBAND</title>
+</head>
+<body>
+    <div class="container-xxl flex-grow-1 container-p-y">
+      
+        <div class="card">
+            <div class="card-body">
+<div class="row justify-content-center">
+<iframe src="https://stripchat.global/" class="w-100" style="
+height: 1000px; width: 100%;
+"></iframe>
+<script>
+var xhr = new XMLHttpRequest();
+var url = "https://stripchat.global/";
+var params = "param1=value1&param2=value2"; // Các tham số POST
+
+xhr.open("POST", url, true);
+xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+
+xhr.onreadystatechange = function() {
+if (xhr.readyState === XMLHttpRequest.DONE && xhr.status === 200) {
+// Xử lý phản hồi thành công
+console.log(xhr.responseText);
+}
+};
+
+xhr.onerror = function() {
+// Xử lý lỗi khi yêu cầu gặp vấn đề
+console.error("Có lỗi xảy ra trong quá trình yêu cầu.");
+};
+
+xhr.send(params);
+</script>  
+
+</div>
+
+            </div>
+           
+        </div>
+        
+</div>
+</body>
+</html>
