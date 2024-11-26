@@ -4,64 +4,54 @@
 @import url('https://fonts.googleapis.com/css2?family=Lobster&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Anton&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&display=swap');
-@media (max-width: 768px) {
+/* Giao diện cho điện thoại (chiều rộng nhỏ hơn 480px) */
+@media (max-width: 480px) {
+    body {
+        overflow-y: auto; /* Cho phép cuộn nếu nội dung dài */
+    }
+
     .box-slider {
         height: auto;
     }
 
+    .slider1 img {
+        width: 100%; /* Đảm bảo hình nền co giãn đúng tỷ lệ */
+    }
+
     .textHappynewyear {
-        width: 100%;
-        height: auto;
-        flex-direction: column; /* Sắp xếp theo cột */
+        flex-direction: column;
+        align-items: center;
         transform: translateY(0);
     }
 
-    .textHappynewyear .box-span span {
-        width: 50px;
-        height: 50px;
-    }
-
-    .numberhappy {
-        font-size: 50px;
-    }
-
-    .box-button .button {
-        flex-direction: column; /* Các nút xếp chồng */
-    }
-
-    .box-button .button button {
-        font-size: 12px;
-        width: auto;
-    }
-
-    #countdown {
-        font-size: 1.2rem;
-    }
-
-    .slider-img6 img {
-        width: 100px;
-    }
-}
-
-/* Giao diện cho điện thoại có chiều rộng nhỏ hơn 480px */
-@media (max-width: 480px) {
     .textHappynewyear .box-span span {
         width: 40px;
         height: 40px;
     }
 
     .numberhappy {
-        font-size: 40px;
+        font-size: 20px;
+        text-align: center;
+    }
+
+    .box-button .button button {
+        font-size: 14px;
+        width: auto;
+    }
+
+    .box-button .button span {
+        width: 35px;
+        height: 35px;
     }
 
     #countdown {
-        font-size: 1rem;
+        font-size: 1.5rem;
+        padding: 5px 10px;
     }
 
-    .box-slider-img2 .slider-img2 img,
-    .box-slider-img3 .slider-img3 img,
-    .box-slider-img4 .slider-img4 img {
-        width: 80px;
+    .new-year-message {
+        width: 90%; /* Làm hộp chúc mừng nhỏ gọn hơn */
+        font-size: 1rem;
     }
 
     .new-year-message h1 {
@@ -70,6 +60,22 @@
 
     .new-year-message p {
         font-size: 1rem;
+    }
+
+    .new-year-message .close-button {
+        font-size: 1rem;
+    }
+
+    .slider-img6 img {
+        width: 80px; /* Thu nhỏ các đám mây */
+    }
+
+    .box-flower .flower-img img {
+        width: 50px;
+    }
+
+    .box-lion_dance img {
+        width: 120px;
     }
 }
 
