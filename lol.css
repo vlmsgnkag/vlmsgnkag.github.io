@@ -1,0 +1,236 @@
+/* Các thiết lập cơ bản */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Arial', sans-serif;
+  background: url('https://static.ybox.vn/2024/1/4/1704362246169-1.gif') no-repeat fixed center;
+  background-size: cover;
+  color: #d9534f;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  overflow: hidden;
+  text-align: center;
+}
+.countdown-container {
+  background: rgba(0, 0, 0, 0.7);
+  border-radius: 15px;
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
+  padding: 30px;
+  max-width: 80%;
+  width: 100%;
+  margin: 0 auto;
+}
+.container {
+  text-align: center;
+  padding: 20px;
+  background: rgba(0, 0, 0, 0.6);
+  border-radius: 10px;
+  box-shadow: 0 0 30px rgba(0, 0, 0, 0.5);
+}
+
+.title {
+  font-size: 3rem;
+  margin-bottom: 20px;
+  color: #ffcc00;
+  font-family: 'Times New Roman', serif;
+  font-weight: bold;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+.message-box {
+  background: rgba(255, 165, 0, 0.8);
+  color: white;
+  padding: 25px;
+  border-radius: 10px;
+  margin-bottom: 30px;
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
+  font-size: 1.2rem;
+}
+
+.countdown {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+}
+.countdown h1 {
+  font-size: 2.5rem;
+  color: #ffcc00;  /* Màu vàng */
+  margin-bottom: 20px;
+}
+#countdownTimer {
+  font-size: 3rem;
+  font-weight: bold;
+  color: #fff;
+}
+.time {
+  background: #333;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+  width: 100px;
+  position: relative;
+}
+
+.time span {
+  font-size: 2.5rem;
+  font-weight: bold;
+  display: block;
+  margin-bottom: 5px;
+}
+
+.time p {
+  font-size: 1rem;
+  color: #ffcc00;
+}
+
+.time::before {
+  content: '🌸';
+  position: absolute;
+  top: -15px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 2rem;
+}
+
+/* Hiệu ứng hiện chữ "Chúc Mừng Năm Mới" */
+.new-year-message {
+  display: none;
+  font-size: 4rem;
+  color: #ffcc00;
+  font-weight: bold;
+  text-transform: uppercase;
+  text-shadow: 3px 3px 10px rgba(0, 0, 0, 0.7), 0 0 15px #ffcc00, 0 0 30px #ffcc00;
+  animation: fadeIn 3s ease-in-out, bounce 1s 1s ease-out forwards;
+}
+
+#newYearMessage h2 {
+  font-size: 3rem;
+  color: #ffcc00;
+  text-shadow: 4px 4px 5px rgba(0, 0, 0, 0.5); /* Hiệu ứng chữ nổi */
+}
+#newYearMessage {
+  margin-top: 20px;
+  display: none;
+}
+#newYearMessage p {
+  font-size: 1.5rem;
+  color: #fff;
+  margin-top: 10px;
+}
+nav {
+  background: #ff6600;
+  color: white;
+  padding: 10px;
+  text-align: center;
+}
+
+nav a {
+  color: white;
+  text-decoration: none;
+  padding: 10px 20px;
+  font-size: 1.2rem;
+}
+
+nav a:hover {
+  background: #ffcc00;
+  border-radius: 5px;
+}
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes bounce {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-20px);
+  }
+}
+@keyframes fireworks {
+  0% {
+    transform: scale(0);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.5);
+    opacity: 0.8;
+  }
+  100% {
+    transform: scale(0);
+    opacity: 0;
+  }
+}
+/* Hiệu ứng pháo bông */
+.fireworks {
+  position: absolute;
+  width: 50px;
+  height: 50px;
+  background-color: #ffcc00;
+  border-radius: 50%;
+  box-shadow: 0 0 10px rgba(255, 255, 0, 0.5);
+  animation: fireworks 1s ease-out forwards;
+}
+
+.fireworks .burst {
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255, 255, 0, 1) 0%, rgba(255, 0, 0, 0) 80%);
+  animation: explode 1s ease-out infinite;
+}
+
+.fireworks .burst:nth-child(1) {
+  top: 10%;
+  left: 50%;
+  animation-delay: 0s;
+}
+
+.fireworks .burst:nth-child(2) {
+  top: 40%;
+  left: 60%;
+  animation-delay: 0.3s;
+}
+
+.fireworks .burst:nth-child(3) {
+  top: 20%;
+  left: 80%;
+  animation-delay: 0.5s;
+}
+
+@keyframes explode {
+  0% {
+    transform: scale(0);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(10);
+    opacity: 0;
+  }
+}
+
+.fireworks .burst:nth-child(4) {
+  top: 60%;
+  left: 20%;
+  animation-delay: 0.7s;
+}
+
+.fireworks .burst:nth-child(5) {
+  top: 80%;
+  left: 30%;
+  animation-delay: 1s;
+}
