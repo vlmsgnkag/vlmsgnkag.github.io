@@ -1,0 +1,160 @@
+<html lang="en"><head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <link rel="website icon" type="png" href="image/cat.png">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css" integrity="sha512-MV7K8+y+gLIBoVD59lQIYicR65iaqukzvf/nwasF0nqhPay5w/9lJmVM2hMDcnK1OnMGCdVK+iQrJ7lzPJQd1w==" crossorigin="anonymous" referrerpolicy="no-referrer">
+    <link rel="stylesheet" href="intro.css">
+    <title>Happy New Year</title>
+</head>
+<body>
+    <div class="box-slider">
+        <div class="slider1">
+            <img src="image/bgr.jpg" alt="">
+            <div class="happynewyear">
+                <div class="textHappynewyear">
+                    <div class="box-span">
+                        <span></span>
+                    </div>
+                    <div class="box-span">
+                        <span></span>
+                    </div>
+                    <div class="box-span">
+                        <span></span>
+                    </div>
+                    <div class="box-span">
+                        <span></span>
+                    </div>
+                </div>
+            </div>
+            <div class="box-flower">
+                <div class="flower-img active">
+                    <img src="image/flower.png" alt="">
+                </div>
+                <div class="flower-img active">
+                    <img src="image/flower.png" alt="">
+                </div>
+                <div class="flower-img active">
+                    <img src="image/flower1.png" alt="">
+                </div>
+                <div class="flower-img active">
+                    <img src="image/flower1.png" alt="">
+                </div>
+                <div class="flower-img active">
+                    <img src="image/flower2.png" alt="">
+                </div>
+                <div class="flower-img active">
+                    <img src="image/flower2.png" alt="">
+                </div>
+            </div>
+            <div class="box-slider_img2">
+                <div class="box-slider-img2">
+                    <div class="slider-img2">
+                        <img src="image/lanterns.png" alt="">
+                    </div>
+                </div>
+                <div class="box-slider-img3">
+                    <div class="slider-img3">
+                        <img src="image/lanterns.png" alt="">
+                    </div>
+                </div>
+                <div class="box-slider-img4">
+                    <div class="slider-img4">
+                        <img src="image/lanterns.png" alt="">
+                    </div>
+                </div>
+                <div class="box-slider-img5">
+                    <div class="slider-img5">
+                        <img src="image/lanterns.png" alt="">
+                    </div>
+                </div>
+            </div>
+            <div class="slider-img6">
+                <img src="image/cloud-red1.png" alt="">
+                <img src="image/cloud-red2.png" alt="">
+                <img src="image/cloud-red2.png" alt="">
+            </div>
+            <div class="box-lion_dance">
+                <div class="lion_dance1">
+                    <img src="image/Lion-dance.gif" alt="">
+                </div>
+                <div class="lion_dance2">
+                    <img src="image/Lion-dance2.gif" alt="">
+                </div>
+            </div>
+            <div class="cat active">
+                <img src="image/cat.png" alt="">
+            </div>
+            <div class="box-number active">
+                <div class="numberhappy">
+                    <div class="number">
+                        <span>Chúc</span>
+                    </div>
+                    <div class="number">
+                        <span>Mừng</span>
+                    </div>
+                    <div class="number">
+                        <span>Năm</span>
+                    </div>
+                    <div class="number">
+                        <span>Mới</span>
+                    </div>
+                </div>
+            </div>          
+            <div class="box-rim">
+                <div class="rim1">
+                    <img src="image/rim1.png" alt="">
+                </div>
+                <div class="rim2">
+                    <img src="image/rim1.png" alt="">
+                </div>
+            </div>
+            <div class="box-texture_clouds">
+                <div class="texture_clouds1">
+                    <img src="image/texture-clouds.png" alt="">
+                </div>
+                <div class="texture_clouds1">
+                    <img src="image/texture-clouds.png" alt="">
+                </div>
+                <div class="texture_clouds1">
+                    <img src="image/texture-clouds.png" alt="">
+                </div>
+                <div class="texture_clouds1">
+                    <img src="image/texture-clouds.png" alt="">
+                </div>
+                <div class="texture_clouds1">
+                    <img src="image/texture-clouds.png" alt="">
+                </div>
+            </div>
+            <div class="box-big_clouds">
+                <div class="big_clouds1">
+                    <img src="image/big-clouds1.png" alt="">
+                </div>
+                <div class="big_clouds2">
+                    <img src="image/big-clouds2.png" alt="">
+                </div>
+                <div class="big_clouds3">
+                    <img src="image/big-clouds3.png" alt="">
+                </div>
+            </div>
+        </div>
+        <!-- Audio player -->
+    <audio id="audioPlayer" autoplay loop>
+        <source src="" type="audio/mp3">
+        Trình duyệt của bạn không hỗ trợ phát nhạc.
+    </audio>
+
+    <div id="countdown">
+        <span id="days">00</span> ngày
+        <span id="hours">00</span> giờ
+        <span id="minutes">00</span> phút
+        <span id="seconds">00</span> giây
+    </div>
+        <canvas id="fireworks"></canvas>
+        <script src="./intro.js"></script>
+        <style>
+            html,body{cursor:url("https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjac-SGqqBNOf8R-yQBGf8rXc_3Mko7Jk_Vf-3mtmVeE3EiU4oaRG-3lS1CqQ5XgWXpBspTaSriDXGF73L3m9V0c0K07iDq1r7XyLXpsEqU3VF2O6mT-gZkqsJimuxi8gLvOQtxhGXx8Y9a/s0/mouse-f1.png"), auto;}
+            a:hover{cursor:url("https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjITCvg05WrPmBtw3wfCNDButQe1JVWYCtbJ07WNQ1Q_72Sf0PTOXRzt9H8OqryPkJrC7GmiHUJ0CwHje_VLV2Trr9cumn0Y6eMcFL77Z9fm4G4I3ZwLHu8I8kDUy9rkXjzH_v49SscqVYT/s0/mouse-f2.png"), auto;}
+        </style>
+          
+</body></html>
