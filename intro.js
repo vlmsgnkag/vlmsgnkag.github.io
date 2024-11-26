@@ -199,6 +199,8 @@ function playRandomSong() {
     audioPlayer.src = `image/${selectedSong.file}`; // Đường dẫn tới thư mục chứa nhạc
     audioPlayer.play(); // Phát nhạc tự động
 }
+canvas.width = Math.min(window.innerWidth, 768); // Đảm bảo kích thước canvas vừa với thiết bị nhỏ
+canvas.height = Math.min(window.innerHeight, 1024);
 
 // Gọi hàm khi trang được tải
 document.addEventListener("DOMContentLoaded", playRandomSong);
