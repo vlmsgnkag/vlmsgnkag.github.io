@@ -72,6 +72,16 @@ const songs = [
     { src: "music/70.mp3", image: "https://i.pinimg.com/474x/b7/4e/cc/b74eccabad6d13e3e716ce226fb3295f.jpg" },
     { src: "music/71.mp3", image: "https://i.pinimg.com/236x/11/6d/99/116d99c44902e7003a1f6731cb93d99d.jpg" },
     { src: "music/72.mp3", image: "https://i.pinimg.com/236x/40/9b/e4/409be4d747572a4680ba890faf30df30.jpg" },
+    { src: "music/73.mp3", image: "https://i.pinimg.com/236x/01/3c/11/013c11d9fb23f12602bd7d9974aab53d.jpg" },
+    { src: "music/74.mp3", image: "https://i.pinimg.com/236x/60/75/ad/6075ad700bd16ea3fb7b26b979ee8081.jpg" },
+    { src: "music/75.mp3", image: "https://i.pinimg.com/236x/82/05/f4/8205f41df2398d0faf622078fe5ec529.jpg" },
+    { src: "music/76.mp3", image: "https://i.pinimg.com/236x/90/22/2b/90222b6677e3ae1825c2d7db88dec75a.jpg" },
+    { src: "music/77.mp3", image: "https://i.pinimg.com/236x/60/16/ed/6016ede8877e0eb31f17b1f9aa15cbe2.jpg" },
+    { src: "music/78.mp3", image: "https://i.pinimg.com/236x/49/86/72/4986722358f267b00429e2f049c1d811.jpg" },
+    { src: "music/79.mp3", image: "https://i.pinimg.com/236x/8d/d4/c0/8dd4c0fa591d3b642541c39ba60692fc.jpg" },
+    { src: "music/80.mp3", image: "https://i.pinimg.com/236x/d4/b9/1d/d4b91dba1f6fd3aac6237170ce9b614e.jpg" }
+    
+
 
     // Thêm các bài nhạc và ảnh tương ứng ở đây
 ];
