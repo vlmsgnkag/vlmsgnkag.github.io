@@ -90,11 +90,35 @@ const songs = [
 
 // Các phần tử HTML
 const playButton = document.getElementById("playButton");
+const currentSongIndexElement = document.getElementById("currentSongIndex");
+const songInfo = document.getElementById("songInfo");
+const totalSongsElement = document.getElementById("totalSongs");
 const songImage = document.getElementById("songImage");
+let remainingSongs = [...songs];
+let currentSongIndex = -1;
+
+function updateTotalSongs() {
+    totalSongsElement.textContent = songs.length;
+}
+function updateCurrentSongIndex(index) {
+    currentSongIndexElement.textContent = index + 1; // +1 để hiển thị số thứ tự từ 1
+}
 
 // Tạo đối tượng âm thanh toàn cục
 let audio = new Audio();
 
+function renderSongList() {
+    songListContainer.innerHTML = ""; // Xóa danh sách cũ
+    songs.forEach((song, index) => {
+        const songItem = document.createElement("div");
+        songItem.classList.add("song-list-item");
+        if (index === currentSongIndex) {
+            songItem.classList.add("active");
+        }
+        songItem.textContent = `${index + 1}. ${song.src.split('/').pop()}`;
+        songListContainer.appendChild(songItem);
+    });
+}
 // Kích thước canvas và sóng âm thanh
 const canvas = document.getElementById("waveCanvas");
 const ctx = canvas.getContext("2d");
@@ -137,13 +161,30 @@ drawWave();
 
 // Hàm phát bài ngẫu nhiên
 function playRandomSong() {
-    const randomIndex = Math.floor(Math.random() * songs.length);
-    const selectedSong = songs[randomIndex];
+    // Làm mới danh sách khi tất cả bài đã được phát
+    if (remainingSongs.length === 0) {
+        remainingSongs = [...songs];
+    }
+
+    // Lấy ngẫu nhiên một bài từ danh sách còn lại
+    const randomIndex = Math.floor(Math.random() * remainingSongs.length);
+    const selectedSong = remainingSongs.splice(randomIndex, 1)[0]; // Xóa bài đã chọn ra khỏi danh sách
+    currentSongIndex = songs.indexOf(selectedSong);
+    updateSongInfo(currentSongIndex, selectedSong);
+
+
+
+    // Phát bài và cập nhật ảnh
     audio.src = selectedSong.src;
     songImage.src = selectedSong.image;
     audio.play();
+    renderSongList();
 }
 
+function updateSongInfo(index, song) {
+    currentSongIndexElement.textContent = index + 1; // Hiển thị từ 1
+    songTitleElement.textContent = song.src.split('/').pop(); // Hiển thị tên tệp bài hát
+}
 // Khi bài nhạc kết thúc, phát bài mới
 audio.addEventListener("ended", playRandomSong);
 
@@ -154,6 +195,8 @@ playButton.addEventListener("click", playRandomSong);
 window.addEventListener("load", () => {
     // Tương thích với trình duyệt yêu cầu tương tác trước khi phát âm thanh
     const playPromise = audio.play();
+    renderSongList();
+    updateTotalSongs(); // Hiển thị tổng số bài hát
     if (playPromise !== undefined) {
         playPromise
             .then(() => {
