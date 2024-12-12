@@ -104,3 +104,71 @@ button:hover {
     margin-bottom: 20px;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
 }
+
+.song-list {
+    position: relative;
+    z-index: 2;
+    margin-top: 20px;
+    max-height: 300px;
+    overflow-y: auto;
+    width: 90%;
+    max-width: 600px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+    padding: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    color: white;
+    font-size: 16px;
+}
+
+.song-list-item {
+    padding: 10px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: background-color 0.3s ease;
+    cursor: pointer;
+}
+
+.song-list-item:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+}
+
+.song-list-item.active {
+    background-color: rgba(255, 255, 255, 0.4);
+    font-weight: bold;
+}
+
+.song-info {
+    position: relative;
+    z-index: 2;
+    margin-top: 20px;
+    font-size: 16px;
+    text-align: center;
+    color: white;
+    text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.6);
+    padding: 10px;
+    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.1);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    max-width: 90%;
+    width: 300px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.song-info #currentSongIndex,
+.song-info #totalSongs {
+    font-size: 24px;
+    font-weight: bold;
+    color: #ffd700; /* Vàng sáng */
+}
+
+.song-info #currentSongTitle {
+    font-size: 14px;
+    margin-top: 5px;
+    font-weight: normal;
+    color: #fff;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+}
