@@ -24,8 +24,8 @@ const songTitle = document.getElementById('song-title');new Vue({
         {
           name: "Nonstop 2021 Vinahouse",
           artist: "DJ Thai Hoang Full Track",
-          cover: "https://i.pinimg.com/474x/0a/61/d9/0a61d904e6c362d088a38651e73ccc35.jpg",
-          source: "https://voca.ro/1lij0rfthUSn",
+          cover: "https://i.pinimg.com/236x/7e/75/33/7e75335f313ff3a8812224c0e0fc89cd.jpg",
+          source: "https://media1.vocaroo.com/mp3/1lij0rfthUSn",
           url: "https://www.youtube.com/watch?v=ualSK9XsZ4o",
           favorited: true
         },
@@ -67,7 +67,7 @@ const songTitle = document.getElementById('song-title');new Vue({
         {
           name: "Một Đời",
           artist: "14Casper x Bon Nghiêm x 2T x ChangC - NVT ft TPhuc",
-          cover: "https://i.pinimg.com/236x/0e/92/da/0e92da18055fab54b47ccc5400b0cb68.jpg",
+          cover: "https://i.pinimg.com/736x/50/cd/ac/50cdac210bd63ca334a4f3b531cab960.jpg",
           source: "remix/M%E1%BB%99t%20%C4%90%E1%BB%9Di%20Remix.mp3",
           url: "https://www.youtube.com/watch?v=JgTZvDbaTtg&pp=ygUMTeG7mXQgxJHhu51p",
           favorited: true
