@@ -88,8 +88,6 @@ const songs = [
     // Thêm các bài nhạc và ảnh tương ứng ở đây
 ];
 
-// Các phần tử HTML
-// Các phần tử HTML
 const playButton = document.getElementById("playButton");
 const songImage = document.getElementById("songImage");
 
@@ -136,10 +134,17 @@ function drawWave() {
 }
 drawWave();
 
+// Biến lưu danh sách bài hát chưa phát
+let unplayedSongs = [...songs];
+
 // Hàm phát bài ngẫu nhiên
 function playRandomSong() {
-    const randomIndex = Math.floor(Math.random() * songs.length);
-    const selectedSong = songs[randomIndex];
+    if (unplayedSongs.length === 0) {
+        // Làm mới danh sách khi đã phát hết tất cả bài hát
+        unplayedSongs = [...songs];
+    }
+    const randomIndex = Math.floor(Math.random() * unplayedSongs.length);
+    const selectedSong = unplayedSongs.splice(randomIndex, 1)[0]; // Lấy bài hát và xóa khỏi danh sách chưa phát
     audio.src = selectedSong.src;
     songImage.src = selectedSong.image;
     audio.play();
