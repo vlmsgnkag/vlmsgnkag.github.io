@@ -83,7 +83,15 @@ const songs = [
     { src: "music/81.mp3", image: "https://i.pinimg.com/236x/df/f0/e9/dff0e950ba846a39ba0ae4fb1fff044f.jpg" },
     { src: "music/82.mp3", image: "https://i.pinimg.com/236x/5b/b1/b3/5bb1b33c6cd7654274cb3df2997405d4.jpg" },
     { src: "music/83.mp3", image: "https://i.pinimg.com/236x/5a/4d/17/5a4d171c129423b0e16c68cfd68517a1.jpg" },
-    { src: "music/84.mp3", image: "https://i.pinimg.com/236x/c2/a7/44/c2a744ecbb75f2c4ee3aa3681866fda4.jpg" }
+    { src: "music/84.mp3", image: "https://i.pinimg.com/236x/c2/a7/44/c2a744ecbb75f2c4ee3aa3681866fda4.jpg" },
+    { src: "music/85.mp3", image: "https://i.pinimg.com/236x/b7/4e/42/b74e4217662842979353832a66ef2cbd.jpg" },
+    { src: "music/86.mp3", image: "https://i.pinimg.com/474x/94/a0/20/94a0202574cb35a0319cade119be52e1.jpg" },
+    { src: "music/87.mp3", image: "https://i.pinimg.com/236x/62/d5/e7/62d5e7673f1ce5043bd266f6dbba99c8.jpg" },
+    { src: "music/88.mp3", image: "https://i.pinimg.com/236x/96/1b/10/961b10c845a1772cf4a0e00b1d5a35dd.jpg" },
+    { src: "music/89.mp3", image: "https://i.pinimg.com/474x/e7/dc/77/e7dc7786be4b2faad53e5b40344d7eef.jpg" },
+    { src: "music/90.mp3", image: "https://i.pinimg.com/236x/0a/2b/89/0a2b89b4726f9e1c62e9440856fe3ee5.jpg" },
+    { src: "music/91.mp3", image: "https://i.pinimg.com/236x/ae/33/28/ae3328e1e373e36f60a3cbce66359477.jpg" },
+    { src: "music/92.mp3", image: "https://i.pinimg.com/236x/d2/19/1c/d2191c1bcf8c50f2ba43e70380998c82.jpg" }
     
 
 
