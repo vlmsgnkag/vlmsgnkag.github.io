@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tải xuống cấu hình</title>
+</head>
+<body>
+    <h1>Đang tải xuống cấu hình...</h1>
+    <p>Nếu file không tự động tải xuống, <a id="download-link" href="https://raw.githubusercontent.com/vlmsgnkag/DNS/refs/heads/main/vlxx.mobileconfig">nhấp vào đây</a>.</p>
+
+    <script>
+        // Tự động tải file
+        const downloadUrl = "https://raw.githubusercontent.com/vlmsgnkag/DNS/refs/heads/main/vlxx.mobileconfig"; // Thay URL bằng link file của bạn
+        const link = document.createElement("a");
+        link.href = downloadUrl;
+        link.download = ""; // Tự động kích hoạt tải
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    </script>
+</body>
+</html>
