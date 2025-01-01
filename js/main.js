@@ -4,19 +4,19 @@ const articles = [
       title: "Report 13 tuổi - Báo cáo tài khoản Facebook",
       image: "images/facebook-icon.png",
       summary: "Hướng dẫn chi tiết cách báo cáo tài khoản Facebook chưa đủ tuổi.",
-      url: "posts/report-13.html",
+      url: "report-13.html",
     },
     {
       title: "TUT DAME 282 - Mới nhất 2025",
       image: "images/facebook-icon.png",
       summary: "TUT DAME 282 FAKE CLONE - VIA MỚI NHẤT 2025",
-      url: "posts/dame-282.html",
+      url: "dame-282.html",
     },
     {
       title: "Cách xác minh danh tính Facebook",
       image: "images/facebook-icon.png",
       summary: "Hướng dẫn từng bước để xác minh danh tính tài khoản Facebook.",
-      url: "posts/verify-facebook.html",
+      url: "verify-facebook.html",
     },
   ];
   
