@@ -1,0 +1,127 @@
+/* Reset CSS */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+  
+  body {
+    font-family: Arial, sans-serif;
+    line-height: 1.6;
+    background-color: #f4f4f4;
+    color: #333;
+  }
+  
+  /* Container */
+  .article-container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  }
+  
+  /* Header */
+  .article-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 0;
+  }
+  
+  .article-header .logo a {
+    text-decoration: none;
+    font-size: 1.5rem;
+    color: #007bff;
+    font-weight: bold;
+  }
+  
+  .article-header .nav a {
+    text-decoration: none;
+    margin-left: 15px;
+    color: #555;
+    font-size: 1rem;
+  }
+  
+  .article-header .nav a:hover {
+    color: #007bff;
+  }
+  
+  /* Main Article */
+  .article-title {
+    font-size: 2rem;
+    margin-bottom: 10px;
+    color: #333;
+  }
+  
+  .article-meta {
+    font-size: 0.9rem;
+    color: #777;
+    margin-bottom: 20px;
+  }
+  
+  .article-image {
+    width: 5%;
+    height: auto;
+    border-radius: 8px;
+    margin-bottom: 20px;
+  }
+  
+  .article-intro {
+    font-size: 1.2rem;
+    margin-bottom: 20px;
+    color: #444;
+  }
+  
+  .article-inline-image {
+    width: 100%;
+    height: auto;
+    margin: 20px 0;
+    border-radius: 8px;
+  }
+  
+  /* Related Articles */
+  .related-articles {
+    margin-top: 40px;
+  }
+  
+  .related-articles h3 {
+    font-size: 1.5rem;
+    margin-bottom: 20px;
+    color: #007bff;
+  }
+  
+  .related-list {
+    display: flex;
+    gap: 15px;
+    flex-wrap: wrap;
+  }
+  
+  .related-item {
+    flex: 1;
+    min-width: 200px;
+    text-decoration: none;
+    color: #333;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    transition: transform 0.3s;
+  }
+  
+  .related-item img {
+    width: 20%;
+    height: auto;
+    display: block;
+  }
+  
+  .related-item h4 {
+    padding: 10px;
+    font-size: 1rem;
+  }
+  
+  .related-item:hover {
+    transform: translateY(-5px);
+  }
+  
