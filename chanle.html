@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Phân Tích Lịch Sử Chẵn Lẻ - Mô Phỏng Dự Đoán Nâng Cao</title>
+  <style>
+    /* Giao diện hiện đại và đẹp mắt */
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #74ABE2, #5563DE);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      color: #333;
+    }
+    .container {
+      background-color: #fff;
+      width: 90%;
+      max-width: 600px;
+      border-radius: 12px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+      padding: 30px;
+      text-align: center;
+    }
+    h2 {
+      margin-bottom: 20px;
+      color: #5563DE;
+      font-size: 24px;
+    }
+    p {
+      margin-bottom: 20px;
+      color: #555;
+      font-size: 16px;
+    }
+    .input-group {
+      text-align: left;
+      margin-bottom: 15px;
+    }
+    label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: bold;
+      color: #333;
+    }
+    textarea, input[type="number"] {
+      width: 100%;
+      padding: 10px;
+      font-size: 16px;
+      border: 2px solid #ddd;
+      border-radius: 5px;
+      box-sizing: border-box;
+      transition: border 0.3s ease;
+    }
+    textarea:focus, input[type="number"]:focus {
+      border-color: #5563DE;
+      outline: none;
+    }
+    button {
+      background-color: #5563DE;
+      color: #fff;
+      border: none;
+      padding: 12px 25px;
+      font-size: 16px;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+      margin-top: 10px;
+    }
+    button:hover {
+      background-color: #4353b3;
+    }
+    #result {
+      margin-top: 25px;
+      text-align: left;
+      font-size: 16px;
+      line-height: 1.6;
+      background: #f7f7f7;
+      padding: 15px;
+      border-radius: 8px;
+      box-shadow: inset 0 2px 5px rgba(0,0,0,0.1);
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>Phân Tích Lịch Sử Chẵn Lẻ - Mô Phỏng Dự Đoán Nâng Cao</h2>
+    <p>Nhập dữ liệu lịch sử (C = Chẵn, L = Lẻ) cách nhau bởi dấu phẩy, khoảng trắng hoặc xuống dòng.</p>
+    <div class="input-group">
+      <label for="historyInput">Dữ liệu lịch sử:</label>
+      <textarea id="historyInput" placeholder="VD: C, L, C, C, L, C, L, ..."></textarea>
+    </div>
+    <div class="input-group">
+      <label for="simRuns">Số lần mô phỏng:</label>
+      <input type="number" id="simRuns" placeholder="VD: 100" min="1">
+    </div>
+    <button onclick="calculatePrediction()">Tính Dự Đoán</button>
+    <div id="result"></div>
+  </div>
+  
+  <script>
+    // Sử dụng hệ số smoothing λ cao hơn (λ = 10) để giảm độ nghiêng khi chênh lệch không lớn
+    const lambda = 10;
+    
+    // Hàm tính dự đoán với mô phỏng nâng cao:
+    // Mỗi lần mô phỏng thêm nhiễu ngẫu nhiên (±delta) vào số liệu lịch sử, sau đó tính dự đoán với Laplace smoothing
+    function calculatePrediction() {
+      const historyData = document.getElementById("historyInput").value.trim();
+      const simRunsInput = document.getElementById("simRuns").value.trim();
+      
+      if (!historyData) {
+        alert("Vui lòng nhập dữ liệu lịch sử!");
+        return;
+      }
+      
+      const simRuns = parseInt(simRunsInput);
+      if (isNaN(simRuns) || simRuns <= 0) {
+        alert("Vui lòng nhập số lần mô phỏng hợp lệ!");
+        return;
+      }
+      
+      // Tách dữ liệu lịch sử: hỗ trợ dấu phẩy, khoảng trắng, xuống dòng
+      const tokens = historyData.split(/[\s,]+/).map(item => item.trim().toUpperCase()).filter(item => item !== "");
+      if (tokens.length === 0) {
+        alert("Dữ liệu lịch sử trống!");
+        return;
+      }
+      
+      // Kiểm tra dữ liệu hợp lệ: chỉ cho phép "C" và "L"
+      for (let token of tokens) {
+        if (token !== "C" && token !== "L") {
+          alert("Dữ liệu lịch sử không hợp lệ! Chỉ cho phép ký hiệu 'C' và 'L'.");
+          return;
+        }
+      }
+      
+      const even = tokens.filter(x => x === "C").length;
+      const odd  = tokens.filter(x => x === "L").length;
+      const total = even + odd;
+      if (total === 0) {
+        alert("Tổng số dữ liệu phải lớn hơn 0!");
+        return;
+      }
+      
+      // Định nghĩa khoảng nhiễu: delta = max(1, floor(5% của total))
+      const delta = Math.max(1, Math.floor(total * 0.05));
+      
+      let evenPredictions = [];
+      let oddPredictions = [];
+      
+      // Thực hiện mô phỏng simRuns lần
+      for (let i = 0; i < simRuns; i++) {
+        const perturbEven = Math.floor(Math.random() * (2 * delta + 1)) - delta;
+        const perturbOdd  = Math.floor(Math.random() * (2 * delta + 1)) - delta;
+        
+        let simEven = even + perturbEven;
+        let simOdd  = odd + perturbOdd;
+        if (simEven < 0) simEven = 0;
+        if (simOdd < 0) simOdd = 0;
+        
+        let simTotal = simEven + simOdd;
+        if (simTotal === 0) {
+          simEven = even;
+          simOdd  = odd;
+          simTotal = total;
+        }
+        
+        const predEven = ((simEven + lambda) / (simTotal + 2 * lambda)) * 100;
+        const predOdd  = ((simOdd + lambda) / (simTotal + 2 * lambda)) * 100;
+        evenPredictions.push(predEven);
+        oddPredictions.push(predOdd);
+      }
+      
+      // Hàm tính thống kê (trung bình, độ lệch chuẩn, min, max)
+      function calculateStats(arr) {
+        const mean = arr.reduce((sum, val) => sum + val, 0) / arr.length;
+        const variance = arr.reduce((sum, val) => sum + Math.pow(val - mean, 2), 0) / arr.length;
+        const stdDev = Math.sqrt(variance);
+        const min = Math.min(...arr);
+        const max = Math.max(...arr);
+        return { mean, stdDev, min, max };
+      }
+      
+      const statsEven = calculateStats(evenPredictions);
+      const statsOdd  = calculateStats(oddPredictions);
+      
+      // Hiển thị kết quả thống kê
+      document.getElementById("result").innerHTML = `
+        <h3>Kết Quả Dự Đoán Sau ${simRuns} Lần Mô Phỏng:</h3>
+        <p><strong>Tổng số dữ liệu lịch sử:</strong> ${total} (Chẵn: ${even}, Lẻ: ${odd})</p>
+        <p><strong>Chẵn:</strong> Dự đoán trung bình = ${statsEven.mean.toFixed(2)}%, StdDev = ${statsEven.stdDev.toFixed(2)}%, Min = ${statsEven.min.toFixed(2)}%, Max = ${statsEven.max.toFixed(2)}%</p>
+        <p><strong>Lẻ:</strong> Dự đoán trung bình = ${statsOdd.mean.toFixed(2)}%, StdDev = ${statsOdd.stdDev.toFixed(2)}%, Min = ${statsOdd.min.toFixed(2)}%, Max = ${statsOdd.max.toFixed(2)}%</p>
+      `;
+    }
+  </script>
+</body>
+</html>
