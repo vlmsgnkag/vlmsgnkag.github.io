@@ -1,0 +1,798 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dự đoán Tài Xỉu</title>
+  <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    body {
+      font-family: 'Roboto', sans-serif;
+      background: linear-gradient(to right, #6a11cb, #2575fc);
+      color: #333;
+      margin: 0;
+      padding: 0;
+    }
+    .container {
+      max-width: 1000px;
+      margin: 30px auto;
+      padding: 20px;
+      background: #fff;
+      border-radius: 10px;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
+    h2, h3 {
+      color: #2575fc;
+    }
+    input[type="number"] {
+      padding: 10px;
+      font-size: 16px;
+      border: 2px solid #ccc;
+      border-radius: 5px;
+      width: 100px;
+      margin-right: 10px;
+    }
+    button {
+      padding: 10px 20px;
+      font-size: 16px;
+      border: none;
+      border-radius: 5px;
+      background: #2575fc;
+      color: #fff;
+      cursor: pointer;
+    }
+    button:hover {
+      background: #1a5bb8;
+    }
+    #resultHistory, #predictionOutput, #simulationOutput {
+      font-size: 18px;
+      margin: 20px 0;
+    }
+    canvas {
+      max-width: 100%;
+      height: auto;
+    }
+    .card {
+      padding: 15px;
+      border: 1px solid #eee;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      background: #fafafa;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>Dự đoán Tài Xỉu</h2>
+    
+    <!-- Khu vực nhập dữ liệu -->
+    <div class="card">
+      <p>Nhập kết quả 3 viên xúc xắc (mỗi viên 1–6) và tổng (3–18):</p>
+      <input type="number" id="dice1" placeholder="Xúc xắc 1" min="1" max="6">
+      <input type="number" id="dice2" placeholder="Xúc xắc 2" min="1" max="6">
+      <input type="number" id="dice3" placeholder="Xúc xắc 3" min="1" max="6">
+      <input type="number" id="diceSum" placeholder="Tổng" min="3" max="18">
+      <button onclick="addDiceResult()">Thêm</button>
+    </div>
+
+    <!-- Hiển thị lịch sử kết quả -->
+    <div class="card">
+      <h3>Lịch Sử Kết Quả (Tổng 3 Xúc Xắc)</h3>
+      <div id="resultHistory"></div>
+    </div>
+
+    <!-- Biểu đồ xu hướng -->
+    <div class="card">
+      <h3>Biểu đồ Xu Hướng</h3>
+      <canvas id="chart"></canvas>
+    </div>
+
+    <!-- Kết quả dự đoán -->
+    <div class="card">
+      <h3>Dự Đoán Kết Quả Tiếp Theo</h3>
+      <div id="predictionOutput"></div>
+    </div>
+
+    <!-- Khu vực mô phỏng -->
+    <div class="card">
+      <h3>Mô Phỏng Thuật Toán</h3>
+      <p>Nhập số lượt mô phỏng:</p>
+      <input type="number" id="simulateCount" placeholder="VD: 50" min="1" max="1000" step="1" style="width:120px;">
+      <button onclick="simulate()">Chạy Mô Phỏng</button>
+      <div id="simulationOutput"></div>
+    </div>
+  </div>
+
+  <script>
+    // ======================= //
+    //     BIẾN & HẰNG SỐ      //
+    // ======================= //
+    let history = [];          // Lưu lịch sử (tổng 3 viên)
+    const ALPHA = 0.8;         // Hệ số làm mịn hàm mũ
+    const MAX_HISTORY = 100;   // Giới hạn tối đa
+    const ROLLING_WINDOW = 5;  // Trung bình trượt
+    // Các biến giả lập “huấn luyện” cho Naive Bayes & Mạng Nơ-ron
+    let naiveBayesModel = {};  // {sum: count, ...}
+    let neuralWeights = {};    // {sum: weight, ...} (giả lập)
+
+    // ======================= //
+    //   HÀM XỬ LÝ GIAO DIỆN   //
+    // ======================= //
+    function addDiceResult() {
+      let d1 = parseInt(document.getElementById("dice1").value);
+      let d2 = parseInt(document.getElementById("dice2").value);
+      let d3 = parseInt(document.getElementById("dice3").value);
+      let s  = parseInt(document.getElementById("diceSum").value);
+
+      if ([d1, d2, d3, s].some(isNaN)) {
+        alert("Vui lòng nhập đủ 3 viên xúc xắc & tổng.");
+        return;
+      }
+      if (d1 < 1 || d1 > 6 || d2 < 1 || d2 > 6 || d3 < 1 || d3 > 6) {
+        alert("Xúc xắc phải trong khoảng 1–6.");
+        return;
+      }
+      if (s < 3 || s > 18) {
+        alert("Tổng phải trong khoảng 3–18.");
+        return;
+      }
+      if (d1 + d2 + d3 !== s) {
+        alert(`Tổng không khớp! (${d1}+${d2}+${d3} = ${d1+d2+d3}) ≠ ${s}`);
+        return;
+      }
+
+      // Thêm vào đầu mảng
+      history.unshift(s);
+      if (history.length > MAX_HISTORY) history.pop();
+
+      // Cập nhật “giả lập huấn luyện” Naive Bayes & Mạng Nơ-ron
+      trainNaiveBayes([s]);
+      trainNeural([s]);
+
+      // Cập nhật giao diện
+      displayHistory();
+      updateChart();
+      updatePrediction();
+
+      // Reset input
+      document.getElementById("dice1").value = "";
+      document.getElementById("dice2").value = "";
+      document.getElementById("dice3").value = "";
+      document.getElementById("diceSum").value = "";
+    }
+
+    function displayHistory() {
+      document.getElementById("resultHistory").innerText = history.join(" - ");
+    }
+
+    function updateChart() {
+      let ctx = document.getElementById("chart").getContext("2d");
+      if (window.myChart) {
+        window.myChart.destroy();
+      }
+      window.myChart = new Chart(ctx, {
+        type: "line",
+        data: {
+          labels: history.map((_, i) => `Lượt ${i + 1}`),
+          datasets: [{
+            label: "Tổng 3 Xúc Xắc",
+            data: history,
+            borderColor: "#2575fc",
+            backgroundColor: "rgba(37,117,252,0.2)",
+            fill: true,
+            tension: 0.3
+          }]
+        },
+        options: {
+          responsive: true,
+          scales: {
+            y: {
+              beginAtZero: true,
+              suggestedMin: 0,
+              suggestedMax: 20
+            }
+          }
+        }
+      });
+    }
+
+    // ============================ //
+    //  HUẤN LUYỆN NAIVE BAYES (giả)
+    // ============================ //
+    function trainNaiveBayes(dataArray) {
+      // Giả lập: chỉ đếm tần suất
+      if (!naiveBayesModel.count) {
+        naiveBayesModel.count = 0;
+        naiveBayesModel.freq  = {};
+        for (let i = 3; i <= 18; i++) {
+          naiveBayesModel.freq[i] = 0;
+        }
+      }
+      dataArray.forEach(val => {
+        naiveBayesModel.count++;
+        naiveBayesModel.freq[val]++;
+      });
+    }
+
+    function predictNaiveBayes(dataArray) {
+      // Nếu chưa “huấn luyện” => null
+      if (!naiveBayesModel.count || naiveBayesModel.count === 0) return null;
+      // Tính p(x) = freq[x] / total
+      let probabilities = {};
+      for (let i = 3; i <= 18; i++) {
+        probabilities[i] = naiveBayesModel.freq[i] / naiveBayesModel.count;
+      }
+      // Tìm giá trị cao nhất
+      let predicted = null;
+      let maxProb = -Infinity;
+      for (let sum in probabilities) {
+        if (probabilities[sum] > maxProb) {
+          maxProb = probabilities[sum];
+          predicted = parseInt(sum);
+        }
+      }
+      return {
+        prediction: predicted,
+        probability: maxProb,
+        distribution: probabilities
+      };
+    }
+
+    // ============================== //
+    //  HUẤN LUYỆN MẠNG NƠ-RON (giả)  //
+    // ============================== //
+    function trainNeural(dataArray) {
+      // Giả lập: chỉ gán weight += 1 cho sum
+      if (!neuralWeights.total) {
+        neuralWeights.total = 0;
+        neuralWeights.weight = {};
+        for (let i = 3; i <= 18; i++) {
+          neuralWeights.weight[i] = 0;
+        }
+      }
+      dataArray.forEach(val => {
+        neuralWeights.total++;
+        neuralWeights.weight[val] += 1;
+      });
+    }
+
+    function predictNeural(dataArray) {
+      // Nếu chưa “huấn luyện”
+      if (!neuralWeights.total || neuralWeights.total === 0) return null;
+      // Chuyển sang xác suất
+      let probabilities = {};
+      let total = neuralWeights.total;
+      for (let i = 3; i <= 18; i++) {
+        probabilities[i] = neuralWeights.weight[i] / total;
+      }
+      // Tìm giá trị cao nhất
+      let predicted = null;
+      let maxProb = -Infinity;
+      for (let sum in probabilities) {
+        if (probabilities[sum] > maxProb) {
+          maxProb = probabilities[sum];
+          predicted = parseInt(sum);
+        }
+      }
+      return {
+        prediction: predicted,
+        probability: maxProb,
+        distribution: probabilities
+      };
+    }
+
+    // ======================= //
+    //   PHƯƠNG PHÁP THỐNG KÊ  //
+    // ======================= //
+    function computeFrequencies(dataArray) {
+      let freq = {};
+      for (let i = 3; i <= 18; i++) {
+        freq[i] = 0;
+      }
+      dataArray.forEach(val => { freq[val] += 1; });
+      return freq;
+    }
+
+    function predictByFrequency(dataArray) {
+      if (dataArray.length === 0) return null;
+      let freq = computeFrequencies(dataArray);
+      let total = dataArray.length;
+      let probabilities = {};
+      for (let sum in freq) {
+        probabilities[sum] = freq[sum] / total;
+      }
+      let predicted = null;
+      let maxProb = -Infinity;
+      for (let sum in probabilities) {
+        if (probabilities[sum] > maxProb) {
+          maxProb = probabilities[sum];
+          predicted = parseInt(sum);
+        }
+      }
+      return {
+        prediction: predicted,
+        probability: maxProb,
+        distribution: probabilities
+      };
+    }
+
+    // ======================= //
+    //  PHƯƠNG PHÁP TRỌNG SỐ   //
+    // ======================= //
+    function computeWeightedFrequencies(dataArray) {
+      let weighted = {};
+      for (let i = 3; i <= 18; i++) {
+        weighted[i] = 0;
+      }
+      for (let i = 0; i < dataArray.length; i++) {
+        let weight = Math.pow(ALPHA, i); 
+        weighted[dataArray[i]] += weight;
+      }
+      return weighted;
+    }
+
+    function predictByWeighted(dataArray) {
+      if (dataArray.length === 0) return null;
+      let weighted = computeWeightedFrequencies(dataArray);
+      let totalWeighted = 0;
+      for (let sum in weighted) {
+        totalWeighted += weighted[sum];
+      }
+      if (totalWeighted === 0) return null;
+      let weightedProbabilities = {};
+      for (let sum in weighted) {
+        weightedProbabilities[sum] = weighted[sum] / totalWeighted;
+      }
+      let predicted = null;
+      let maxProb = -Infinity;
+      for (let sum in weightedProbabilities) {
+        if (weightedProbabilities[sum] > maxProb) {
+          maxProb = weightedProbabilities[sum];
+          predicted = parseInt(sum);
+        }
+      }
+      return {
+        prediction: predicted,
+        probability: maxProb,
+        distribution: weightedProbabilities
+      };
+    }
+
+    // ======================= //
+    //     MARKOV CHAIN BẬC 1  //
+    // ======================= //
+    function buildMarkovChain(dataArray) {
+      let transition = {};
+      for (let i = 3; i <= 18; i++) {
+        transition[i] = {};
+        for (let j = 3; j <= 18; j++) {
+          transition[i][j] = 0;
+        }
+      }
+      for (let idx = 0; idx < dataArray.length - 1; idx++) {
+        let currVal = dataArray[idx];
+        let nextVal = dataArray[idx + 1];
+        transition[currVal][nextVal] += 1;
+      }
+      for (let i = 3; i <= 18; i++) {
+        let rowSum = 0;
+        for (let j = 3; j <= 18; j++) {
+          rowSum += transition[i][j];
+        }
+        if (rowSum > 0) {
+          for (let j = 3; j <= 18; j++) {
+            transition[i][j] = transition[i][j] / rowSum;
+          }
+        }
+      }
+      return transition;
+    }
+
+    function predictByMarkovChain(dataArray) {
+      if (dataArray.length < 2) return null;
+      let transition = buildMarkovChain(dataArray);
+      let lastVal = dataArray[0];
+      let distribution = transition[lastVal];
+      if (!distribution) return null;
+      let predicted = null;
+      let maxProb = -Infinity;
+      for (let sum in distribution) {
+        if (distribution[sum] > maxProb) {
+          maxProb = distribution[sum];
+          predicted = parseInt(sum);
+        }
+      }
+      return {
+        prediction: predicted,
+        probability: maxProb,
+        distribution: distribution
+      };
+    }
+
+    // ======================= //
+    //   MARKOV CHAIN BẬC 2    //
+    // ======================= //
+    function buildMarkovChain2(dataArray) {
+      let transition2 = {};
+      for (let x1 = 3; x1 <= 18; x1++) {
+        for (let x2 = 3; x2 <= 18; x2++) {
+          transition2[[x1, x2]] = {};
+          for (let x3 = 3; x3 <= 18; x3++) {
+            transition2[[x1, x2]][x3] = 0;
+          }
+        }
+      }
+      for (let i = 0; i < dataArray.length - 2; i++) {
+        let s1 = dataArray[i];
+        let s2 = dataArray[i + 1];
+        let s3 = dataArray[i + 2];
+        transition2[[s1, s2]][s3] += 1;
+      }
+      for (let x1 = 3; x1 <= 18; x1++) {
+        for (let x2 = 3; x2 <= 18; x2++) {
+          let rowSum = 0;
+          for (let x3 = 3; x3 <= 18; x3++) {
+            rowSum += transition2[[x1, x2]][x3];
+          }
+          if (rowSum > 0) {
+            for (let x3 = 3; x3 <= 18; x3++) {
+              transition2[[x1, x2]][x3] = transition2[[x1, x2]][x3] / rowSum;
+            }
+          }
+        }
+      }
+      return transition2;
+    }
+
+    function predictByMarkovChain2(dataArray) {
+      if (dataArray.length < 3) return null;
+      let transition2 = buildMarkovChain2(dataArray);
+      let s1 = dataArray[0];
+      let s2 = dataArray[1];
+      let distribution = transition2[[s1, s2]];
+      if (!distribution) return null;
+      let predicted = null;
+      let maxProb = -Infinity;
+      for (let sum in distribution) {
+        if (distribution[sum] > maxProb) {
+          maxProb = distribution[sum];
+          predicted = parseInt(sum);
+        }
+      }
+      return {
+        prediction: predicted,
+        probability: maxProb,
+        distribution: distribution
+      };
+    }
+
+    // ======================= //
+    //  TRUNG BÌNH TRƯỢT (MA)  //
+    // ======================= //
+    function predictByRollingAvg(dataArray) {
+      if (dataArray.length === 0) return null;
+      let sliceData = dataArray.slice(0, ROLLING_WINDOW);
+      let avg = sliceData.reduce((acc, val) => acc + val, 0) / sliceData.length;
+      let predicted = Math.round(avg);
+      if (predicted < 3) predicted = 3;
+      if (predicted > 18) predicted = 18;
+      return {
+        prediction: predicted,
+        probability: 1.0,
+        distribution: {}
+      };
+    }
+
+    // ========================= //
+    //  KẾT HỢP BẬC 1 (3 phân phối)
+    // ========================= //
+    function predictCombinedB1(dataArray) {
+      let freqRes    = predictByFrequency(dataArray);
+      let weightRes  = predictByWeighted(dataArray);
+      let markov1Res = predictByMarkovChain(dataArray);
+      if (!freqRes || !weightRes || !markov1Res) return null;
+      let combined = {};
+      for (let i = 3; i <= 18; i++) {
+        let p1 = freqRes.distribution[i]    || 0;
+        let p2 = weightRes.distribution[i]  || 0;
+        let p3 = markov1Res.distribution[i] || 0;
+        combined[i] = (p1 + p2 + p3) / 3;
+      }
+      let predicted = null;
+      let maxProb = -Infinity;
+      for (let sum in combined) {
+        if (combined[sum] > maxProb) {
+          maxProb = combined[sum];
+          predicted = parseInt(sum);
+        }
+      }
+      return {
+        prediction: predicted,
+        probability: maxProb,
+        distribution: combined
+      };
+    }
+
+    // ========================= //
+    //  KẾT HỢP BẬC 2 (4 phân phối)
+    // ========================= //
+    function predictCombinedB2(dataArray) {
+      let freqRes     = predictByFrequency(dataArray);
+      let weightRes   = predictByWeighted(dataArray);
+      let markov1Res  = predictByMarkovChain(dataArray);
+      let markov2Res  = predictByMarkovChain2(dataArray);
+      if (!freqRes || !weightRes || !markov1Res || !markov2Res) return null;
+      let combined = {};
+      for (let i = 3; i <= 18; i++) {
+        let p1 = freqRes.distribution[i]     || 0;
+        let p2 = weightRes.distribution[i]   || 0;
+        let p3 = markov1Res.distribution[i]  || 0;
+        let p4 = markov2Res.distribution[i]  || 0;
+        combined[i] = (p1 + p2 + p3 + p4) / 4;
+      }
+      let predicted = null;
+      let maxProb = -Infinity;
+      for (let sum in combined) {
+        if (combined[sum] > maxProb) {
+          maxProb = combined[sum];
+          predicted = parseInt(sum);
+        }
+      }
+      return {
+        prediction: predicted,
+        probability: maxProb,
+        distribution: combined
+      };
+    }
+
+    // ========================= //
+    //  SIÊU KẾT HỢP (tất cả)
+    // ========================= //
+    // Gộp: Thống kê, Trọng số, Markov1, Markov2, NaiveBayes, Mạng Nơ-ron
+    function predictSuperCombined(dataArray) {
+      let freqRes     = predictByFrequency(dataArray);
+      let weightRes   = predictByWeighted(dataArray);
+      let markov1Res  = predictByMarkovChain(dataArray);
+      let markov2Res  = predictByMarkovChain2(dataArray);
+      let bayesRes    = predictNaiveBayes(dataArray);
+      let neuralRes   = predictNeural(dataArray);
+
+      // Cần đủ dữ liệu cho Markov2 (>=3), Bayes & Neural (đã “train”)
+      if (!freqRes || !weightRes || !markov1Res || !markov2Res || !bayesRes || !neuralRes) return null;
+
+      let combined = {};
+      for (let i = 3; i <= 18; i++) {
+        combined[i] = 0;
+      }
+      for (let i = 3; i <= 18; i++) {
+        let p1 = freqRes.distribution[i]     || 0;
+        let p2 = weightRes.distribution[i]   || 0;
+        let p3 = markov1Res.distribution[i]  || 0;
+        let p4 = markov2Res.distribution[i]  || 0;
+        let p5 = bayesRes.distribution[i]    || 0;
+        let p6 = neuralRes.distribution[i]   || 0;
+        combined[i] = (p1 + p2 + p3 + p4 + p5 + p6) / 6;
+      }
+      let predicted = null;
+      let maxProb = -Infinity;
+      for (let sum in combined) {
+        if (combined[sum] > maxProb) {
+          maxProb = combined[sum];
+          predicted = parseInt(sum);
+        }
+      }
+      return {
+        prediction: predicted,
+        probability: maxProb,
+        distribution: combined
+      };
+    }
+
+    // ======================= //
+    //  PHÂN LOẠI TÀI / XỈU    //
+    // ======================= //
+    function classifyResult(sum) {
+      return (sum <= 10) ? "Xỉu" : "Tài";
+    }
+
+    // ======================= //
+    //   HIỂN THỊ DỰ ĐOÁN     //
+    // ======================= //
+    function updatePrediction() {
+      let freqRes    = predictByFrequency(history);
+      let weightRes  = predictByWeighted(history);
+      let markov1Res = predictByMarkovChain(history);
+      let markov2Res = predictByMarkovChain2(history);
+      let rollingRes = predictByRollingAvg(history);
+      let bayesRes   = predictNaiveBayes(history);
+      let nnRes      = predictNeural(history);
+
+      let comboB1    = predictCombinedB1(history);
+      let comboB2    = predictCombinedB2(history);
+      let superCombo = predictSuperCombined(history);
+
+      let outputDiv = document.getElementById("predictionOutput");
+      let htmlOutput = "";
+
+      // Siêu kết hợp
+      if (superCombo) {
+        htmlOutput += `<p><strong>Siêu Kết Hợp (All):</strong> 
+          ${superCombo.prediction} (${classifyResult(superCombo.prediction)}) ~ ${(superCombo.probability*100).toFixed(1)}%</p>`;
+      } else {
+        htmlOutput += `<p>Siêu Kết Hợp: Chưa đủ dữ liệu (cần >=3 lượt + huấn luyện Bayes & NN).</p>`;
+      }
+
+      // Kết hợp bậc 2
+      if (comboB2) {
+        htmlOutput += `<p><strong>Kết Hợp Bậc 2:</strong> 
+          ${comboB2.prediction} (${classifyResult(comboB2.prediction)}) ~ ${(comboB2.probability*100).toFixed(1)}%</p>`;
+      } else {
+        htmlOutput += `<p>Kết Hợp Bậc 2: Chưa đủ dữ liệu (cần >=3 lượt).</p>`;
+      }
+
+      // Kết hợp bậc 1
+      if (comboB1) {
+        htmlOutput += `<p><strong>Kết Hợp Bậc 1:</strong> 
+          ${comboB1.prediction} (${classifyResult(comboB1.prediction)}) ~ ${(comboB1.probability*100).toFixed(1)}%</p>`;
+      } else {
+        htmlOutput += `<p>Kết Hợp Bậc 1: Chưa đủ dữ liệu (cần >=2 lượt).</p>`;
+      }
+
+      // Từng thuật toán
+      if (freqRes) {
+        htmlOutput += `<p><strong>Thống kê:</strong> 
+          ${freqRes.prediction} (${classifyResult(freqRes.prediction)}) ~ ${(freqRes.probability*100).toFixed(1)}%</p>`;
+      }
+      if (weightRes) {
+        htmlOutput += `<p><strong>Trọng số:</strong> 
+          ${weightRes.prediction} (${classifyResult(weightRes.prediction)}) ~ ${(weightRes.probability*100).toFixed(1)}%</p>`;
+      }
+      if (markov1Res) {
+        htmlOutput += `<p><strong>Markov bậc 1:</strong> 
+          ${markov1Res.prediction} (${classifyResult(markov1Res.prediction)}) ~ ${(markov1Res.probability*100).toFixed(1)}%</p>`;
+      } else {
+        htmlOutput += `<p>Markov bậc 1: Chưa đủ dữ liệu (≥2 lượt).</p>`;
+      }
+      if (markov2Res) {
+        htmlOutput += `<p><strong>Markov bậc 2:</strong> 
+          ${markov2Res.prediction} (${classifyResult(markov2Res.prediction)}) ~ ${(markov2Res.probability*100).toFixed(1)}%</p>`;
+      } else {
+        htmlOutput += `<p>Markov bậc 2: Chưa đủ dữ liệu (≥3 lượt).</p>`;
+      }
+      if (rollingRes) {
+        htmlOutput += `<p><strong>Trung bình trượt:</strong> 
+          ${rollingRes.prediction} (${classifyResult(rollingRes.prediction)})</p>`;
+      }
+      if (bayesRes) {
+        htmlOutput += `<p><strong>Naive Bayes (giả):</strong> 
+          ${bayesRes.prediction} (${classifyResult(bayesRes.prediction)}) ~ ${(bayesRes.probability*100).toFixed(1)}%</p>`;
+      } else {
+        htmlOutput += `<p>Naive Bayes: Chưa huấn luyện.</p>`;
+      }
+      if (nnRes) {
+        htmlOutput += `<p><strong>Mạng Nơ-ron (giả):</strong> 
+          ${nnRes.prediction} (${classifyResult(nnRes.prediction)}) ~ ${(nnRes.probability*100).toFixed(1)}%</p>`;
+      } else {
+        htmlOutput += `<p>Mạng Nơ-ron: Chưa huấn luyện.</p>`;
+      }
+
+      outputDiv.innerHTML = htmlOutput;
+    }
+
+    // ======================= //
+    //    MÔ PHỎNG THUẬT TOÁN  //
+    // ======================= //
+    function simulate() {
+      let countElem = document.getElementById("simulateCount");
+      let n = parseInt(countElem.value);
+      if (isNaN(n) || n < 1) {
+        alert("Vui lòng nhập số lượt mô phỏng hợp lệ.");
+        return;
+      }
+
+      // Reset mô hình Naive Bayes & NN
+      naiveBayesModel = {};
+      neuralWeights   = {};
+
+      // Tạo chuỗi ngẫu nhiên
+      let simulatedData = [];
+      for (let i = 0; i < n; i++) {
+        let randomSum = Math.floor(Math.random() * 16) + 3; 
+        simulatedData.push(randomSum);
+      }
+
+      // Lưu kết quả thống kê
+      let correctExact = { 
+        freq: 0, weight: 0, markov1: 0, markov2: 0, rolling: 0, 
+        bayes: 0, nn: 0, comboB1: 0, comboB2: 0, superCombo: 0
+      };
+      let correctTaiXiu= { 
+        freq: 0, weight: 0, markov1: 0, markov2: 0, rolling: 0, 
+        bayes: 0, nn: 0, comboB1: 0, comboB2: 0, superCombo: 0
+      };
+
+      let simHistory = [];
+
+      for (let i = 0; i < n; i++) {
+        let actual = simulatedData[i];
+        // “Huấn luyện” dần Naive Bayes & NN
+        trainNaiveBayes([actual]);
+        trainNeural([actual]);
+
+        // Dự đoán one-step-ahead => Phải dự đoán trước khi thêm actual
+        if (simHistory.length > 0) {
+          let freqRes   = predictByFrequency(simHistory);
+          let weightRes = predictByWeighted(simHistory);
+          let mk1Res    = predictByMarkovChain(simHistory);
+          let mk2Res    = predictByMarkovChain2(simHistory);
+          let rollRes   = predictByRollingAvg(simHistory);
+          let bayesRes  = predictNaiveBayes(simHistory);
+          let nnRes     = predictNeural(simHistory);
+          let cb1Res    = predictCombinedB1(simHistory);
+          let cb2Res    = predictCombinedB2(simHistory);
+          let scRes     = predictSuperCombined(simHistory);
+
+          // Hàm check
+          function checkMethod(res, name) {
+            if (!res) return;
+            if (res.prediction === actual) correctExact[name]++;
+            if (classifyResult(res.prediction) === classifyResult(actual)) correctTaiXiu[name]++;
+          }
+
+          checkMethod(freqRes,   'freq');
+          checkMethod(weightRes, 'weight');
+          checkMethod(mk1Res,    'markov1');
+          checkMethod(mk2Res,    'markov2');
+          checkMethod(rollRes,   'rolling');
+          checkMethod(bayesRes,  'bayes');
+          checkMethod(nnRes,     'nn');
+          checkMethod(cb1Res,    'comboB1');
+          checkMethod(cb2Res,    'comboB2');
+          checkMethod(scRes,     'superCombo');
+        }
+
+        // Sau khi dự đoán xong => mới thêm actual
+        simHistory.unshift(actual);
+        if (simHistory.length > MAX_HISTORY) simHistory.pop();
+      }
+
+      function percent(val) {
+        return ((val / (n - 1)) * 100).toFixed(1) + "%";
+      }
+
+      let simOutput = `
+      <h4>Kết quả Mô Phỏng với ${n} lượt (dự đoán one-step-ahead)</h4>
+      <p><strong>Chính xác “đúng tổng”:</strong></p>
+      <ul>
+        <li>Thống kê: ${correctExact.freq} / ${n-1} (${percent(correctExact.freq)})</li>
+        <li>Trọng số: ${correctExact.weight} / ${n-1} (${percent(correctExact.weight)})</li>
+        <li>Markov bậc 1: ${correctExact.markov1} / ${n-1} (${percent(correctExact.markov1)})</li>
+        <li>Markov bậc 2: ${correctExact.markov2} / ${n-1} (${percent(correctExact.markov2)})</li>
+        <li>Trung bình trượt: ${correctExact.rolling} / ${n-1} (${percent(correctExact.rolling)})</li>
+        <li>Naive Bayes: ${correctExact.bayes} / ${n-1} (${percent(correctExact.bayes)})</li>
+        <li>Nơ-ron (giả): ${correctExact.nn} / ${n-1} (${percent(correctExact.nn)})</li>
+        <li>Kết hợp bậc 1: ${correctExact.comboB1} / ${n-1} (${percent(correctExact.comboB1)})</li>
+        <li>Kết hợp bậc 2: ${correctExact.comboB2} / ${n-1} (${percent(correctExact.comboB2)})</li>
+        <li>Siêu Kết Hợp: ${correctExact.superCombo} / ${n-1} (${percent(correctExact.superCombo)})</li>
+      </ul>
+      <p><strong>Chính xác “Tài/Xỉu”:</strong></p>
+      <ul>
+        <li>Thống kê: ${correctTaiXiu.freq} / ${n-1} (${percent(correctTaiXiu.freq)})</li>
+        <li>Trọng số: ${correctTaiXiu.weight} / ${n-1} (${percent(correctTaiXiu.weight)})</li>
+        <li>Markov bậc 1: ${correctTaiXiu.markov1} / ${n-1} (${percent(correctTaiXiu.markov1)})</li>
+        <li>Markov bậc 2: ${correctTaiXiu.markov2} / ${n-1} (${percent(correctTaiXiu.markov2)})</li>
+        <li>Trung bình trượt: ${correctTaiXiu.rolling} / ${n-1} (${percent(correctTaiXiu.rolling)})</li>
+        <li>Naive Bayes: ${correctTaiXiu.bayes} / ${n-1} (${percent(correctTaiXiu.bayes)})</li>
+        <li>Nơ-ron (giả): ${correctTaiXiu.nn} / ${n-1} (${percent(correctTaiXiu.nn)})</li>
+        <li>Kết hợp bậc 1: ${correctTaiXiu.comboB1} / ${n-1} (${percent(correctTaiXiu.comboB1)})</li>
+        <li>Kết hợp bậc 2: ${correctTaiXiu.comboB2} / ${n-1} (${percent(correctTaiXiu.comboB2)})</li>
+        <li>Siêu Kết Hợp: ${correctTaiXiu.superCombo} / ${n-1} (${percent(correctTaiXiu.superCombo)})</li>
+      </ul>
+      `;
+
+      document.getElementById("simulationOutput").innerHTML = simOutput;
+    }
+  </script>
+</body>
+</html>
