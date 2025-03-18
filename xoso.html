@@ -94,7 +94,7 @@
     .center {
       text-align: center;
     }
-    /* Thêm style cho phần cài đặt tham số */
+    /* Phần cài đặt tham số */
     .settings {
       margin-bottom: 20px;
       background: #fafafa;
@@ -104,35 +104,54 @@
     }
     .settings label {
       display: inline-block;
-      width: 150px;
+      width: 160px;
       font-weight: bold;
     }
     .settings input[type="number"] {
-      width: 100px;
+      width: 80px;
       padding: 5px;
       margin-left: 5px;
+    }
+    .settings select {
+      margin-left: 5px;
+      padding: 5px;
     }
   </style>
 </head>
 <body>
-  <h1>PHÂN TÍCH LÔ ĐỀ (Softmax + Temperature)</h1>
+  <h1>PHÂN TÍCH LÔ ĐỀ (Tất cả phương pháp, 10.000 lần mô phỏng)</h1>
   <div class="container">
 
     <!-- Phần cài đặt tham số -->
     <div class="settings">
+      <p><strong>Cài đặt mô phỏng & phương pháp:</strong></p>
       <label for="alpha">Alpha (smoothing):</label>
       <input type="number" id="alpha" step="0.1" value="0.5" min="0" max="10">
-      <label for="temperature">Temperature:</label>
+      <br><br>
+      <label for="temperature">Temperature (0.1 - 5):</label>
       <input type="number" id="temperature" step="0.1" value="0.7" min="0.1" max="5">
+      <br><br>
+      <label for="methodSelect">Phương pháp:</label>
+      <select id="methodSelect">
+        <option value="weighted">Weighted Random (Alpha + Temp)</option>
+        <option value="nucleus">Nucleus Sampling (p)</option>
+        <option value="topk">Top-K Sampling</option>
+      </select>
+      <br><br>
+      <label for="nucleusP">Nucleus p (0.5 - 1.0):</label>
+      <input type="number" id="nucleusP" step="0.1" value="0.9" min="0.5" max="1">
+      <br><br>
+      <label for="topK">Top-K (1 - 100):</label>
+      <input type="number" id="topK" step="1" value="5" min="1" max="100">
       <p style="font-size: 0.9em; color: #444;">
-        - <strong>Alpha</strong> (0.0 trở lên): Tăng cơ hội cho các cặp số tần suất 0 (smoothing).  
-        - <strong>Temperature</strong> (0.1 - 5):  
-          <br>&nbsp;&nbsp; • <em>Thấp</em> (0.1 → 0.7): Tập trung mạnh vào các cặp tần suất cao.  
-          <br>&nbsp;&nbsp; • <em>Cao</em> (trên 1.0): Phân phối ngẫu nhiên hơn.
+        - <strong>Alpha</strong> (≥0): thêm vào tần suất để cặp số tần suất 0 vẫn có xác suất.  
+        - <strong>Temperature</strong>: càng thấp, càng ưu tiên cặp tần suất cao.  
+        - <strong>Nucleus p</strong>: xác suất tích lũy “nòng cốt” (0.5 - 1.0).  
+        - <strong>Top-K</strong>: chỉ lấy K cặp có giá trị cao nhất (đã transform), rồi random trong đó.  
       </p>
     </div>
 
-    <!-- Bảng nhập liệu (theo yêu cầu cập nhật) -->
+    <!-- Bảng nhập liệu (cập nhật G5=6 kết quả, G6=3, G7=4) -->
     <table>
       <!-- Đặc Biệt -->
       <tr>
@@ -172,7 +191,9 @@
         <td><input type="text" data-gi="4" maxlength="5" placeholder="VD: 7565"></td>
         <td><input type="text" data-gi="4" maxlength="5" placeholder="VD: 2651"></td>
         <td><input type="text" data-gi="4" maxlength="5" placeholder="VD: 1660"></td>
-        <td colspan="2"></td>
+        <td><input type="text" data-gi="4" maxlength="5" placeholder="VD: 2341"></td>
+        <td><input type="text" data-gi="4" maxlength="5" placeholder="VD: 5125"></td>
+        <td><input type="text" data-gi="4" maxlength="5" placeholder="VD: 5211"></td>
       </tr>
       <!-- Giải 5 (6 kết quả) -->
       <tr>
@@ -187,18 +208,23 @@
       <!-- Giải 6 (3 kết quả, mỗi kết quả 3 chữ số) -->
       <tr>
         <th>6</th>
-        <td><input type="text" data-gi="6" maxlength="3" placeholder="VD: 123"></td>
-        <td><input type="text" data-gi="6" maxlength="3" placeholder="VD: 456"></td>
-        <td><input type="text" data-gi="6" maxlength="3" placeholder="VD: 789"></td>
+        <td><input type="text" data-gi="6" maxlength="4 " placeholder="VD: 123"></td>
+        <td><input type="text" data-gi="6" maxlength="4" placeholder="VD: 456"></td>
+        <td><input type="text" data-gi="6" maxlength="4" placeholder="VD: 789"></td>
         <td colspan="3"></td>
       </tr>
       <!-- Giải 7 (4 kết quả, mỗi kết quả 2 chữ số) -->
       <tr>
         <th>7</th>
+        <td><input type="text" data-gi="7" maxlength="3" placeholder="VD: 122"></td>
+        <td><input type="text" data-gi="7" maxlength="3" placeholder="VD: 343"></td>
+        <td><input type="text" data-gi="7" maxlength="3" placeholder="VD: 456"></td>
+        <td><input type="text" data-gi="7" maxlength="3" placeholder="VD: 758"></td>
+        <td colspan="2"></td>
+      </tr>
+      <tr>
+        <th>8</th>
         <td><input type="text" data-gi="7" maxlength="2" placeholder="VD: 12"></td>
-        <td><input type="text" data-gi="7" maxlength="2" placeholder="VD: 34"></td>
-        <td><input type="text" data-gi="7" maxlength="2" placeholder="VD: 56"></td>
-        <td><input type="text" data-gi="7" maxlength="2" placeholder="VD: 78"></td>
         <td colspan="2"></td>
       </tr>
     </table>
@@ -211,17 +237,12 @@
       <div id="resultContent"></div>
     </div>
     <div class="note">
-      <strong>Lưu ý:</strong> Mô phỏng random dựa trên tần suất + tham số temperature; không đảm bảo chính xác tuyệt đối.
+      <strong>Lưu ý:</strong> Mọi kết quả chỉ mang tính tham khảo, không đảm bảo chính xác 100%.
     </div>
   </div>
 
   <script>
-    /**
-     * Lấy các chữ số cuối tuỳ theo giải:
-     * - G6: 3 chữ số cuối
-     * - G7: 2 chữ số (toàn bộ, vì maxlength=2)
-     * - Khác: 2 chữ số cuối
-     */
+    //=== 1) LẤY CHỮ SỐ CUỐI THEO GIẢI ===
     function getLastDigits(value, gi) {
       if (gi === '6') {
         // G6 có 3 chữ số
@@ -235,39 +256,25 @@
       }
     }
 
-    /**
-     * Tạo phân phối xác suất bằng Softmax (có thêm alpha + temperature).
-     * freqMap: { "00": count, "01": count, ... }
-     * alpha: lượng smoothing
-     * temperature: nhiệt độ, càng thấp -> càng “tập trung” vào count lớn.
-     */
-    function createDistribution(freqMap, alpha, temperature) {
-      // B1: Tạo một mảng [ [digits, weightedValue], ... ]
+    //=== 2) Weighted Random (Alpha + Temperature) ===
+    function createWeightedDistribution(freqMap, alpha, temperature) {
       let weightedArray = [];
       for (let [digits, count] of Object.entries(freqMap)) {
-        // Thêm alpha để smoothing (nếu freq=0 vẫn có xác suất)
-        // Nâng luỹ thừa 1/temperature (hoặc e^(log(count + alpha)/temperature))
-        let val = (count + alpha);
-        // Thay vì log + exp, ta có thể dùng Math.pow:
-        //   val = val^(1/temperature)
+        let val = count + alpha;
         val = Math.pow(val, 1 / temperature);
         weightedArray.push([digits, val]);
       }
-
-      // Nếu freqMap rỗng, ta vẫn tạo 100 “cặp” (00..99) + alpha
+      // Nếu rỗng => tạo 00..99
       if (weightedArray.length === 0) {
         for (let i = 0; i < 100; i++) {
-          let digits = i.toString().padStart(2, '0');
-          let val = Math.pow(alpha, 1 / temperature);
-          weightedArray.push([digits, val]);
+          let d = i.toString().padStart(2, '0');
+          let v = Math.pow(alpha, 1/temperature);
+          weightedArray.push([d, v]);
         }
       }
-
-      // B2: Tính tổng
-      let sumVal = weightedArray.reduce((sum, item) => sum + item[1], 0);
-
-      // B3: Tạo map xác suất
-      // dist: { "00": p, "01": p, ... }, tổng p ~ 1
+      // Tính tổng
+      let sumVal = weightedArray.reduce((s, x) => s + x[1], 0);
+      // Tạo dist
       let dist = {};
       weightedArray.forEach(([digits, val]) => {
         dist[digits] = val / sumVal;
@@ -275,13 +282,8 @@
       return dist;
     }
 
-    /**
-     * Random dựa trên phân phối dist (đã tạo bởi createDistribution).
-     * dist: { "00": p, "01": p, ... }
-     * Trả về 1 key (VD: "00" hoặc "123")
-     */
-    function randomFromDistribution(dist) {
-      let rand = Math.random(); // [0,1)
+    function randomFromDist(dist) {
+      let rand = Math.random();
       let cumulative = 0;
       for (let [digits, p] of Object.entries(dist)) {
         cumulative += p;
@@ -289,70 +291,174 @@
           return digits;
         }
       }
-      // Dự phòng: trả về key đầu
       return Object.keys(dist)[0];
     }
 
-    /**
-     * Chạy mô phỏng n lần, mỗi lần chọn 1 key từ dist.
-     * dist: phân phối xác suất (đã có alpha, temperature).
-     * Trả về map tần suất mô phỏng { "00": count, ... }
-     */
-    function runSimulation(n, dist) {
-      let simFreqMap = {};
-      let keys = Object.keys(dist);
-      for (let i = 0; i < n; i++) {
-        let digits = randomFromDistribution(dist);
-        if (!simFreqMap[digits]) {
-          simFreqMap[digits] = 0;
+    //=== 3) Nucleus Sampling (p) ===
+    function createNucleusDistribution(freqMap, alpha, temperature, nucleusP) {
+      // Tạo weightedArray (chưa chuẩn hoá)
+      let weightedArray = [];
+      for (let [digits, count] of Object.entries(freqMap)) {
+        let val = count + alpha;
+        val = Math.pow(val, 1 / temperature);
+        weightedArray.push([digits, val]);
+      }
+      if (weightedArray.length === 0) {
+        for (let i = 0; i < 100; i++) {
+          let d = i.toString().padStart(2, '0');
+          let v = Math.pow(alpha, 1/temperature);
+          weightedArray.push([d, v]);
         }
+      }
+      // Sort giảm dần
+      weightedArray.sort((a,b) => b[1] - a[1]);
+
+      // Tổng
+      let totalVal = weightedArray.reduce((s, x) => s + x[1], 0);
+
+      // Tính p theo tỉ lệ val/totalVal, cộng dồn đến nucleusP
+      let subList = [];
+      let sumSub = 0;
+      for (let [digits, val] of weightedArray) {
+        let p = val / totalVal;
+        subList.push([digits, p]);
+        sumSub += p;
+        if (sumSub >= nucleusP) break;
+      }
+      // Chuẩn hoá subList => dist
+      let dist = {};
+      for (let [digits, p] of subList) {
+        dist[digits] = p / sumSub;
+      }
+      return dist;
+    }
+
+    function randomFromNucleus(dist) {
+      let rand = Math.random();
+      let cumulative = 0;
+      for (let [digits, p] of Object.entries(dist)) {
+        cumulative += p;
+        if (rand < cumulative) {
+          return digits;
+        }
+      }
+      return Object.keys(dist)[0];
+    }
+
+    //=== 4) Top-K Sampling ===
+    function createTopKDistribution(freqMap, alpha, temperature, topK) {
+      // Tương tự Weighted, nhưng ta sort & lấy K phần tử
+      let weightedArray = [];
+      for (let [digits, count] of Object.entries(freqMap)) {
+        let val = count + alpha;
+        val = Math.pow(val, 1 / temperature);
+        weightedArray.push([digits, val]);
+      }
+      if (weightedArray.length === 0) {
+        for (let i = 0; i < 100; i++) {
+          let d = i.toString().padStart(2, '0');
+          let v = Math.pow(alpha, 1/temperature);
+          weightedArray.push([d, v]);
+        }
+      }
+      // Sort giảm dần
+      weightedArray.sort((a,b) => b[1] - a[1]);
+
+      // Lấy top K
+      let subList = weightedArray.slice(0, topK);
+
+      // Tính tổng
+      let sumVal = subList.reduce((s, x) => s + x[1], 0);
+
+      // Tạo dist
+      let dist = {};
+      subList.forEach(([digits, val]) => {
+        dist[digits] = val / sumVal;
+      });
+      return dist;
+    }
+
+    function randomFromTopK(dist) {
+      // Giống randomFromDist
+      let rand = Math.random();
+      let cumulative = 0;
+      for (let [digits, p] of Object.entries(dist)) {
+        cumulative += p;
+        if (rand < cumulative) {
+          return digits;
+        }
+      }
+      return Object.keys(dist)[0];
+    }
+
+    //=== 5) Mô phỏng n lần từ 1 trong 3 phương pháp ===
+    function runSimulation(n, dist, method) {
+      let simFreqMap = {};
+      for (let i = 0; i < n; i++) {
+        let digits;
+        if (method === 'weighted') {
+          digits = randomFromDist(dist);
+        } else if (method === 'nucleus') {
+          digits = randomFromNucleus(dist);
+        } else {
+          // topk
+          digits = randomFromTopK(dist);
+        }
+        if (!simFreqMap[digits]) simFreqMap[digits] = 0;
         simFreqMap[digits]++;
       }
       return simFreqMap;
     }
 
+    //=== 6) HÀM CHÍNH: analyze() ===
     function analyze() {
-      // 1) Lấy alpha, temperature từ input
+      // Lấy tham số
       const alpha = parseFloat(document.getElementById('alpha').value) || 0;
       const temperature = parseFloat(document.getElementById('temperature').value) || 1;
+      const method = document.getElementById('methodSelect').value; 
+      const nucleusP = parseFloat(document.getElementById('nucleusP').value) || 0.9;
+      const topK = parseInt(document.getElementById('topK').value) || 5;
 
-      // 2) Thu thập dữ liệu từ các ô input
+      // Thu thập dữ liệu
       const inputs = document.querySelectorAll('table input[type="text"]');
-      let allDigitsArr = []; // Lưu các "key" (2 hoặc 3 chữ số) tuỳ giải
+      let allDigitsArr = [];
       let userValues = [];
 
       inputs.forEach(input => {
         let val = input.value.trim();
-        let gi = input.getAttribute('data-gi'); // Lấy giải
+        let gi = input.getAttribute('data-gi');
         userValues.push(val);
-
-        // Nếu hợp lệ (không rỗng, là số)
         if (val !== '' && !isNaN(val)) {
           let lastX = getLastDigits(val, gi);
           allDigitsArr.push(lastX);
         }
       });
 
-      // 3) Tạo freqMap
-      let freqMap = {}; 
-      allDigitsArr.forEach(digits => {
-        if (!freqMap[digits]) {
-          freqMap[digits] = 0;
-        }
-        freqMap[digits]++;
+      // freqMap
+      let freqMap = {};
+      allDigitsArr.forEach(d => {
+        if (!freqMap[d]) freqMap[d] = 0;
+        freqMap[d]++;
       });
 
-      // 4) Tạo phân phối xác suất (dist) bằng Softmax + alpha + temperature
-      let dist = createDistribution(freqMap, alpha, temperature);
+      // Tạo distribution
+      let dist;
+      if (method === 'weighted') {
+        dist = createWeightedDistribution(freqMap, alpha, temperature);
+      } else if (method === 'nucleus') {
+        dist = createNucleusDistribution(freqMap, alpha, temperature, nucleusP);
+      } else {
+        dist = createTopKDistribution(freqMap, alpha, temperature, topK);
+      }
 
-      // 5) Chạy mô phỏng 1000 lần
-      let simulationCount = 1000;
-      let simFreqMap = runSimulation(simulationCount, dist);
+      // Mô phỏng 10.000 lần
+      let simulationCount = 10000;
+      let simFreqMap = runSimulation(simulationCount, dist, method);
 
-      // 6) Thống kê kết quả mô phỏng: sắp xếp theo tần suất giảm dần
-      let sortedSim = Object.entries(simFreqMap).sort((a,b) => b[1] - a[1]); 
-      
-      // 7) Tìm top 5
+      // Sắp xếp
+      let sortedSim = Object.entries(simFreqMap).sort((a,b) => b[1] - a[1]);
+
+      // Top 5
       let top5HTML = '';
       sortedSim.slice(0,5).forEach(([digits, count], idx) => {
         top5HTML += `
@@ -360,12 +466,12 @@
             <td>${idx+1}</td>
             <td><strong>${digits}</strong></td>
             <td>${count}</td>
-            <td>${((count/simulationCount)*100).toFixed(2)}%</td>
+            <td>${((count / simulationCount)*100).toFixed(2)}%</td>
           </tr>
         `;
       });
 
-      // 8) So sánh với dữ liệu người dùng
+      // So sánh với dữ liệu người dùng
       let userSet = new Set(allDigitsArr);
       let matchCount = 0;
       sortedSim.slice(0,5).forEach(([digits]) => {
@@ -373,14 +479,20 @@
           matchCount++;
         }
       });
-      let compareMsg = `Trong top 5 mô phỏng, có <strong>${matchCount}</strong> kết quả trùng với dữ liệu đã nhập.`;
+      let compareMsg = `Trong top 5 mô phỏng, có <strong>${matchCount}</strong> kết quả trùng với dữ liệu bạn nhập.`;
 
-      // 9) Dự đoán cuối cùng cho từng ô (random theo dist)
+      // Dự đoán cuối cùng cho từng ô
       let predictions = userValues.map(val => {
-        return randomFromDistribution(dist);
+        if (method === 'weighted') {
+          return randomFromDist(dist);
+        } else if (method === 'nucleus') {
+          return randomFromNucleus(dist);
+        } else {
+          return randomFromTopK(dist);
+        }
       });
 
-      // 10) Tạo bảng hiển thị dự đoán
+      // Tạo bảng hiển thị dự đoán
       let predictTableHTML = `
         <table class="predict-table">
           <tr>
@@ -400,13 +512,13 @@
       });
       predictTableHTML += `</table>`;
 
-      // 11) Tổng hợp HTML kết quả
+      // Kết quả HTML
       let resultHTML = `
-        <p><strong>Mô phỏng ${simulationCount} lần (Softmax + alpha + temperature):</strong></p>
+        <p><strong>Mô phỏng ${simulationCount} lần (${method}):</strong></p>
         <table class="predict-table">
           <tr>
             <th>Hạng</th>
-            <th>Chuỗi (2-3 chữ số)</th>
+            <th>Chuỗi</th>
             <th>Số lần</th>
             <th>Tỷ lệ</th>
           </tr>
