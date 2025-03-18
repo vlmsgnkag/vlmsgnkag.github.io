@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <title>Phân Tích Lô Đề</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f0f0f0;
+      margin: 0;
+      padding: 20px;
+    }
+    h1 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    .container {
+      max-width: 700px;
+      margin: 0 auto;
+      background: #fff;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 15px;
+    }
+    th, td {
+      border: 1px solid #ccc;
+      text-align: center;
+      padding: 8px;
+    }
+    th {
+      background: #eee;
+      font-weight: bold;
+    }
+    .db {
+      color: red;
+      font-weight: bold;
+    }
+    input[type="text"] {
+      width: 100%;
+      border: none;
+      outline: none;
+      text-align: center;
+    }
+    button {
+      display: block;
+      width: 100%;
+      padding: 10px;
+      font-size: 16px;
+      background: #007bff;
+      color: #fff;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+    button:hover {
+      background: #0056b3;
+    }
+    .result {
+      background: #e9e9e9;
+      padding: 10px;
+      border-radius: 5px;
+      margin-top: 15px;
+    }
+    .result h2 {
+      margin-top: 0;
+    }
+    .note {
+      font-size: 0.9em;
+      color: #666;
+      margin-top: 5px;
+    }
+    /* Bảng kết quả, tần suất */
+    .predict-table {
+      margin-top: 15px;
+      border: 1px solid #ccc;
+      border-collapse: collapse;
+      width: 100%;
+    }
+    .predict-table th, .predict-table td {
+      border: 1px solid #ccc;
+      padding: 8px;
+      text-align: center;
+    }
+    .highlight {
+      color: #d00;
+      font-weight: bold;
+    }
+    .center {
+      text-align: center;
+    }
+    /* Thêm style cho phần cài đặt tham số */
+    .settings {
+      margin-bottom: 20px;
+      background: #fafafa;
+      border: 1px solid #ccc;
+      padding: 10px;
+      border-radius: 5px;
+    }
+    .settings label {
+      display: inline-block;
+      width: 150px;
+      font-weight: bold;
+    }
+    .settings input[type="number"] {
+      width: 100px;
+      padding: 5px;
+      margin-left: 5px;
+    }
+  </style>
+</head>
+<body>
+  <h1>PHÂN TÍCH LÔ ĐỀ (Softmax + Temperature)</h1>
+  <div class="container">
+
+    <!-- Phần cài đặt tham số -->
+    <div class="settings">
+      <label for="alpha">Alpha (smoothing):</label>
+      <input type="number" id="alpha" step="0.1" value="0.5" min="0" max="10">
+      <label for="temperature">Temperature:</label>
+      <input type="number" id="temperature" step="0.1" value="0.7" min="0.1" max="5">
+      <p style="font-size: 0.9em; color: #444;">
+        - <strong>Alpha</strong> (0.0 trở lên): Tăng cơ hội cho các cặp số tần suất 0 (smoothing).  
+        - <strong>Temperature</strong> (0.1 - 5):  
+          <br>&nbsp;&nbsp; • <em>Thấp</em> (0.1 → 0.7): Tập trung mạnh vào các cặp tần suất cao.  
+          <br>&nbsp;&nbsp; • <em>Cao</em> (trên 1.0): Phân phối ngẫu nhiên hơn.
+      </p>
+    </div>
+
+    <!-- Bảng nhập liệu (theo yêu cầu cập nhật) -->
+    <table>
+      <!-- Đặc Biệt -->
+      <tr>
+        <th>ĐB</th>
+        <td colspan="6">
+          <input type="text" class="db" data-gi="DB" maxlength="6" placeholder="VD: 48130">
+        </td>
+      </tr>
+      <!-- Giải 1 -->
+      <tr>
+        <th>1</th>
+        <td colspan="6">
+          <input type="text" data-gi="1" maxlength="5" placeholder="VD: 66421">
+        </td>
+      </tr>
+      <!-- Giải 2 (2 kết quả) -->
+      <tr>
+        <th>2</th>
+        <td><input type="text" data-gi="2" maxlength="5" placeholder="VD: 73844"></td>
+        <td><input type="text" data-gi="2" maxlength="5" placeholder="VD: 41421"></td>
+        <td colspan="4"></td>
+      </tr>
+      <!-- Giải 3 (6 kết quả) -->
+      <tr>
+        <th>3</th>
+        <td><input type="text" data-gi="3" maxlength="5" placeholder="VD: 62423"></td>
+        <td><input type="text" data-gi="3" maxlength="5" placeholder="VD: 46621"></td>
+        <td><input type="text" data-gi="3" maxlength="5" placeholder="VD: 17961"></td>
+        <td><input type="text" data-gi="3" maxlength="5" placeholder="VD: 19630"></td>
+        <td><input type="text" data-gi="3" maxlength="5" placeholder="VD: 55272"></td>
+        <td><input type="text" data-gi="3" maxlength="5" placeholder="VD: 97320"></td>
+      </tr>
+      <!-- Giải 4 (4 kết quả) -->
+      <tr>
+        <th>4</th>
+        <td><input type="text" data-gi="4" maxlength="5" placeholder="VD: 9526"></td>
+        <td><input type="text" data-gi="4" maxlength="5" placeholder="VD: 7565"></td>
+        <td><input type="text" data-gi="4" maxlength="5" placeholder="VD: 2651"></td>
+        <td><input type="text" data-gi="4" maxlength="5" placeholder="VD: 1660"></td>
+        <td colspan="2"></td>
+      </tr>
+      <!-- Giải 5 (6 kết quả) -->
+      <tr>
+        <th>5</th>
+        <td><input type="text" data-gi="5" maxlength="5" placeholder="VD: 9130"></td>
+        <td><input type="text" data-gi="5" maxlength="5" placeholder="VD: 1718"></td>
+        <td><input type="text" data-gi="5" maxlength="5" placeholder="VD: 4336"></td>
+        <td><input type="text" data-gi="5" maxlength="5" placeholder="VD: 9999"></td>
+        <td><input type="text" data-gi="5" maxlength="5" placeholder="VD: 8888"></td>
+        <td><input type="text" data-gi="5" maxlength="5" placeholder="VD: 7777"></td>
+      </tr>
+      <!-- Giải 6 (3 kết quả, mỗi kết quả 3 chữ số) -->
+      <tr>
+        <th>6</th>
+        <td><input type="text" data-gi="6" maxlength="3" placeholder="VD: 123"></td>
+        <td><input type="text" data-gi="6" maxlength="3" placeholder="VD: 456"></td>
+        <td><input type="text" data-gi="6" maxlength="3" placeholder="VD: 789"></td>
+        <td colspan="3"></td>
+      </tr>
+      <!-- Giải 7 (4 kết quả, mỗi kết quả 2 chữ số) -->
+      <tr>
+        <th>7</th>
+        <td><input type="text" data-gi="7" maxlength="2" placeholder="VD: 12"></td>
+        <td><input type="text" data-gi="7" maxlength="2" placeholder="VD: 34"></td>
+        <td><input type="text" data-gi="7" maxlength="2" placeholder="VD: 56"></td>
+        <td><input type="text" data-gi="7" maxlength="2" placeholder="VD: 78"></td>
+        <td colspan="2"></td>
+      </tr>
+    </table>
+
+    <button onclick="analyze()">Phân tích</button>
+    
+    <!-- Hiển thị kết quả phân tích -->
+    <div class="result" id="resultArea" style="display: none;">
+      <h2>Kết quả Phân Tích</h2>
+      <div id="resultContent"></div>
+    </div>
+    <div class="note">
+      <strong>Lưu ý:</strong> Mô phỏng random dựa trên tần suất + tham số temperature; không đảm bảo chính xác tuyệt đối.
+    </div>
+  </div>
+
+  <script>
+    /**
+     * Lấy các chữ số cuối tuỳ theo giải:
+     * - G6: 3 chữ số cuối
+     * - G7: 2 chữ số (toàn bộ, vì maxlength=2)
+     * - Khác: 2 chữ số cuối
+     */
+    function getLastDigits(value, gi) {
+      if (gi === '6') {
+        // G6 có 3 chữ số
+        return value.slice(-3).padStart(3, '0');
+      } else if (gi === '7') {
+        // G7 có 2 chữ số
+        return value.slice(-2).padStart(2, '0');
+      } else {
+        // Mặc định lấy 2 chữ số cuối
+        return value.slice(-2).padStart(2, '0');
+      }
+    }
+
+    /**
+     * Tạo phân phối xác suất bằng Softmax (có thêm alpha + temperature).
+     * freqMap: { "00": count, "01": count, ... }
+     * alpha: lượng smoothing
+     * temperature: nhiệt độ, càng thấp -> càng “tập trung” vào count lớn.
+     */
+    function createDistribution(freqMap, alpha, temperature) {
+      // B1: Tạo một mảng [ [digits, weightedValue], ... ]
+      let weightedArray = [];
+      for (let [digits, count] of Object.entries(freqMap)) {
+        // Thêm alpha để smoothing (nếu freq=0 vẫn có xác suất)
+        // Nâng luỹ thừa 1/temperature (hoặc e^(log(count + alpha)/temperature))
+        let val = (count + alpha);
+        // Thay vì log + exp, ta có thể dùng Math.pow:
+        //   val = val^(1/temperature)
+        val = Math.pow(val, 1 / temperature);
+        weightedArray.push([digits, val]);
+      }
+
+      // Nếu freqMap rỗng, ta vẫn tạo 100 “cặp” (00..99) + alpha
+      if (weightedArray.length === 0) {
+        for (let i = 0; i < 100; i++) {
+          let digits = i.toString().padStart(2, '0');
+          let val = Math.pow(alpha, 1 / temperature);
+          weightedArray.push([digits, val]);
+        }
+      }
+
+      // B2: Tính tổng
+      let sumVal = weightedArray.reduce((sum, item) => sum + item[1], 0);
+
+      // B3: Tạo map xác suất
+      // dist: { "00": p, "01": p, ... }, tổng p ~ 1
+      let dist = {};
+      weightedArray.forEach(([digits, val]) => {
+        dist[digits] = val / sumVal;
+      });
+      return dist;
+    }
+
+    /**
+     * Random dựa trên phân phối dist (đã tạo bởi createDistribution).
+     * dist: { "00": p, "01": p, ... }
+     * Trả về 1 key (VD: "00" hoặc "123")
+     */
+    function randomFromDistribution(dist) {
+      let rand = Math.random(); // [0,1)
+      let cumulative = 0;
+      for (let [digits, p] of Object.entries(dist)) {
+        cumulative += p;
+        if (rand < cumulative) {
+          return digits;
+        }
+      }
+      // Dự phòng: trả về key đầu
+      return Object.keys(dist)[0];
+    }
+
+    /**
+     * Chạy mô phỏng n lần, mỗi lần chọn 1 key từ dist.
+     * dist: phân phối xác suất (đã có alpha, temperature).
+     * Trả về map tần suất mô phỏng { "00": count, ... }
+     */
+    function runSimulation(n, dist) {
+      let simFreqMap = {};
+      let keys = Object.keys(dist);
+      for (let i = 0; i < n; i++) {
+        let digits = randomFromDistribution(dist);
+        if (!simFreqMap[digits]) {
+          simFreqMap[digits] = 0;
+        }
+        simFreqMap[digits]++;
+      }
+      return simFreqMap;
+    }
+
+    function analyze() {
+      // 1) Lấy alpha, temperature từ input
+      const alpha = parseFloat(document.getElementById('alpha').value) || 0;
+      const temperature = parseFloat(document.getElementById('temperature').value) || 1;
+
+      // 2) Thu thập dữ liệu từ các ô input
+      const inputs = document.querySelectorAll('table input[type="text"]');
+      let allDigitsArr = []; // Lưu các "key" (2 hoặc 3 chữ số) tuỳ giải
+      let userValues = [];
+
+      inputs.forEach(input => {
+        let val = input.value.trim();
+        let gi = input.getAttribute('data-gi'); // Lấy giải
+        userValues.push(val);
+
+        // Nếu hợp lệ (không rỗng, là số)
+        if (val !== '' && !isNaN(val)) {
+          let lastX = getLastDigits(val, gi);
+          allDigitsArr.push(lastX);
+        }
+      });
+
+      // 3) Tạo freqMap
+      let freqMap = {}; 
+      allDigitsArr.forEach(digits => {
+        if (!freqMap[digits]) {
+          freqMap[digits] = 0;
+        }
+        freqMap[digits]++;
+      });
+
+      // 4) Tạo phân phối xác suất (dist) bằng Softmax + alpha + temperature
+      let dist = createDistribution(freqMap, alpha, temperature);
+
+      // 5) Chạy mô phỏng 1000 lần
+      let simulationCount = 1000;
+      let simFreqMap = runSimulation(simulationCount, dist);
+
+      // 6) Thống kê kết quả mô phỏng: sắp xếp theo tần suất giảm dần
+      let sortedSim = Object.entries(simFreqMap).sort((a,b) => b[1] - a[1]); 
+      
+      // 7) Tìm top 5
+      let top5HTML = '';
+      sortedSim.slice(0,5).forEach(([digits, count], idx) => {
+        top5HTML += `
+          <tr>
+            <td>${idx+1}</td>
+            <td><strong>${digits}</strong></td>
+            <td>${count}</td>
+            <td>${((count/simulationCount)*100).toFixed(2)}%</td>
+          </tr>
+        `;
+      });
+
+      // 8) So sánh với dữ liệu người dùng
+      let userSet = new Set(allDigitsArr);
+      let matchCount = 0;
+      sortedSim.slice(0,5).forEach(([digits]) => {
+        if (userSet.has(digits)) {
+          matchCount++;
+        }
+      });
+      let compareMsg = `Trong top 5 mô phỏng, có <strong>${matchCount}</strong> kết quả trùng với dữ liệu đã nhập.`;
+
+      // 9) Dự đoán cuối cùng cho từng ô (random theo dist)
+      let predictions = userValues.map(val => {
+        return randomFromDistribution(dist);
+      });
+
+      // 10) Tạo bảng hiển thị dự đoán
+      let predictTableHTML = `
+        <table class="predict-table">
+          <tr>
+            <th>Ô</th>
+            <th>Giá trị nhập</th>
+            <th>Dự đoán</th>
+          </tr>
+      `;
+      predictions.forEach((digits, idx) => {
+        predictTableHTML += `
+          <tr>
+            <td>${idx+1}</td>
+            <td>${userValues[idx] || '<em>Trống</em>'}</td>
+            <td class="highlight">${digits}</td>
+          </tr>
+        `;
+      });
+      predictTableHTML += `</table>`;
+
+      // 11) Tổng hợp HTML kết quả
+      let resultHTML = `
+        <p><strong>Mô phỏng ${simulationCount} lần (Softmax + alpha + temperature):</strong></p>
+        <table class="predict-table">
+          <tr>
+            <th>Hạng</th>
+            <th>Chuỗi (2-3 chữ số)</th>
+            <th>Số lần</th>
+            <th>Tỷ lệ</th>
+          </tr>
+          ${top5HTML || '<tr><td colspan="4">Không có dữ liệu</td></tr>'}
+        </table>
+        <p>${compareMsg}</p>
+        <h3>Dự đoán cho từng ô:</h3>
+        ${predictTableHTML}
+      `;
+
+      document.getElementById('resultContent').innerHTML = resultHTML;
+      document.getElementById('resultArea').style.display = 'block';
+    }
+  </script>
+</body>
+</html>
