@@ -1,21 +1,32 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="shortcut icon" href="https://i.pinimg.com/736x/16/94/64/169464ce68a83fa9f60e584931da5236.jpg">
-    <title>Music Player</title>
-    <link rel="stylesheet" href="styles.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="shortcut icon" href="https://i.pinimg.com/736x/16/94/64/169464ce68a83fa9f60e584931da5236.jpg">
+  <title>Music</title>
+  <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <div class="container">
-        <canvas id="waveCanvas"></canvas>
-        <div class="content">
-            <img id="songImage" src="https://i.pinimg.com/736x/39/03/89/390389f56f2f295dc8d7f2cc84e8f205.jpg" alt="Song Thumbnail" />
-            <button id="playButton">Play Song</button>
-        </div>
+  <div class="container">
+    <canvas id="waveCanvas"></canvas>
+    <div class="content">
+      <img id="songImage" src="https://i.pinimg.com/736x/39/03/89/390389f56f2f295dc8d7f2cc84e8f205.jpg" alt="Song Thumbnail">
+      <div id="timeDisplayContainer">
+        <span id="currentTime">00:00</span>
+        <div id="progressBar"><div id="progress"></div></div>
+        <span id="durationTime">00:00</span>
+      </div>
+      <!-- Nút tải xuống bài hát hiện tại -->
+      <a id="downloadButton" class="download-button" href="#" download>
+        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQJ-4rUAr5swZ_RzW2c7_pHxhYGaUjg27Kb5g&s" alt="Download" class="download-icon">
+      </a>
+      <div class="play-section">
+        <p id="songInfo" class="hidden">Đang phát bài 0 / 100</p>
+        <button id="playButton">Play Song</button>
+      </div>
     </div>
-    <script src="script.js"></script>
+  </div>
+  <script src="script.js"></script>
 </body>
 </html>
