@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <title>Phân tích MD5 - Siêu Nâng Cao (Cập nhật)</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+  <style>
+    /* Reset và font */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+    }
+    /* Container chính */
+    .container {
+      background: rgba(255, 255, 255, 0.97);
+      padding: 40px 30px;
+      border-radius: 15px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+      width: 400px;
+      text-align: center;
+      animation: fadeIn 1s ease;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    h1 {
+      font-size: 24px;
+      color: #333;
+      margin-bottom: 15px;
+    }
+    p.description {
+      font-size: 14px;
+      color: #555;
+      margin-bottom: 25px;
+    }
+    input[type="text"] {
+      width: 100%;
+      padding: 12px 15px;
+      font-size: 16px;
+      border: 2px solid #ddd;
+      border-radius: 8px;
+      transition: border 0.3s, box-shadow 0.3s;
+      outline: none;
+    }
+    input[type="text"]:focus {
+      border-color: #667eea;
+      box-shadow: 0 0 8px rgba(102,126,234,0.6);
+    }
+    button {
+      margin-top: 20px;
+      background: #667eea;
+      color: #fff;
+      border: none;
+      padding: 12px 20px;
+      font-size: 16px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.3s, transform 0.2s;
+      width: 100%;
+    }
+    button:hover {
+      background: #5a67d8;
+      transform: scale(1.02);
+    }
+    button:active {
+      transform: scale(0.98);
+    }
+    .result {
+      margin-top: 25px;
+      font-size: 20px;
+      font-weight: 600;
+      padding: 12px;
+      border-radius: 8px;
+      background: #f1f1f1;
+      transition: background 0.3s, color 0.3s;
+      color: #444;
+      min-height: 40px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Phân tích MD5</h1>
+    <p class="description">Nhập mã MD5 (32 ký tự) hoặc dạng kết quả (bắt đầu bằng "#")</p>
+    <input type="text" id="md5Input" placeholder="Nhập mã MD5 hoặc kết quả" />
+    <button id="analyzeBtn">Phân tích ngay</button>
+    <div class="result" id="result"></div>
+  </div>
+
+  <script>
+    // Hàm kiểm tra số nguyên tố (với vị trí 1-indexed)
+    function isPrime(num) {
+      if (num < 2) return false;
+      for (let i = 2; i <= Math.sqrt(num); i++) {
+        if (num % i === 0) return false;
+      }
+      return true;
+    }
+
+    // Hàm phân tích MD5 với 28 yếu tố (yếu tố 1–24 đã có + 25–28 mới)
+    function analyzeMD5UltraAdvanced(inputStr) {
+      let sessionCount = null;
+      if (inputStr.startsWith("#")) {
+        let match = inputStr.match(/^#(\d+)_/);
+        if (match) {
+          sessionCount = parseInt(match[1], 10);
+        }
+        inputStr = inputStr.replace(/[^0-9a-fA-F]/g, "");
+      }
+      
+      const md5Str = inputStr;
+      const n = md5Str.length;
+      if (n === 0) return "Không đủ dữ liệu để phân tích";
+      
+      let evenCount = 0, oddCount = 0, weightedSum = 0, totalWeight = 0;
+      let primeIndexSum = 0, compositeIndexSum = 0;
+      let allValues = [];
+      let firstHalfSum = 0, secondHalfSum = 0;
+      let countHigh = 0, countLow = 0;
+      // Yếu tố 14 & 17
+      let digitCount = 0, alphaCount = 0, sumDigitsOnly = 0;
+      // Yếu tố 15
+      let sumSquares = 0;
+      // Yếu tố 18
+      let totalOnes = 0;
+      // Yếu tố 20
+      let oddIndicesSum = 0, evenIndicesSum = 0;
+      
+      // Các yếu tố mới:
+      // Yếu tố 21: Tổng mã ASCII của từng ký tự
+      let asciiSum = 0;
+      // Yếu tố 22: Đếm số ký tự nguyên âm (a và e)
+      let vowelCount = 0;
+      // Yếu tố 23: Đếm số ký tự 'f' (không phân biệt hoa thường)
+      let countF = 0;
+      // Yếu tố 24: Tổng các giá trị của những ký tự có giá trị là số nguyên tố (2,3,5,7,11,13)
+      let sumPrimeDigits = 0;
+      
+      for (let i = 0; i < n; i++) {
+        let char = md5Str.charAt(i);
+        let value = parseInt(char, 16);
+        allValues.push(value);
+        
+        if (value % 2 === 0) {
+          evenCount++;
+        } else {
+          oddCount++;
+        }
+        weightedSum += value * (i + 1);
+        totalWeight += (i + 1);
+        
+        if (isPrime(i + 1)) {
+          primeIndexSum += value;
+        } else {
+          compositeIndexSum += value;
+        }
+        
+        if (i < Math.floor(n / 2)) {
+          firstHalfSum += value;
+        } else {
+          secondHalfSum += value;
+        }
+        
+        if (value >= 8) {
+          countHigh++;
+        } else {
+          countLow++;
+        }
+        
+        if (/[0-9]/.test(char)) {
+          digitCount++;
+          sumDigitsOnly += parseInt(char, 10);
+        } else {
+          alphaCount++;
+        }
+        
+        sumSquares += Math.pow(value, 2);
+        
+        let binStr = value.toString(2);
+        for (let ch of binStr) {
+          if (ch === '1') totalOnes++;
+        }
+        
+        if ((i + 1) % 2 === 1) {
+          oddIndicesSum += value;
+        } else {
+          evenIndicesSum += value;
+        }
+        
+        // Yếu tố 21: Tổng mã ASCII
+        asciiSum += char.charCodeAt(0);
+        // Yếu tố 22: Đếm ký tự nguyên âm (a, e)
+        if (char.toLowerCase() === "a" || char.toLowerCase() === "e") {
+          vowelCount++;
+        }
+        // Yếu tố 23: Đếm ký tự 'f'
+        if (char.toLowerCase() === "f") {
+          countF++;
+        }
+        // Yếu tố 24: Tổng các giá trị của ký tự nếu thuộc tập [2,3,5,7,11,13]
+        if ([2, 3, 5, 7, 11, 13].includes(value)) {
+          sumPrimeDigits += value;
+        }
+      }
+      
+      let avg = weightedSum / totalWeight;
+      
+      // Các yếu tố cũ (1–20)
+      let vote1 = (evenCount >= oddCount + 4) ? "Tài" : (oddCount >= evenCount + 4 ? "Xỉu" : null);
+      let vote2 = (weightedSum % 2 === 0) ? "Tài" : "Xỉu";
+      let vote3 = (avg > 7.5) ? "Tài" : "Xỉu";
+      let vote4 = (primeIndexSum % 2 === 0) ? "Tài" : "Xỉu";
+      let vote5 = (compositeIndexSum % 2 === 0) ? "Tài" : "Xỉu";
+      let mean = allValues.reduce((sum, val) => sum + val, 0) / n;
+      let variance = allValues.reduce((sum, val) => sum + Math.pow(val - mean, 2), 0) / n;
+      let vote6 = (variance > 12) ? "Tài" : "Xỉu";
+      let vote7 = (firstHalfSum % 2 === 0) ? "Tài" : "Xỉu";
+      let vote8 = (secondHalfSum % 2 === 0) ? "Tài" : "Xỉu";
+      let vote9 = (countHigh > countLow) ? "Tài" : "Xỉu";
+      let vote10 = null;
+      if (sessionCount !== null) {
+        vote10 = (sessionCount % 2 === 0) ? "Tài" : "Xỉu";
+      }
+      let xorResult = 0;
+      for (let val of allValues) {
+        xorResult ^= val;
+      }
+      let vote11 = (xorResult % 2 === 0) ? "Tài" : "Xỉu";
+      let sortedValues = [...allValues].sort((a, b) => a - b);
+      let median = (n % 2 === 0) ? (sortedValues[n/2 - 1] + sortedValues[n/2]) / 2 : sortedValues[Math.floor(n/2)];
+      let vote12 = (median > 7.5) ? "Tài" : "Xỉu";
+      let maxVal = Math.max(...allValues);
+      let minVal = Math.min(...allValues);
+      let range = maxVal - minVal;
+      let vote13 = (range >= 8) ? "Tài" : "Xỉu";
+      let vote14 = (digitCount >= alphaCount) ? "Tài" : "Xỉu";
+      let vote15 = (sumSquares % 2 === 0) ? "Tài" : "Xỉu";
+      let mad = allValues.reduce((sum, val) => sum + Math.abs(val - mean), 0) / n;
+      let vote16 = (mad > 4) ? "Tài" : "Xỉu";
+      let vote17 = (sumDigitsOnly % 2 === 0) ? "Tài" : "Xỉu";
+      let vote18 = (totalOnes % 2 === 0) ? "Tài" : "Xỉu";
+      let diffSum = 0;
+      for (let i = 0; i < allValues.length - 1; i++) {
+        diffSum += Math.abs(allValues[i+1] - allValues[i]);
+      }
+      let vote19 = (diffSum % 2 === 0) ? "Tài" : "Xỉu";
+      let vote20 = (((oddIndicesSum - evenIndicesSum) % 2) === 0) ? "Tài" : "Xỉu";
+      
+      // Các yếu tố mới (21–24)
+      let vote21 = (asciiSum % 2 === 0) ? "Tài" : "Xỉu";
+      let vote22 = (vowelCount % 2 === 0) ? "Tài" : "Xỉu";
+      let vote23 = (countF % 2 === 0) ? "Tài" : "Xỉu";
+      let vote24 = (sumPrimeDigits % 2 === 0) ? "Tài" : "Xỉu";
+      
+      // Các yếu tố thống kê mới (25–28)
+      // Yếu tố 25: Shannon Entropy
+      let freq = {};
+      for (let i = 0; i < allValues.length; i++) {
+        let v = allValues[i];
+        freq[v] = (freq[v] || 0) + 1;
+      }
+      let entropy = 0;
+      for (let key in freq) {
+        let p = freq[key] / n;
+        entropy -= p * Math.log2(p);
+      }
+      let vote25 = (entropy > 3.7) ? "Tài" : "Xỉu";
+      
+      // Chuẩn bị các giá trị cần cho skewness, kurtosis và std
+      let std = Math.sqrt(variance);
+      let skewness = allValues.reduce((sum, val) => sum + Math.pow(val - mean, 3), 0) / n / Math.pow(std, 3);
+      let vote26 = (skewness >= 0) ? "Tài" : "Xỉu";
+      
+      let kurtosis = allValues.reduce((sum, val) => sum + Math.pow(val - mean, 4), 0) / n / Math.pow(variance, 2) - 3;
+      let vote27 = (kurtosis >= 0) ? "Tài" : "Xỉu";
+      
+      let vote28 = (std >= 4.5) ? "Tài" : "Xỉu";
+      
+      // Tổng hợp tất cả các phiếu
+      let votes = [vote1, vote2, vote3, vote4, vote5, vote6, vote7, vote8, vote9,
+                   vote11, vote12, vote13, vote14, vote15, vote16, vote17, vote18, vote19, vote20,
+                   vote21, vote22, vote23, vote24,
+                   vote25, vote26, vote27, vote28];
+      if (vote10 !== null) votes.push(vote10);
+      
+      // Tính số phiếu "Tài" và "Xỉu" (ở đây bạn có thể tự điều chỉnh cách kết hợp các phiếu)
+      let taiVotes = votes.filter(v => v === "Tài").length;
+      let xiuVotes = votes.filter(v => v === "Xỉu").length;
+      let resultPrediction = (taiVotes === xiuVotes) ? vote2 : (taiVotes > xiuVotes ? "Tài" : "Xỉu");
+      
+      return (sessionCount !== null) ?
+             "Dự đoán: " + resultPrediction + " | Số phiên đang chơi: " + sessionCount :
+             "Dự đoán: " + resultPrediction;
+    }
+
+    document.getElementById('analyzeBtn').addEventListener('click', function() {
+      let inputStr = document.getElementById('md5Input').value.trim();
+      const resultDiv = document.getElementById('result');
+      
+      if (inputStr === "") {
+        resultDiv.innerText = "Vui lòng nhập mã MD5 hoặc kết quả!";
+        resultDiv.style.background = "#f8d7da";
+        resultDiv.style.color = "#721c24";
+        return;
+      }
+      
+      if (!inputStr.startsWith("#") && !/^[a-fA-F0-9]{32}$/.test(inputStr)) {
+        resultDiv.innerText = "Định dạng mã không hợp lệ. Vui lòng nhập 32 ký tự hex hoặc dạng kết quả (bắt đầu bằng #).";
+        resultDiv.style.background = "#f8d7da";
+        resultDiv.style.color = "#721c24";
+        return;
+      }
+      
+      const prediction = analyzeMD5UltraAdvanced(inputStr);
+      resultDiv.innerText = prediction;
+      resultDiv.style.background = "#d4edda";
+      resultDiv.style.color = "#155724";
+    });
+  </script>
+</body>
+</html>
