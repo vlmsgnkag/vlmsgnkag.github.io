@@ -177,6 +177,8 @@ function updateTime() {
         progressBar.style.width = `${progressPercent}%`;
     }
 }
+audio.addEventListener("timeupdate", updateTime);
+audio.addEventListener("loadedmetadata", updateTime);
 
 // Hàm phát bài ngẫu nhiên và cập nhật giao diện
 function playRandomSong() {
