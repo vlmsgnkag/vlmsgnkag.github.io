@@ -1,10 +1,12 @@
 /* Reset cơ bản */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
 body, html {
     margin: 0;
     padding: 0;
     height: 100%;
-    font-family: 'Arial', sans-serif;
+    font-family: 'Poppins', sans-serif;
     overflow: hidden;
+    background: #222;
 }
 
 /* Giao diện chính */
@@ -15,11 +17,34 @@ body, html {
     align-items: center;
     position: relative;
     height: 100%;
+    padding: 20px;
     background: linear-gradient(-45deg, #ff9a9e, #fad0c4, #fbc2eb, #a18cd1);
     background-size: 400% 400%;
-    animation: gradientBackground 10s ease infinite;
-    color: white;
+    animation: gradientBackground 20s ease infinite;
+    color: #fff;
     text-align: center;
+    overflow: hidden;
+}
+
+/* Floating bubbles effect */
+.container::after {
+    content: "";
+    position: absolute;
+    width: 200%;
+    height: 200%;
+    top: -50%;
+    left: -50%;
+    background: radial-gradient(circle, rgba(255,255,255,0.1) 10%, transparent 10%);
+    background-size: 50px 50px;
+    animation: moveBubbles 15s linear infinite;
+    opacity: 0.3;
+    z-index: 0;
+}
+
+@keyframes moveBubbles {
+    0% { transform: translate(0, 0); }
+    50% { transform: translate(25px, 25px); }
+    100% { transform: translate(0, 0); }
 }
 
 /* Hiệu ứng gradient động */
@@ -37,70 +62,223 @@ body, html {
     width: 100%;
     height: 100%;
     z-index: 1;
-    opacity: 0.6;
+    opacity: 0.2;
 }
 
-/* Nội dung chính */
+/* Nội dung chính với hiệu ứng glassmorphism và fadeIn */
 .content {
     position: relative;
     z-index: 2;
+    background: rgba(0, 0, 0, 0.2);
+    padding: 40px;
+    border-radius: 20px;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
+    animation: fadeIn 2s ease;
 }
 
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Tiêu đề với hiệu ứng neon glow sáng tạo */
 h1 {
-    font-size: 2.5rem;
-    margin-bottom: 20px;
+    font-size: 3.5rem;
+    margin-bottom: 10px;
     color: #fff;
-    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+    text-shadow: 0 0 10px #fff, 0 0 20px #ff7eb3, 0 0 30px #ff7eb3;
+    animation: glow 1.5s ease-in-out infinite alternate;
 }
 
+@keyframes glow {
+    from {
+        text-shadow: 0 0 5px #fff, 0 0 10px #ff7eb3, 0 0 15px #ff7eb3;
+    }
+    to {
+        text-shadow: 0 0 20px #fff, 0 0 30px #ff7eb3, 0 0 40px #ff7eb3;
+    }
+}
+
+/* Đoạn mô tả */
+.content p {
+    font-size: 1.2rem;
+    margin-bottom: 20px;
+    opacity: 0.9;
+}
+
+/* Nút bấm với hiệu ứng ripple và transform */
 button {
-    padding: 15px 30px;
+    position: relative;
+    padding: 15px 40px;
     font-size: 18px;
-    font-weight: bold;
+    font-weight: 600;
     color: #fff;
     background: linear-gradient(135deg, #ff7eb3, #ff758c);
     border: none;
     border-radius: 50px;
     cursor: pointer;
     margin-top: 20px;
-    transition: all 0.4s ease-in-out;
-    box-shadow: 0 8px 20px rgba(255, 117, 140, 0.6), inset 0 0 0 0 rgba(255, 255, 255, 0.3);
-    text-transform: uppercase;
-    letter-spacing: 1.2px;
-    position: relative;
     overflow: hidden;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    box-shadow: 0 8px 20px rgba(255, 117, 140, 0.6);
 }
 
 button::before {
-    content: '';
+    content: "";
     position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(255, 255, 255, 0.2);
-    z-index: 0;
-    border-radius: 50px;
-    transform: scale(0);
-    transition: transform 0.4s ease-in-out;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    transition: width 0.4s ease-out, height 0.4s ease-out;
 }
 
 button:hover::before {
-    transform: scale(1);
+    width: 200%;
+    height: 200%;
 }
 
 button:hover {
-    background: linear-gradient(135deg, #ff758c, #ff7eb3);
-    transform: translateY(-3px);
-    box-shadow: 0 12px 24px rgba(255, 117, 140, 0.8), inset 0 0 10px rgba(255, 255, 255, 0.4);
+    transform: translateY(-5px) scale(1.05);
+    box-shadow: 0 12px 30px rgba(255, 117, 140, 0.8);
 }
 
-
+/* Ảnh bài hát với hiệu ứng phóng to và xoay nhẹ khi hover */
 #songImage {
-    width: 300px;
-    height: 300px;
+    width: 320px;
+    height: 320px;
     object-fit: cover;
-    border-radius: 15px;
+    border-radius: 20px;
     margin-bottom: 20px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.25);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+#songImage:hover {
+    transform: scale(1.05) rotate(1deg);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.35);
+}
+
+/* Nút tải xuống */
+.image-container {
+    position: relative;
+    display: inline-block;
+}
+
+.download-button {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    width: 40px;
+    height: 40px;
+    background: rgba(0, 0, 0, 0.6);
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: background 0.3s ease;
+}
+
+.download-button:hover {
+    background: rgba(0, 0, 0, 0.8);
+}
+
+.download-icon {
+    width: 20px;
+    height: 20px;
+    filter: invert(1);
+}
+
+/* Hiển thị thời gian bài hát */
+#timeDisplayContainer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    max-width: 350px;
+    margin-top: 10px;
+}
+
+#progressBar {
+    width: 70%;
+    height: 5px;
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: 3px;
+    overflow: hidden;
+    position: relative;
+}
+
+#progress {
+    height: 100%;
+    width: 0%;
+    background: #ff758c;
+    transition: width 0.2s ease-in-out;
+}
+
+#currentTime, #durationTime {
+    font-size: 14px;
+    font-weight: 600;
+    color: white;
+}
+
+.play-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* canh giữa theo chiều ngang */
+    gap: 10px; /* khoảng cách giữa #songInfo và nút Play */
+    margin-top: 20px; /* tạo khoảng cách với phần tử trên */
+}
+
+  #songInfo {
+    background: rgba(0, 0, 0, 0.4);
+    color: #fff;
+    padding: 8px 16px;
+    border-radius: 30px;
+    font-size: 16px;
+    font-weight: 600;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+    transition: background 0.3s ease;
+    /* display: none; // không cần nữa nếu đã dùng class .hidden */
+    /* Các thiết kế khác vẫn giữ nguyên */
+  }
+  
+  #songInfo:hover {
+    background: rgba(0, 0, 0, 0.6);
+  }
+  
+  /* Giữ nguyên style nút Play nếu bạn đã có sẵn */
+  #playButton {
+    /* ví dụ */
+    padding: 12px 30px;
+    border: none;
+    border-radius: 30px;
+    background: #ff758c;
+    color: #fff;
+    font-weight: 600;
+    cursor: pointer;
+    box-shadow: 0 8px 20px rgba(255, 117, 140, 0.6);
+    transition: all 0.3s ease;
+  }
+  
+  #playButton:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 12px 30px rgba(255, 117, 140, 0.8);
+  }
+/* Responsive cho màn hình nhỏ */
+@media (max-width: 768px) {
+    h1 {
+        font-size: 2.5rem;
+    }
+    #songImage {
+        width: 280px;
+        height: 280px;
+    }
+    button {
+        padding: 12px 30px;
+        font-size: 16px;
+    }
 }
