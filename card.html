@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Advanced Fake Card Generator</title>
+  <style>
+    /* RESET & BASE */
+    * {
+      margin: 0; 
+      padding: 0; 
+      box-sizing: border-box;
+      font-family: 'Segoe UI', Tahoma, sans-serif;
+    }
+    body {
+      background: linear-gradient(to bottom right, #182b3a, #2c3e50);
+      color: #fff;
+      display: flex;
+      min-height: 100vh;
+    }
+    a, button {
+      cursor: pointer;
+    }
+    /* SIDEBAR */
+    .sidebar {
+      width: 250px;
+      background: #1c2f40;
+      display: flex;
+      flex-direction: column;
+      padding: 20px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.4);
+    }
+    .sidebar h2 {
+      text-align: center;
+      margin-bottom: 30px;
+      font-size: 24px;
+      color: #00e6ac;
+    }
+    .nav-menu {
+      list-style: none;
+      flex: 1;
+    }
+    .nav-menu li {
+      margin-bottom: 15px;
+    }
+    .nav-menu li a {
+      display: block;
+      background: #22384e;
+      padding: 12px 15px;
+      border-radius: 5px;
+      color: #fff;
+      font-size: 16px;
+      transition: background 0.3s;
+      text-decoration: none;
+    }
+    .nav-menu li a:hover,
+    .nav-menu li a.active {
+      background: #2b4963;
+    }
+    .sidebar footer {
+      text-align: center;
+      font-size: 13px;
+      color: #ccc;
+      margin-top: 20px;
+    }
+    /* MAIN CONTENT */
+    .main {
+      flex: 1;
+      padding: 20px;
+      overflow-y: auto;
+    }
+    .tab-content {
+      display: none;
+    }
+    .tab-content.active {
+      display: block;
+    }
+    .tab-content h1 {
+      font-size: 24px;
+      margin-bottom: 15px;
+      color: #00e6ac;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+    .section {
+      background: rgba(255,255,255,0.05);
+      padding: 20px;
+      border-radius: 10px;
+      margin-bottom: 30px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+    }
+    .section h2 {
+      font-size: 18px;
+      margin-bottom: 10px;
+      color: #aad;
+      border-bottom: 1px solid #3a4f60;
+      padding-bottom: 5px;
+    }
+    label {
+      display: block;
+      margin: 10px 0 5px;
+      font-weight: 600;
+      color: #bfeaf5;
+    }
+    input[type='text'], input[type='number'], select {
+      width: 100%;
+      padding: 10px;
+      background: #1f3345;
+      border: 1px solid #2a4058;
+      border-radius: 5px;
+      color: #fff;
+      font-size: 14px;
+      outline: none;
+    }
+    .btn {
+      display: inline-block;
+      background: #00e6ac;
+      color: #1f3345;
+      padding: 12px 16px;
+      border: none;
+      border-radius: 5px;
+      font-weight: bold;
+      text-transform: uppercase;
+      margin-top: 10px;
+      transition: background 0.3s;
+    }
+    .btn:hover {
+      background: #00c996;
+    }
+    /* CARD LOGOS */
+    .card-logos {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin: 10px 0 20px;
+    }
+    .card-logos img {
+      width: 50px;
+      height: auto;
+      border-radius: 5px;
+      border: 2px solid transparent;
+      transition: border-color 0.3s;
+      cursor: pointer;
+      background: #fff;
+    }
+    .card-logos img:hover {
+      border-color: #00e6ac;
+    }
+    /* MY CARDS LIST */
+    .cards-list {
+      max-height: 320px;
+      overflow-y: auto;
+      border: 1px solid #2a4058;
+      border-radius: 5px;
+      margin-top: 10px;
+      background: rgba(255,255,255,0.02);
+    }
+    .card-item {
+      display: flex;
+      align-items: center;
+      background: #1f3345;
+      padding: 10px;
+      border-bottom: 1px solid #2a4058;
+      gap: 10px;
+    }
+    .card-item:last-child {
+      border-bottom: none;
+    }
+    .card-image {
+      width: 70px;
+      flex-shrink: 0;
+    }
+    .card-image img {
+      width: 70px;
+      height: auto;
+      border-radius: 5px;
+    }
+    .card-info {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      font-size: 14px;
+      flex: 1;
+    }
+    .card-actions {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+    .card-actions button {
+      background: #f88;
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+      padding: 6px 10px;
+      font-size: 12px;
+      transition: background 0.3s;
+    }
+    .card-actions button:hover {
+      background: #d66;
+    }
+    /* SCROLLBAR */
+    ::-webkit-scrollbar {
+      width: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #1f3345;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #00e6ac;
+      border-radius: 3px;
+    }
+    /* RESPONSIVE */
+    @media (max-width: 768px) {
+      .sidebar {
+        width: 200px;
+      }
+      .tab-content h1 {
+        font-size: 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- SIDEBAR -->
+  <div class="sidebar">
+    <h2>CardGen Pro</h2>
+    <ul class="nav-menu">
+      <li><a href="#" class="active" data-tab="generator">Generator</a></li>
+      <li><a href="#" data-tab="mycards">My Cards</a></li>
+    </ul>
+    <footer>
+      © 2025 Advanced CardGen
+    </footer>
+  </div>
+  
+  <!-- MAIN CONTENT -->
+  <div class="main">
+    <!-- GENERATOR TAB -->
+    <div class="tab-content active" id="generator">
+      <h1>Generator</h1>
+      <div class="section">
+        <h2>International Brands</h2>
+        <div class="card-logos">
+          <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/0/04/Visa.svg/120px-Visa.svg.png" alt="Visa" onclick="selectCardBrand('visa')">
+          <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/0/0c/MasterCard_logo.png/120px-MasterCard_logo.png" alt="MasterCard" onclick="selectCardBrand('mastercard')">
+          <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRNWTf0gss11bk-DC6vVxMPwDffbqGicKC7XA&s" alt="AMEX" onclick="selectCardBrand('amex')" style="width:60px;">
+          <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/4/40/JCB_logo.svg/1200px-JCB_logo.svg.png" alt="JCB" onclick="selectCardBrand('jcb')" style="width:60px;">
+          <img src="https://www.pymnts.com/wp-content/uploads/2014/03/Discover-logo-e1416429693676.jpg" alt="Discover" onclick="selectCardBrand('discover')" style="width:60px;">
+          <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTu-n4Zp7F2ny-Jb-V3tcmRdf2PNfp-yAieiw&s" alt="Diners" onclick="selectCardBrand('diners')" style="width:60px;">
+        </div>
+      </div>
+      <div class="section">
+        <h2>Vietnamese Banks</h2>
+        <div class="card-logos">
+          <img src="https://hienlaptop.com/wp-content/uploads/2024/12/logo-vietcombank-vector-11.png" alt="Vietcombank" onclick="selectCardBrand('vietcombank')" style="width:70px;">
+          <img src="https://inkythuatso.com/uploads/images/2021/09/logo-techcombank-inkythuatso-10-15-11-46.jpg" alt="Techcombank" onclick="selectCardBrand('techcombank')" style="width:70px;">
+          <img src="https://bidv.com.vn/wps/wcm/connect/674b6448-d23b-484e-b4d3-1e86fa68bd0d/Logo+Nguyen+ban+nen+trang.png?MOD=AJPERES&CACHEID=ROOTWORKSPACE-674b6448-d23b-484e-b4d3-1e86fa68bd0d-pfdjkOq" alt="BIDV" onclick="selectCardBrand('bidv')" style="width:60px;">
+          <img src="https://inkythuatso.com/uploads/images/2021/11/mb-bank-logo-inkythuatso-01-10-09-01-10.jpg" alt="MBBank" onclick="selectCardBrand('mbbank')" style="width:70px;">
+          <img src="https://play-lh.googleusercontent.com/u9fUwltudW3eSwh0RddQsiAzTpXWRtD8TS0TCC3s--NgUej28iWoCikXCrFLd89YgxHX" alt="VPBank" onclick="selectCardBrand('vpbank')" style="width:70px;">
+          <img src="https://inkythuatso.com/uploads/images/2021/11/logo-agribank-inkythuatso-3-01-09-15-15-16.jpg" alt="Agribank" onclick="selectCardBrand('agribank')" style="width:70px;">
+        </div>
+      </div>
+      <div class="section">
+        <h2>Card Settings</h2>
+        <label>Country</label>
+        <select id="countrySelect">
+          <option value="vn">Vietnam</option>
+          <option value="us">USA</option>
+          <option value="global">Global</option>
+        </select>
+
+        <label>Quantity</label>
+        <input type="number" id="qty" min="1" max="20" value="1">
+
+        <label>Expiry Year</label>
+        <select id="yearOption">
+          <option value="random">Random</option>
+          <option value="2023">2023</option>
+          <option value="2024">2024</option>
+          <option value="2025">2025</option>
+          <option value="2026">2026</option>
+        </select>
+        <button class="btn" onclick="generateCards()">Generate</button>
+      </div>
+    </div>
+    
+    <!-- MY CARDS TAB -->
+    <div class="tab-content" id="mycards">
+      <h1>My Cards</h1>
+      <div class="section">
+        <h2>Stored Cards</h2>
+        <div class="cards-list" id="cardsList">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+
+    let activeBrand = 'visa'; 
+    let storedCards = [];
+
+
+    const vnNames = [
+      'Nguyen Van Hoang','Tran Thi An','Le Hoang Phuoc','Pham Quoc Tuan','Phan Minh Chien','Do Thanh Nam',
+      'Hoang Yen Nhi','Bui Thanh Tam','Le Huu Tien','Nguyen Hai Dang', 'Trinh Cong The', 'Lam Trong The', 'Dang Duc Phuoc', 'Doan Tan Tu', 'Phung Thi Lan'
+    ];
+
+
+    const globalNames = [
+      'Cecília Mo\'av','Jarmila Ovadia','Naila Aurora','Adamina Keeley','Prahalad Fionntan',
+      'Zain Babette','Avishag Fernande','Palina Bakhtiyar','Apanii Managold','Yuri Ignat',
+      'Christen Kostakis','Filip Zubin','Bergljót Mar','Magdalena Hédi','Ernesto Gwawr',
+      'Jehovah Nic','Marie Sera','Etelka Denice','Cipriano Dušana','Thelonius Bernarda'
+    ];
+
+
+    const usNames = [
+      "Benjamin Davies","Andrew Edmunds","Tracey Payne","Samantha Thomson","Deirdre Mills","Hannah Hodges",
+      "Ian Glover","Charles Jones","Madeleine Gray","Amelia Marshall","Abigail Chapman","Diana Powell",
+      "Harry Davidson","Karen Bailey","Adam Miller","Simon Lee","Oliver Jackson","Jessica Lewis",
+      "Sean Mackay","Theresa Ince","Samantha Rutherford","Thomas Hart","Mary Wallace","Claire Lewis",
+      "Lisa Morgan","Melanie Sanderson","Madeleine Sutherland","Jason MacLeod","Carolyn Howard",
+      "Thomas Wilkins","Boris Fisher","Rebecca Rees","Colin Bower","Eric Burgess","Luke Greene",
+      "Sally Wilkins","Max Paterson","Tim Harris","Cameron Buckland","Austin Nash","Piers Nash","Una Ince",
+      "Sonia Harris","Joanne Jackson","Hannah Springer","Victoria Tucker","Sarah Hardacre","Audrey Vance",
+      "Ella Arnold","Elizabeth May","Gabrielle Jackson","Ella Piper","Amy Simpson","Victor Skinner",
+      "Ava Ince","Sonia Lyman","William Pullman","Blake Springer","Stewart King","Nathan Miller",
+      "Gabrielle Stewart","Melanie Kerr","Jane Bailey","Lisa Poole","Una Dyer","Frank Lyman","Irene Harris",
+      "Faith Welch","Joshua Bell","Pippa Nash","William Oliver","Phil Wright","Emma McGrath",
+      "Samantha Abraham","Felicity Hughes","Lucas Martin","Rebecca Simpson","Julia Langdon",
+      "Joe Sutherland","Ava Davidson","Dominic Walker","Michael Smith","Heather Taylor","Brian Grant",
+      "Sam Kerr","Edward Paige","Jacob Abraham","Jan Forsyth","Anna Avery","Simon Taylor","Stephanie May",
+      "Caroline Wilkins","Jonathan Lambert","Angela Bond","Piers McLean","Stephanie Murray","Sebastian Parsons",
+      "Oliver Short","Chloe Bower","Colin McGrath","Alan Grant","Stephen Dyer","Grace Robertson",
+      "Lily Piper","Stewart Fisher","Gavin Scott","Joe Nolan","Jason Springer","Olivia Payne",
+      "Edward Payne","Irene Blake","Connor MacLeod","Hannah Dowd","Christopher Slater","Thomas Gibson",
+      "Edward Stewart","Harry Dowd","Adrian Robertson","Abigail Mitchell","Faith Allan","Luke Morgan",
+      "Leah Hemmings","Jacob Mathis","Robert Jackson","Samantha Quinn","Edward Thomson","Megan Paige",
+      "Theresa Parr","Sally May","Andrea Mitchell","Wendy Walsh","Frank Marshall","Heather Abraham",
+      "Jessica Bond","Rachel Hamilton","Tracey Avery","Faith Quinn","Boris Grant","Christopher King",
+      "Sophie Black","Jason Bailey","Jasmine McLean","Anna Russell","Rebecca Burgess","Gavin Watson",
+      "Julia Alsop","Thomas Vance","Lillian Carr","Theresa Quinn","Colin Chapman","Evan Avery","Sue Watson",
+      "Faith Mathis","Robert Poole","Leah Randall","Jane Mills","Julian Gray","Hannah Sharp","Karen Davidson",
+      "Amanda Buckland","Jessica Walker","Victor Gibson","Neil Ellison","Joseph May","Sophie Rees",
+      "Keith Dickens","Maria Buckland","Alan Clark","Diane Carr","Nicholas Vance","Jonathan Carr",
+      "Mary Underwood","Colin Lawrence","Adam Bailey","William Skinner","David Newman","Sally Turner",
+      "Charles Dyer","Sam McGrath","Madeleine Ball","Penelope Clark","Brian Hunter","Emma Poole",
+      "Tim Butler","Jessica Davidson","Joshua Powell","Dan McGrath","Penelope Robertson","Sonia Reid",
+      "Warren Hart","Bella Stewart","Victoria Terry","Emily Scott","Ella Mills","Gavin Peters",
+      "Carol Arnold","Karen Clarkson","Adam North","Eric Mackay","Justin Ogden","Cameron Paige",
+      "Andrea Cameron","Austin Chapman","Leah Johnston","Benjamin Johnston","Austin Cornish","Yvonne Jones",
+      "Claire Ross","Nicola Henderson","Hannah Oliver","Michael Parr","Jennifer Walker","Katherine Avery",
+      "Phil Morrison","Eric Pullman","Stephen Rutherford","Andrew Parsons","Christopher Arnold","Blake Brown",
+      "Megan Lewis","Thomas Lee","Sue Short","William Hodges","Lucas Skinner","Carolyn Carr","Joan Black",
+      "Megan Smith","Robert Hemmings","Alexandra Parr","Sonia Mackay","Olivia Mills","Anthony Davidson",
+      "Joan Knox","Lily Davidson","Emily Kelly","Victoria Parsons","Sarah Ball","Audrey Vance","Ava Short",
+      "Sonia Lyman","William Pullman","Blake Springer",
+    ];
+
+    // Map country -> nameList
+    const nameSets = {
+      vn: vnNames,
+      us: usNames,
+      global: globalNames
+    };
+
+    // Logo thẻ (để hiển thị)
+    const brandImages = {
+      visa: 'https://upload.wikimedia.org/wikipedia/commons/thumb/0/04/Visa.svg/120px-Visa.svg.png',
+      mastercard: 'https://upload.wikimedia.org/wikipedia/commons/thumb/0/0c/MasterCard_logo.png/120px-MasterCard_logo.png',
+      amex: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRNWTf0gss11bk-DC6vVxMPwDffbqGicKC7XA&s',
+      jcb: 'https://upload.wikimedia.org/wikipedia/commons/thumb/4/40/JCB_logo.svg/1200px-JCB_logo.svg.png',
+      discover: 'https://www.pymnts.com/wp-content/uploads/2014/03/Discover-logo-e1416429693676.jpg',
+      diners: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTu-n4Zp7F2ny-Jb-V3tcmRdf2PNfp-yAieiw&s',
+
+      vietcombank: 'https://hienlaptop.com/wp-content/uploads/2024/12/logo-vietcombank-vector-11.png',
+      techcombank: 'https://inkythuatso.com/uploads/images/2021/09/logo-techcombank-inkythuatso-10-15-11-46.jpg',
+      bidv: 'https://bidv.com.vn/wps/wcm/connect/674b6448-d23b-484e-b4d3-1e86fa68bd0d/Logo+Nguyen+ban+nen+trang.png?MOD=AJPERES&CACHEID=ROOTWORKSPACE-674b6448-d23b-484e-b4d3-1e86fa68bd0d-pfdjkOq',
+      mbbank: 'https://inkythuatso.com/uploads/images/2021/11/mb-bank-logo-inkythuatso-01-10-09-01-10.jpg',
+      vpbank: 'https://play-lh.googleusercontent.com/u9fUwltudW3eSwh0RddQsiAzTpXWRtD8TS0TCC3s--NgUej28iWoCikXCrFLd89YgxHX',
+      agribank: 'https://inkythuatso.com/uploads/images/2021/11/logo-agribank-inkythuatso-3-01-09-15-15-16.jpg'
+    };
+
+    // ============== TAB SWITCHING ==============
+    const menuLinks = document.querySelectorAll('.nav-menu li a');
+    menuLinks.forEach(link => {
+      link.addEventListener('click', function(e) {
+        e.preventDefault();
+        menuLinks.forEach(l => l.classList.remove('active'));
+        this.classList.add('active');
+        document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+        const tabId = this.getAttribute('data-tab');
+        document.getElementById(tabId).classList.add('active');
+      });
+    });
+
+    // ============== CHỌN BRAND ==============
+    function selectCardBrand(brand) {
+      activeBrand = brand;
+      console.log('Selected brand/bank:', brand);
+    }
+
+    // ============== TẠO THẺ ==============
+    function generateCards() {
+      const qty = parseInt(document.getElementById('qty').value) || 1;
+      const yearOpt = document.getElementById('yearOption').value;
+      const country = document.getElementById('countrySelect').value || 'vn';
+
+      for (let i = 0; i < qty; i++) {
+        const card = createFakeCard(activeBrand, yearOpt, country);
+        storedCards.push(card);
+      }
+      alert(`Generated ${qty} card(s) of type ${activeBrand.toUpperCase()}!`);
+      updateCardsList();
+    }
+
+    
+    function createFakeCard(brand, yearOpt, country) {
+
+      let bin6 = '' + (Math.floor(Math.random() * 900000) + 100000); 
+      const length = (brand === 'amex') ? 15 : 16;
+      let cardNum = bin6;
+      while (cardNum.length < length) {
+        cardNum += Math.floor(Math.random() * 10);
+      }
+      const cvvLen = (brand === 'amex') ? 4 : 3;
+      let cvv = '';
+      for (let i = 0; i < cvvLen; i++) {
+        cvv += Math.floor(Math.random() * 10);
+      }
+      let month = ('0' + (Math.floor(Math.random()*12) + 1)).slice(-2);
+      let year;
+      if (yearOpt === 'random') {
+        let nowYear = new Date().getFullYear();
+        let offset = Math.floor(Math.random() * 5) + 1; // 1-5 năm
+        year = nowYear + offset;
+      } else {
+        year = parseInt(yearOpt, 10);
+      }
+      let nameList = nameSets[country] || nameSets.vn;
+      let holderName = nameList[Math.floor(Math.random() * nameList.length)];
+
+      return {
+        brand: brand,
+        brandImg: brandImages[brand] || brandImages.visa,
+        number: cardNum,
+        name: holderName,
+        exp: `${month}/${year.toString().slice(-2)}`,
+        cvv: cvv
+      };
+    }
+
+    // ============== HIỂN THỊ DANH SÁCH THẺ ==============
+    function updateCardsList() {
+      const listDiv = document.getElementById('cardsList');
+      listDiv.innerHTML = '';
+      storedCards.forEach((card, index) => {
+        const item = document.createElement('div');
+        item.className = 'card-item';
+        item.innerHTML = `
+          <div class="card-image">
+            <img src="${card.brandImg}" alt="${card.brand}" />
+          </div>
+          <div class="card-info">
+            <div><strong>${card.brand.toUpperCase()}</strong> - ${card.number}</div>
+            <div>Name: ${card.name}</div>
+            <div>Exp: ${card.exp} | CVV: ${card.cvv}</div>
+          </div>
+          <div class="card-actions">
+            <button onclick="checkCard(${index})">Check</button>
+            <button onclick="removeCard(${index})">X</button>
+          </div>
+        `;
+        listDiv.appendChild(item);
+      });
+    }
+
+    // ============== CHECK CARD (placeholder) ==============
+    function checkCard(idx) {
+      const card = storedCards[idx];
+      alert(`Checking card: ${card.number}\n(This is just a placeholder.)`);
+    }
+
+    // ============== REMOVE CARD ==============
+    function removeCard(idx) {
+      if (confirm('Remove this card?')) {
+        storedCards.splice(idx,1);
+        updateCardsList();
+      }
+    }
+  </script>
+</body>
+</html>
