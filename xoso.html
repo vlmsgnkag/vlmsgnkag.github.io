@@ -2,7 +2,7 @@
 <html lang="vi">
 <head>
   <meta charset="UTF-8">
-  <title>Phân Tích Lô Đề</title>
+  <title>Phân Tích Lô Đề - Cập nhật</title>
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -10,12 +10,12 @@
       margin: 0;
       padding: 20px;
     }
-    h1 {
+    h1, h2, h3 {
       text-align: center;
       margin-bottom: 20px;
     }
     .container {
-      max-width: 700px;
+      max-width: 800px;
       margin: 0 auto;
       background: #fff;
       padding: 20px;
@@ -40,11 +40,14 @@
       color: red;
       font-weight: bold;
     }
-    input[type="text"] {
+    input[type="text"],
+    input[type="number"] {
       width: 100%;
-      border: none;
+      border: 1px solid #ccc;
       outline: none;
       text-align: center;
+      padding: 5px;
+      border-radius: 3px;
     }
     button {
       display: block;
@@ -75,7 +78,6 @@
       color: #666;
       margin-top: 5px;
     }
-    /* Bảng kết quả, tần suất */
     .predict-table {
       margin-top: 15px;
       border: 1px solid #ccc;
@@ -91,10 +93,6 @@
       color: #d00;
       font-weight: bold;
     }
-    .center {
-      text-align: center;
-    }
-    /* Phần cài đặt tham số */
     .settings {
       margin-bottom: 20px;
       background: #fafafa;
@@ -107,19 +105,20 @@
       width: 160px;
       font-weight: bold;
     }
-    .settings input[type="number"] {
-      width: 80px;
-      padding: 5px;
-      margin-left: 5px;
-    }
+    .settings input[type="number"],
     .settings select {
       margin-left: 5px;
       padding: 5px;
     }
+    .full-distribution {
+      max-height: 200px;
+      overflow-y: auto;
+      margin-top: 15px;
+    }
   </style>
 </head>
 <body>
-  <h1>PHÂN TÍCH LÔ ĐỀ (Tất cả phương pháp, 10.000 lần mô phỏng)</h1>
+  <h1>PHÂN TÍCH LÔ ĐỀ (Cập nhật: Dự đoán chính xác và toàn diện hơn)</h1>
   <div class="container">
 
     <!-- Phần cài đặt tham số -->
@@ -143,15 +142,18 @@
       <br><br>
       <label for="topK">Top-K (1 - 100):</label>
       <input type="number" id="topK" step="1" value="5" min="1" max="100">
+      <br><br>
+      <label for="simCount">Số lần mô phỏng:</label>
+      <input type="number" id="simCount" step="1000" value="10000" min="1000">
       <p style="font-size: 0.9em; color: #444;">
-        - <strong>Alpha</strong> (≥0): thêm vào tần suất để cặp số tần suất 0 vẫn có xác suất.  
-        - <strong>Temperature</strong>: càng thấp, càng ưu tiên cặp tần suất cao.  
-        - <strong>Nucleus p</strong>: xác suất tích lũy “nòng cốt” (0.5 - 1.0).  
-        - <strong>Top-K</strong>: chỉ lấy K cặp có giá trị cao nhất (đã transform), rồi random trong đó.  
+        - <strong>Alpha</strong>: Cân bằng tần suất, ngay cả với giá trị ban đầu bằng 0.  
+        - <strong>Temperature</strong>: Càng thấp, càng ưu tiên các cặp số có tần suất cao.  
+        - <strong>Nucleus p</strong>: Lấy tập “nòng cốt” với xác suất tích lũy từ 0.5 đến 1.  
+        - <strong>Top-K</strong>: Chỉ xét K cặp số có giá trị đã transform cao nhất.
       </p>
     </div>
 
-    <!-- Bảng nhập liệu (cập nhật G5=6 kết quả, G6=3, G7=4) -->
+    <!-- Bảng nhập liệu -->
     <table>
       <!-- Đặc Biệt -->
       <tr>
@@ -208,7 +210,7 @@
       <!-- Giải 6 (3 kết quả, mỗi kết quả 3 chữ số) -->
       <tr>
         <th>6</th>
-        <td><input type="text" data-gi="6" maxlength="4 " placeholder="VD: 123"></td>
+        <td><input type="text" data-gi="6" maxlength="4" placeholder="VD: 123"></td>
         <td><input type="text" data-gi="6" maxlength="4" placeholder="VD: 456"></td>
         <td><input type="text" data-gi="6" maxlength="4" placeholder="VD: 789"></td>
         <td colspan="3"></td>
@@ -235,20 +237,24 @@
     <div class="result" id="resultArea" style="display: none;">
       <h2>Kết quả Phân Tích</h2>
       <div id="resultContent"></div>
+      <h3>Phân bố đầy đủ (theo xác suất giảm dần):</h3>
+      <div class="full-distribution" id="fullDistribution"></div>
     </div>
     <div class="note">
-      <strong>Lưu ý:</strong> Mọi kết quả chỉ mang tính tham khảo, không đảm bảo chính xác 100%.
+      <strong>Lưu ý:</strong> Kết quả chỉ mang tính tham khảo, không đảm bảo chính xác 100%.
     </div>
   </div>
 
   <script>
-    //=== 1) LẤY CHỮ SỐ CUỐI THEO GIẢI ===
+    //=== 1) Lấy chữ số cuối theo số lượng của từng giải ===
     function getLastDigits(value, gi) {
+      // Kiểm tra xem giá trị có phải chuỗi số không
+      if (!/^\d+$/.test(value)) return '';
       if (gi === '6') {
-        // G6 có 3 chữ số
+        // Giải 6: 3 chữ số
         return value.slice(-3).padStart(3, '0');
       } else if (gi === '7') {
-        // G7 có 2 chữ số
+        // Giải 7: 2 chữ số
         return value.slice(-2).padStart(2, '0');
       } else {
         // Mặc định lấy 2 chữ số cuối
@@ -256,7 +262,7 @@
       }
     }
 
-    //=== 2) Weighted Random (Alpha + Temperature) ===
+    //=== 2) Tạo phân phối cho phương pháp Weighted Random (Alpha + Temperature) ===
     function createWeightedDistribution(freqMap, alpha, temperature) {
       let weightedArray = [];
       for (let [digits, count] of Object.entries(freqMap)) {
@@ -264,17 +270,14 @@
         val = Math.pow(val, 1 / temperature);
         weightedArray.push([digits, val]);
       }
-      // Nếu rỗng => tạo 00..99
       if (weightedArray.length === 0) {
         for (let i = 0; i < 100; i++) {
           let d = i.toString().padStart(2, '0');
-          let v = Math.pow(alpha, 1/temperature);
+          let v = Math.pow(alpha, 1 / temperature);
           weightedArray.push([d, v]);
         }
       }
-      // Tính tổng
       let sumVal = weightedArray.reduce((s, x) => s + x[1], 0);
-      // Tạo dist
       let dist = {};
       weightedArray.forEach(([digits, val]) => {
         dist[digits] = val / sumVal;
@@ -282,6 +285,64 @@
       return dist;
     }
 
+    //=== 3) Nucleus Sampling (p) ===
+    function createNucleusDistribution(freqMap, alpha, temperature, nucleusP) {
+      let weightedArray = [];
+      for (let [digits, count] of Object.entries(freqMap)) {
+        let val = count + alpha;
+        val = Math.pow(val, 1 / temperature);
+        weightedArray.push([digits, val]);
+      }
+      if (weightedArray.length === 0) {
+        for (let i = 0; i < 100; i++) {
+          let d = i.toString().padStart(2, '0');
+          let v = Math.pow(alpha, 1 / temperature);
+          weightedArray.push([d, v]);
+        }
+      }
+      weightedArray.sort((a, b) => b[1] - a[1]);
+      let totalVal = weightedArray.reduce((s, x) => s + x[1], 0);
+      let subList = [];
+      let sumSub = 0;
+      for (let [digits, val] of weightedArray) {
+        let p = val / totalVal;
+        subList.push([digits, p]);
+        sumSub += p;
+        if (sumSub >= nucleusP) break;
+      }
+      let dist = {};
+      subList.forEach(([digits, p]) => {
+        dist[digits] = p / sumSub;
+      });
+      return dist;
+    }
+
+    //=== 4) Top-K Sampling ===
+    function createTopKDistribution(freqMap, alpha, temperature, topK) {
+      let weightedArray = [];
+      for (let [digits, count] of Object.entries(freqMap)) {
+        let val = count + alpha;
+        val = Math.pow(val, 1 / temperature);
+        weightedArray.push([digits, val]);
+      }
+      if (weightedArray.length === 0) {
+        for (let i = 0; i < 100; i++) {
+          let d = i.toString().padStart(2, '0');
+          let v = Math.pow(alpha, 1 / temperature);
+          weightedArray.push([d, v]);
+        }
+      }
+      weightedArray.sort((a, b) => b[1] - a[1]);
+      let subList = weightedArray.slice(0, topK);
+      let sumVal = subList.reduce((s, x) => s + x[1], 0);
+      let dist = {};
+      subList.forEach(([digits, val]) => {
+        dist[digits] = val / sumVal;
+      });
+      return dist;
+    }
+
+    //=== 5) Hàm chọn số từ phân phối đã tạo ===
     function randomFromDist(dist) {
       let rand = Math.random();
       let cumulative = 0;
@@ -293,124 +354,23 @@
       }
       return Object.keys(dist)[0];
     }
+    // Dùng chung cho nucleus và topK
+    let randomFromNucleus = randomFromDist;
+    let randomFromTopK = randomFromDist;
 
-    //=== 3) Nucleus Sampling (p) ===
-    function createNucleusDistribution(freqMap, alpha, temperature, nucleusP) {
-      // Tạo weightedArray (chưa chuẩn hoá)
-      let weightedArray = [];
-      for (let [digits, count] of Object.entries(freqMap)) {
-        let val = count + alpha;
-        val = Math.pow(val, 1 / temperature);
-        weightedArray.push([digits, val]);
-      }
-      if (weightedArray.length === 0) {
-        for (let i = 0; i < 100; i++) {
-          let d = i.toString().padStart(2, '0');
-          let v = Math.pow(alpha, 1/temperature);
-          weightedArray.push([d, v]);
-        }
-      }
-      // Sort giảm dần
-      weightedArray.sort((a,b) => b[1] - a[1]);
-
-      // Tổng
-      let totalVal = weightedArray.reduce((s, x) => s + x[1], 0);
-
-      // Tính p theo tỉ lệ val/totalVal, cộng dồn đến nucleusP
-      let subList = [];
-      let sumSub = 0;
-      for (let [digits, val] of weightedArray) {
-        let p = val / totalVal;
-        subList.push([digits, p]);
-        sumSub += p;
-        if (sumSub >= nucleusP) break;
-      }
-      // Chuẩn hoá subList => dist
-      let dist = {};
-      for (let [digits, p] of subList) {
-        dist[digits] = p / sumSub;
-      }
-      return dist;
-    }
-
-    function randomFromNucleus(dist) {
-      let rand = Math.random();
-      let cumulative = 0;
-      for (let [digits, p] of Object.entries(dist)) {
-        cumulative += p;
-        if (rand < cumulative) {
-          return digits;
-        }
-      }
-      return Object.keys(dist)[0];
-    }
-
-    //=== 4) Top-K Sampling ===
-    function createTopKDistribution(freqMap, alpha, temperature, topK) {
-      // Tương tự Weighted, nhưng ta sort & lấy K phần tử
-      let weightedArray = [];
-      for (let [digits, count] of Object.entries(freqMap)) {
-        let val = count + alpha;
-        val = Math.pow(val, 1 / temperature);
-        weightedArray.push([digits, val]);
-      }
-      if (weightedArray.length === 0) {
-        for (let i = 0; i < 100; i++) {
-          let d = i.toString().padStart(2, '0');
-          let v = Math.pow(alpha, 1/temperature);
-          weightedArray.push([d, v]);
-        }
-      }
-      // Sort giảm dần
-      weightedArray.sort((a,b) => b[1] - a[1]);
-
-      // Lấy top K
-      let subList = weightedArray.slice(0, topK);
-
-      // Tính tổng
-      let sumVal = subList.reduce((s, x) => s + x[1], 0);
-
-      // Tạo dist
-      let dist = {};
-      subList.forEach(([digits, val]) => {
-        dist[digits] = val / sumVal;
-      });
-      return dist;
-    }
-
-    function randomFromTopK(dist) {
-      // Giống randomFromDist
-      let rand = Math.random();
-      let cumulative = 0;
-      for (let [digits, p] of Object.entries(dist)) {
-        cumulative += p;
-        if (rand < cumulative) {
-          return digits;
-        }
-      }
-      return Object.keys(dist)[0];
-    }
-
-    //=== 5) Mô phỏng n lần từ 1 trong 3 phương pháp ===
-    function runSimulation(n, dist, method) {
+    //=== 6) Mô phỏng n lần từ phân phối theo phương pháp chọn ===
+    function runSimulation(n, dist) {
       let simFreqMap = {};
       for (let i = 0; i < n; i++) {
-        let digits;
-        if (method === 'weighted') {
-          digits = randomFromDist(dist);
-        } else if (method === 'nucleus') {
-          digits = randomFromNucleus(dist);
-        } else {
-          // topk
-          digits = randomFromTopK(dist);
-        }
+        let digits = randomFromDist(dist);
+        if (digits === '') continue;
         if (!simFreqMap[digits]) simFreqMap[digits] = 0;
         simFreqMap[digits]++;
       }
       return simFreqMap;
     }
 
-    //=== 6) HÀM CHÍNH: analyze() ===
+    //=== 7) Hàm chính: analyze() ===
     function analyze() {
       // Lấy tham số
       const alpha = parseFloat(document.getElementById('alpha').value) || 0;
@@ -418,30 +378,30 @@
       const method = document.getElementById('methodSelect').value; 
       const nucleusP = parseFloat(document.getElementById('nucleusP').value) || 0.9;
       const topK = parseInt(document.getElementById('topK').value) || 5;
+      const simulationCount = parseInt(document.getElementById('simCount').value) || 10000;
 
-      // Thu thập dữ liệu
+      // Thu thập dữ liệu từ các ô input
       const inputs = document.querySelectorAll('table input[type="text"]');
       let allDigitsArr = [];
       let userValues = [];
-
       inputs.forEach(input => {
         let val = input.value.trim();
         let gi = input.getAttribute('data-gi');
         userValues.push(val);
-        if (val !== '' && !isNaN(val)) {
+        if (val !== '' && /^\d+$/.test(val)) {
           let lastX = getLastDigits(val, gi);
-          allDigitsArr.push(lastX);
+          if(lastX) allDigitsArr.push(lastX);
         }
       });
 
-      // freqMap
+      // Tạo tần suất xuất hiện
       let freqMap = {};
       allDigitsArr.forEach(d => {
         if (!freqMap[d]) freqMap[d] = 0;
         freqMap[d]++;
       });
 
-      // Tạo distribution
+      // Tạo phân phối dựa trên phương pháp đã chọn
       let dist;
       if (method === 'weighted') {
         dist = createWeightedDistribution(freqMap, alpha, temperature);
@@ -451,14 +411,11 @@
         dist = createTopKDistribution(freqMap, alpha, temperature, topK);
       }
 
-      // Mô phỏng 10.000 lần
-      let simulationCount = 10000;
-      let simFreqMap = runSimulation(simulationCount, dist, method);
+      // Mô phỏng
+      let simFreqMap = runSimulation(simulationCount, dist);
+      let sortedSim = Object.entries(simFreqMap).sort((a, b) => b[1] - a[1]);
 
-      // Sắp xếp
-      let sortedSim = Object.entries(simFreqMap).sort((a,b) => b[1] - a[1]);
-
-      // Top 5
+      // Tạo bảng top 5 kết quả mô phỏng
       let top5HTML = '';
       sortedSim.slice(0,5).forEach(([digits, count], idx) => {
         top5HTML += `
@@ -466,33 +423,18 @@
             <td>${idx+1}</td>
             <td><strong>${digits}</strong></td>
             <td>${count}</td>
-            <td>${((count / simulationCount)*100).toFixed(2)}%</td>
+            <td>${((count / simulationCount) * 100).toFixed(2)}%</td>
           </tr>
         `;
       });
+      let compareMsg = `Trong top 5 mô phỏng, có <strong>${sortedSim.slice(0,5).filter(([d]) => allDigitsArr.includes(d)).length}</strong> kết quả trùng với dữ liệu bạn nhập.`;
 
-      // So sánh với dữ liệu người dùng
-      let userSet = new Set(allDigitsArr);
-      let matchCount = 0;
-      sortedSim.slice(0,5).forEach(([digits]) => {
-        if (userSet.has(digits)) {
-          matchCount++;
-        }
-      });
-      let compareMsg = `Trong top 5 mô phỏng, có <strong>${matchCount}</strong> kết quả trùng với dữ liệu bạn nhập.`;
-
-      // Dự đoán cuối cùng cho từng ô
+      // Dự đoán cho từng ô dựa trên phân phối
       let predictions = userValues.map(val => {
-        if (method === 'weighted') {
-          return randomFromDist(dist);
-        } else if (method === 'nucleus') {
-          return randomFromNucleus(dist);
-        } else {
-          return randomFromTopK(dist);
-        }
+        if(val.trim() === '') return '<em>Trống</em>';
+        return randomFromDist(dist);
       });
 
-      // Tạo bảng hiển thị dự đoán
       let predictTableHTML = `
         <table class="predict-table">
           <tr>
@@ -512,13 +454,33 @@
       });
       predictTableHTML += `</table>`;
 
-      // Kết quả HTML
+      // Hiển thị bảng toàn bộ phân bố (sắp xếp theo xác suất giảm dần)
+      let fullDistributionHTML = `
+        <table class="predict-table">
+          <tr>
+            <th>Hạng</th>
+            <th>Chuỗi số</th>
+            <th>Xác suất</th>
+          </tr>
+      `;
+      sortedSim.forEach(([digits, count], idx) => {
+        fullDistributionHTML += `
+          <tr>
+            <td>${idx+1}</td>
+            <td>${digits}</td>
+            <td>${((count / simulationCount) * 100).toFixed(2)}%</td>
+          </tr>
+        `;
+      });
+      fullDistributionHTML += `</table>`;
+
+      // Tổng hợp HTML kết quả
       let resultHTML = `
         <p><strong>Mô phỏng ${simulationCount} lần (${method}):</strong></p>
         <table class="predict-table">
           <tr>
             <th>Hạng</th>
-            <th>Chuỗi</th>
+            <th>Chuỗi số</th>
             <th>Số lần</th>
             <th>Tỷ lệ</th>
           </tr>
@@ -528,8 +490,8 @@
         <h3>Dự đoán cho từng ô:</h3>
         ${predictTableHTML}
       `;
-
       document.getElementById('resultContent').innerHTML = resultHTML;
+      document.getElementById('fullDistribution').innerHTML = fullDistributionHTML;
       document.getElementById('resultArea').style.display = 'block';
     }
   </script>
