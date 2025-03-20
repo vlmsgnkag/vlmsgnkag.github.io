@@ -2,330 +2,467 @@
 <html lang="vi">
 <head>
   <meta charset="UTF-8">
-  <title>Phân tích MD5 - Siêu Nâng Cao (Cập nhật)</title>
+  <title>Phân tích MD5</title>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
   <style>
-    /* Reset và font */
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
       font-family: 'Poppins', sans-serif;
       background: linear-gradient(135deg, #667eea, #764ba2);
       min-height: 100vh;
-      display: flex;
-      justify-content: center;
-      align-items: center;
+      display: flex; 
+      justify-content: center; 
+      align-items: center; 
       padding: 20px;
     }
-    /* Container chính */
     .container {
-      background: rgba(255, 255, 255, 0.97);
+      background: rgba(255,255,255,0.97);
       padding: 40px 30px;
       border-radius: 15px;
       box-shadow: 0 8px 20px rgba(0,0,0,0.2);
-      width: 400px;
+      width: 700px;
       text-align: center;
       animation: fadeIn 1s ease;
     }
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(-20px); }
-      to { opacity: 1; transform: translateY(0); }
+    @keyframes fadeIn { 
+      from { opacity: 0; transform: translateY(-20px); } 
+      to { opacity: 1; transform: translateY(0); } 
     }
-    h1 {
-      font-size: 24px;
-      color: #333;
-      margin-bottom: 15px;
-    }
-    p.description {
-      font-size: 14px;
-      color: #555;
-      margin-bottom: 25px;
-    }
-    input[type="text"] {
-      width: 100%;
-      padding: 12px 15px;
-      font-size: 16px;
-      border: 2px solid #ddd;
+    h1 { font-size: 26px; color: #333; margin-bottom: 15px; }
+    p { font-size: 16px; color: #555; margin-bottom: 25px; }
+    input {
+      width: 100%; 
+      padding: 12px; 
+      font-size: 16px; 
+      border: 2px solid #ddd; 
       border-radius: 8px;
-      transition: border 0.3s, box-shadow 0.3s;
+      transition: border 0.3s, box-shadow 0.3s; 
       outline: none;
     }
-    input[type="text"]:focus {
-      border-color: #667eea;
-      box-shadow: 0 0 8px rgba(102,126,234,0.6);
+    input:focus { 
+      border-color: #667eea; 
+      box-shadow: 0 0 8px rgba(102,126,234,0.6); 
     }
     button {
-      margin-top: 20px;
-      background: #667eea;
-      color: #fff;
-      border: none;
-      padding: 12px 20px;
-      font-size: 16px;
-      border-radius: 8px;
+      margin-top: 20px; 
+      background: #667eea; 
+      color: #fff; 
+      border: none; 
+      padding: 12px;
+      font-size: 16px; 
+      border-radius: 8px; 
       cursor: pointer;
-      transition: background 0.3s, transform 0.2s;
+      transition: background 0.3s, transform 0.2s; 
       width: 100%;
     }
-    button:hover {
-      background: #5a67d8;
-      transform: scale(1.02);
-    }
-    button:active {
-      transform: scale(0.98);
-    }
+    button:hover { background: #5a67d8; transform: scale(1.02); }
+    button:active { transform: scale(0.98); }
     .result {
-      margin-top: 25px;
-      font-size: 20px;
-      font-weight: 600;
-      padding: 12px;
+      margin-top: 25px; 
+      font-size: 20px; 
+      font-weight: 600; 
+      padding: 12px; 
       border-radius: 8px;
       background: #f1f1f1;
-      transition: background 0.3s, color 0.3s;
+      transition: background 0.3s, color 0.3s; 
       color: #444;
-      min-height: 40px;
+      min-height: 40px; 
+      white-space: pre-line;
     }
   </style>
 </head>
 <body>
   <div class="container">
-    <h1>Phân tích MD5</h1>
-    <p class="description">Nhập mã MD5 (32 ký tự) hoặc dạng kết quả (bắt đầu bằng "#")</p>
-    <input type="text" id="md5Input" placeholder="Nhập mã MD5 hoặc kết quả" />
+    <h1>Phân tích MD5 Nâng Cao</h1>
+    <p>Nhập mã MD5 (32 ký tự)</p>
+    <input type="text" id="md5Input" placeholder="Nhập mã MD5" />
     <button id="analyzeBtn">Phân tích ngay</button>
     <div class="result" id="result"></div>
   </div>
-
+  
   <script>
-    // Hàm kiểm tra số nguyên tố (với vị trí 1-indexed)
+    // --- Các hàm hỗ trợ chung ---
     function isPrime(num) {
-      if (num < 2) return false;
-      for (let i = 2; i <= Math.sqrt(num); i++) {
-        if (num % i === 0) return false;
+      if(num < 2) return false;
+      for(let i = 2; i <= Math.sqrt(num); i++){
+        if(num % i === 0) return false;
       }
       return true;
     }
-
-    // Hàm phân tích MD5 với 28 yếu tố (yếu tố 1–24 đã có + 25–28 mới)
+    
+    function hexToBin(hexChar) {
+      return parseInt(hexChar, 16).toString(2).padStart(4, '0');
+    }
+    
+    function dynamicWeight(stdValue, baseWeight = 1.0) {
+      if(stdValue < 1) return baseWeight * 1.5;
+      else if(stdValue > 3) return baseWeight * 0.75;
+      else return baseWeight;
+    }
+    
+    function findRepeatedBitPatterns(binStr, minLen = 4, maxLen = 6) {
+      let patternFreq = {};
+      for(let len = minLen; len <= maxLen; len++){
+        for(let i = 0; i <= binStr.length - len; i++){
+          let pattern = binStr.substr(i, len);
+          patternFreq[pattern] = (patternFreq[pattern] || 0) + 1;
+        }
+      }
+      let maxPattern = "", maxCount = 0;
+      for(let pat in patternFreq) {
+        if(patternFreq[pat] > maxCount) {
+          maxCount = patternFreq[pat];
+          maxPattern = pat;
+        }
+      }
+      return { pattern: maxPattern, count: maxCount, patternFreq };
+    }
+    
+    function bitEntropy(bitArr) {
+      let count0 = bitArr.filter(b => b === 0).length;
+      let count1 = bitArr.filter(b => b === 1).length;
+      let total = bitArr.length;
+      let p0 = count0 / total, p1 = count1 / total;
+      let ent = 0;
+      if(p0 > 0) ent -= p0 * Math.log2(p0);
+      if(p1 > 0) ent -= p1 * Math.log2(p1);
+      return ent;
+    }
+    
+    // --- Các mô hình học máy giả lập ---
+    function logisticRegressionPrediction(features) {
+      let coef = { entropy: -0.8, std: 0.5, skewness: 0.3, kurtosis: 0.2, intercept: 0.0 };
+      let z = coef.intercept +
+              coef.entropy * features.entropy +
+              coef.std * features.std +
+              coef.skewness * features.skewness +
+              coef.kurtosis * features.kurtosis;
+      let prob = 1 / (1 + Math.exp(-z));
+      return prob;
+    }
+    
+    function svmPrediction(features) {
+      let score = 0.3 * features.entropy + 0.2 * features.std - 0.1 * features.skewness;
+      return score > 1.5 ? "Tài" : "Xỉu";
+    }
+    
+    function nnPrediction(features) {
+      let hidden = Math.tanh(0.4 * features.entropy + 0.3 * features.std);
+      let output = 1 / (1 + Math.exp(-hidden));
+      return output > 0.5 ? "Tài" : "Xỉu";
+    }
+    
+    function decisionTreePrediction(features) {
+      // Giả lập Decision Tree: nếu entropy thấp và std thấp thì "Xỉu", ngược lại "Tài"
+      return (features.entropy < 3.5 && features.std < 4) ? "Xỉu" : "Tài";
+    }
+    
+    function randomForestPrediction(features) {
+      // Giả lập Random Forest bằng cách tổng hợp 3 decision tree đơn giản
+      let tree1 = decisionTreePrediction(features);
+      let tree2 = (features.skewness < 0.2) ? "Xỉu" : "Tài";
+      let tree3 = (features.kurtosis < -1) ? "Xỉu" : "Tài";
+      let votes = [tree1, tree2, tree3];
+      let countTai = votes.filter(v => v === "Tài").length;
+      return countTai >= 2 ? "Tài" : "Xỉu";
+    }
+    
+    function geneticOptimizeWeights(features) {
+      return { optimizedWeight: 1.2 };
+    }
+    
+    function bayesianUpdate(prior, likelihood) {
+      let unnorm = prior * likelihood;
+      let normFactor = unnorm + (1 - prior) * (1 - likelihood);
+      return unnorm / normFactor;
+    }
+    
+    function chiSquaredTest(observed, expected) {
+      let chi2 = 0;
+      for(let i = 0; i < observed.length; i++){
+        chi2 += Math.pow(observed[i] - expected[i], 2) / (expected[i] || 1);
+      }
+      return chi2;
+    }
+    
+    // --- Hàm phân tích MD5 tổng hợp ---
     function analyzeMD5UltraAdvanced(inputStr) {
       let sessionCount = null;
-      if (inputStr.startsWith("#")) {
+      if(inputStr.startsWith("#")){
         let match = inputStr.match(/^#(\d+)_/);
-        if (match) {
-          sessionCount = parseInt(match[1], 10);
-        }
+        if(match) sessionCount = parseInt(match[1], 10);
         inputStr = inputStr.replace(/[^0-9a-fA-F]/g, "");
       }
-      
-      const md5Str = inputStr;
+      const md5Str = inputStr.toLowerCase();
       const n = md5Str.length;
-      if (n === 0) return "Không đủ dữ liệu để phân tích";
-      
+      if(n !== 32) return "❌ Lỗi: Mã MD5 không hợp lệ";
+    
+      // --- Phân tích thống kê cơ bản ---
       let evenCount = 0, oddCount = 0, weightedSum = 0, totalWeight = 0;
       let primeIndexSum = 0, compositeIndexSum = 0;
       let allValues = [];
       let firstHalfSum = 0, secondHalfSum = 0;
       let countHigh = 0, countLow = 0;
-      // Yếu tố 14 & 17
       let digitCount = 0, alphaCount = 0, sumDigitsOnly = 0;
-      // Yếu tố 15
       let sumSquares = 0;
-      // Yếu tố 18
       let totalOnes = 0;
-      // Yếu tố 20
       let oddIndicesSum = 0, evenIndicesSum = 0;
-      
-      // Các yếu tố mới:
-      // Yếu tố 21: Tổng mã ASCII của từng ký tự
-      let asciiSum = 0;
-      // Yếu tố 22: Đếm số ký tự nguyên âm (a và e)
-      let vowelCount = 0;
-      // Yếu tố 23: Đếm số ký tự 'f' (không phân biệt hoa thường)
-      let countF = 0;
-      // Yếu tố 24: Tổng các giá trị của những ký tự có giá trị là số nguyên tố (2,3,5,7,11,13)
-      let sumPrimeDigits = 0;
-      
-      for (let i = 0; i < n; i++) {
+    
+      // --- Các yếu tố bổ sung ---
+      let asciiSum = 0, vowelCount = 0, countF = 0, sumPrimeDigits = 0;
+    
+      // --- Phân tích chuỗi & tần suất ---
+      let fullBinaryStr = "";
+      let frequency = { '0':0, '1':0, '2':0, '3':0, '4':0, '5':0, '6':0, '7':0,
+                        '8':0, '9':0, 'a':0, 'b':0, 'c':0, 'd':0, 'e':0, 'f':0 };
+      let substringFreq = {};
+    
+      for(let i = 0; i < n; i++){
         let char = md5Str.charAt(i);
+        if(frequency.hasOwnProperty(char)) frequency[char]++;
         let value = parseInt(char, 16);
         allValues.push(value);
-        
-        if (value % 2 === 0) {
-          evenCount++;
-        } else {
-          oddCount++;
-        }
-        weightedSum += value * (i + 1);
-        totalWeight += (i + 1);
-        
-        if (isPrime(i + 1)) {
-          primeIndexSum += value;
-        } else {
-          compositeIndexSum += value;
-        }
-        
-        if (i < Math.floor(n / 2)) {
-          firstHalfSum += value;
-        } else {
-          secondHalfSum += value;
-        }
-        
-        if (value >= 8) {
-          countHigh++;
-        } else {
-          countLow++;
-        }
-        
-        if (/[0-9]/.test(char)) {
-          digitCount++;
-          sumDigitsOnly += parseInt(char, 10);
-        } else {
-          alphaCount++;
-        }
-        
-        sumSquares += Math.pow(value, 2);
-        
+        fullBinaryStr += hexToBin(char);
+        if(value % 2 === 0) evenCount++; else oddCount++;
+        weightedSum += value * (i+1);
+        totalWeight += (i+1);
+        if(isPrime(i+1)) primeIndexSum += value; else compositeIndexSum += value;
+        if(i < Math.floor(n/2)) firstHalfSum += value; else secondHalfSum += value;
+        if(value >= 8) countHigh++; else countLow++;
+        if(/[0-9]/.test(char)) { digitCount++; sumDigitsOnly += parseInt(char,10); }
+        else { alphaCount++; }
+        sumSquares += Math.pow(value,2);
         let binStr = value.toString(2);
-        for (let ch of binStr) {
-          if (ch === '1') totalOnes++;
-        }
-        
-        if ((i + 1) % 2 === 1) {
-          oddIndicesSum += value;
-        } else {
-          evenIndicesSum += value;
-        }
-        
-        // Yếu tố 21: Tổng mã ASCII
+        for(let b of binStr) { if(b==='1') totalOnes++; }
+        if((i+1) % 2 === 1) oddIndicesSum += value; else evenIndicesSum += value;
         asciiSum += char.charCodeAt(0);
-        // Yếu tố 22: Đếm ký tự nguyên âm (a, e)
-        if (char.toLowerCase() === "a" || char.toLowerCase() === "e") {
-          vowelCount++;
-        }
-        // Yếu tố 23: Đếm ký tự 'f'
-        if (char.toLowerCase() === "f") {
-          countF++;
-        }
-        // Yếu tố 24: Tổng các giá trị của ký tự nếu thuộc tập [2,3,5,7,11,13]
-        if ([2, 3, 5, 7, 11, 13].includes(value)) {
-          sumPrimeDigits += value;
+        if(char==="a" || char==="e") vowelCount++;
+        if(char==="f") countF++;
+        if([2,3,5,7,11,13].includes(value)) sumPrimeDigits += value;
+    
+        for(let len = 3; len <= 6; len++){
+          if(i+len <= n){
+            let sub = md5Str.substring(i, i+len);
+            substringFreq[sub] = (substringFreq[sub] || 0) + 1;
+          }
         }
       }
-      
+    
       let avg = weightedSum / totalWeight;
-      
-      // Các yếu tố cũ (1–20)
-      let vote1 = (evenCount >= oddCount + 4) ? "Tài" : (oddCount >= evenCount + 4 ? "Xỉu" : null);
-      let vote2 = (weightedSum % 2 === 0) ? "Tài" : "Xỉu";
-      let vote3 = (avg > 7.5) ? "Tài" : "Xỉu";
-      let vote4 = (primeIndexSum % 2 === 0) ? "Tài" : "Xỉu";
-      let vote5 = (compositeIndexSum % 2 === 0) ? "Tài" : "Xỉu";
       let mean = allValues.reduce((sum, val) => sum + val, 0) / n;
       let variance = allValues.reduce((sum, val) => sum + Math.pow(val - mean, 2), 0) / n;
-      let vote6 = (variance > 12) ? "Tài" : "Xỉu";
-      let vote7 = (firstHalfSum % 2 === 0) ? "Tài" : "Xỉu";
-      let vote8 = (secondHalfSum % 2 === 0) ? "Tài" : "Xỉu";
-      let vote9 = (countHigh > countLow) ? "Tài" : "Xỉu";
-      let vote10 = null;
-      if (sessionCount !== null) {
-        vote10 = (sessionCount % 2 === 0) ? "Tài" : "Xỉu";
-      }
-      let xorResult = 0;
-      for (let val of allValues) {
-        xorResult ^= val;
-      }
-      let vote11 = (xorResult % 2 === 0) ? "Tài" : "Xỉu";
-      let sortedValues = [...allValues].sort((a, b) => a - b);
-      let median = (n % 2 === 0) ? (sortedValues[n/2 - 1] + sortedValues[n/2]) / 2 : sortedValues[Math.floor(n/2)];
-      let vote12 = (median > 7.5) ? "Tài" : "Xỉu";
-      let maxVal = Math.max(...allValues);
-      let minVal = Math.min(...allValues);
-      let range = maxVal - minVal;
-      let vote13 = (range >= 8) ? "Tài" : "Xỉu";
-      let vote14 = (digitCount >= alphaCount) ? "Tài" : "Xỉu";
-      let vote15 = (sumSquares % 2 === 0) ? "Tài" : "Xỉu";
+      let std = Math.sqrt(variance);
       let mad = allValues.reduce((sum, val) => sum + Math.abs(val - mean), 0) / n;
-      let vote16 = (mad > 4) ? "Tài" : "Xỉu";
-      let vote17 = (sumDigitsOnly % 2 === 0) ? "Tài" : "Xỉu";
-      let vote18 = (totalOnes % 2 === 0) ? "Tài" : "Xỉu";
-      let diffSum = 0;
-      for (let i = 0; i < allValues.length - 1; i++) {
-        diffSum += Math.abs(allValues[i+1] - allValues[i]);
-      }
-      let vote19 = (diffSum % 2 === 0) ? "Tài" : "Xỉu";
-      let vote20 = (((oddIndicesSum - evenIndicesSum) % 2) === 0) ? "Tài" : "Xỉu";
-      
-      // Các yếu tố mới (21–24)
-      let vote21 = (asciiSum % 2 === 0) ? "Tài" : "Xỉu";
-      let vote22 = (vowelCount % 2 === 0) ? "Tài" : "Xỉu";
-      let vote23 = (countF % 2 === 0) ? "Tài" : "Xỉu";
-      let vote24 = (sumPrimeDigits % 2 === 0) ? "Tài" : "Xỉu";
-      
-      // Các yếu tố thống kê mới (25–28)
-      // Yếu tố 25: Shannon Entropy
-      let freq = {};
-      for (let i = 0; i < allValues.length; i++) {
-        let v = allValues[i];
-        freq[v] = (freq[v] || 0) + 1;
+    
+      let freqForEntropy = {};
+      for(let v of allValues){
+        freqForEntropy[v] = (freqForEntropy[v] || 0) + 1;
       }
       let entropy = 0;
-      for (let key in freq) {
-        let p = freq[key] / n;
+      for(let key in freqForEntropy){
+        let p = freqForEntropy[key] / n;
         entropy -= p * Math.log2(p);
       }
-      let vote25 = (entropy > 3.7) ? "Tài" : "Xỉu";
-      
-      // Chuẩn bị các giá trị cần cho skewness, kurtosis và std
-      let std = Math.sqrt(variance);
+    
       let skewness = allValues.reduce((sum, val) => sum + Math.pow(val - mean, 3), 0) / n / Math.pow(std, 3);
-      let vote26 = (skewness >= 0) ? "Tài" : "Xỉu";
-      
       let kurtosis = allValues.reduce((sum, val) => sum + Math.pow(val - mean, 4), 0) / n / Math.pow(variance, 2) - 3;
-      let vote27 = (kurtosis >= 0) ? "Tài" : "Xỉu";
-      
-      let vote28 = (std >= 4.5) ? "Tài" : "Xỉu";
-      
-      // Tổng hợp tất cả các phiếu
-      let votes = [vote1, vote2, vote3, vote4, vote5, vote6, vote7, vote8, vote9,
-                   vote11, vote12, vote13, vote14, vote15, vote16, vote17, vote18, vote19, vote20,
-                   vote21, vote22, vote23, vote24,
-                   vote25, vote26, vote27, vote28];
-      if (vote10 !== null) votes.push(vote10);
-      
-      // Tính số phiếu "Tài" và "Xỉu" (ở đây bạn có thể tự điều chỉnh cách kết hợp các phiếu)
-      let taiVotes = votes.filter(v => v === "Tài").length;
-      let xiuVotes = votes.filter(v => v === "Xỉu").length;
-      let resultPrediction = (taiVotes === xiuVotes) ? vote2 : (taiVotes > xiuVotes ? "Tài" : "Xỉu");
-      
+    
+      let maxSub = "", maxSubCount = 0;
+      for(let sub in substringFreq){
+        if(substringFreq[sub] > maxSubCount){
+          maxSub = sub;
+          maxSubCount = substringFreq[sub];
+        }
+      }
+      let voteSub = (maxSubCount >= 3) ? "Tài" : "Xỉu";
+    
+      let corr = (firstHalfSum - secondHalfSum) / (firstHalfSum + secondHalfSum);
+      let voteCorr = (corr > 0.1) ? "Tài" : "Xỉu";
+    
+      let freqValues = Object.values(frequency);
+      let totalFreq = freqValues.reduce((a, b) => a + b, 0);
+      let avgFreq = totalFreq / 16;
+      let varianceFreq = freqValues.reduce((sum, f) => sum + Math.pow(f - avgFreq, 2), 0) / 16;
+      let stdFreq = Math.sqrt(varianceFreq);
+      let voteFreq = (stdFreq < 2) ? "Tài" : "Xỉu";
+    
+      // --- Phân tích Bitwise ---
+      let bitColumns = [[], [], [], []];
+      for(let i = 0; i < n; i++){
+        let bin = hexToBin(md5Str.charAt(i));
+        for(let j = 0; j < 4; j++){
+          bitColumns[j].push(parseInt(bin[j]));
+        }
+      }
+      let xorCols = [], andCols = [], orCols = [];
+      let verticalEntropy = [];
+      let verticalPatternAnalysis = [];
+      for(let j = 0; j < 4; j++){
+        let col = bitColumns[j];
+        let maxSeq = 0, currSeq = 0;
+        for(let bit of col){
+          if(bit === 1){ currSeq++; if(currSeq > maxSeq) maxSeq = currSeq; }
+          else { currSeq = 0; }
+        }
+        let entCol = bitEntropy(col);
+        verticalEntropy.push(entCol);
+        let colStr = col.join("");
+        let patternResult = findRepeatedBitPatterns(colStr, 2, 4);
+        verticalPatternAnalysis.push(patternResult);
+        let xorVal = 0, andVal = 1, orVal = 0;
+        for(let bit of col){
+          xorVal ^= bit;
+          andVal &= bit;
+          orVal |= bit;
+        }
+        xorCols.push(xorVal);
+        andCols.push(andVal);
+        orCols.push(orVal);
+      }
+      let avgOnes = xorCols.reduce((a, b) => a + b, 0) / 4;
+      let avgMaxSeq = verticalPatternAnalysis.reduce((sum, obj) => sum + obj.maxSeq, 0) / 4;
+      let voteBitwise = (avgOnes > 2 && avgMaxSeq > 2) ? "Tài" : "Xỉu";
+    
+      // --- Các vote cơ bản ---
+      let v1 = (evenCount >= oddCount + 4) ? "Tài" : "Xỉu";
+      let v2 = (weightedSum % 2 === 0) ? "Tài" : "Xỉu";
+      let v3 = (avg > 7.5) ? "Tài" : "Xỉu";
+      let v4 = (primeIndexSum % 2 === 0) ? "Tài" : "Xỉu";
+      let v5 = (compositeIndexSum % 2 === 0) ? "Tài" : "Xỉu";
+      let v6 = (variance > 12) ? "Tài" : "Xỉu";
+      let v7 = (firstHalfSum % 2 === 0) ? "Tài" : "Xỉu";
+      let v8 = (secondHalfSum % 2 === 0) ? "Tài" : "Xỉu";
+      let v9 = (countHigh > countLow) ? "Tài" : "Xỉu";
+      let v11 = ((allValues.reduce((a, b) => a ^ b, 0)) % 2 === 0) ? "Tài" : "Xỉu";
+      let sortedVals = [...allValues].sort((a, b) => a - b);
+      let med = (n % 2 === 0) ? (sortedVals[n/2 - 1] + sortedVals[n/2]) / 2 : sortedVals[Math.floor(n/2)];
+      let v12 = (med > 7.5) ? "Tài" : "Xỉu";
+      let v13 = ((Math.max(...allValues) - Math.min(...allValues)) >= 8) ? "Tài" : "Xỉu";
+      let v14 = (digitCount >= alphaCount) ? "Tài" : "Xỉu";
+      let v15 = (sumSquares % 2 === 0) ? "Tài" : "Xỉu";
+      let v16 = (mad > 4) ? "Tài" : "Xỉu";
+      let v17 = (sumDigitsOnly % 2 === 0) ? "Tài" : "Xỉu";
+      let v18 = (totalOnes % 2 === 0) ? "Tài" : "Xỉu";
+      let diffSum = 0;
+      for(let i = 0; i < allValues.length - 1; i++){
+        diffSum += Math.abs(allValues[i+1] - allValues[i]);
+      }
+      let v19 = (diffSum % 2 === 0) ? "Tài" : "Xỉu";
+      let v20 = (((oddIndicesSum - evenIndicesSum) % 2) === 0) ? "Tài" : "Xỉu";
+      let v21 = (asciiSum % 2 === 0) ? "Tài" : "Xỉu";
+      let v22 = (vowelCount % 2 === 0) ? "Tài" : "Xỉu";
+      let v23 = (countF % 2 === 0) ? "Tài" : "Xỉu";
+      let v24 = (sumPrimeDigits % 2 === 0) ? "Tài" : "Xỉu";
+      let v25 = (entropy > 3.7) ? "Tài" : "Xỉu";
+      let v26 = (skewness >= 0) ? "Tài" : "Xỉu";
+      let v27 = (kurtosis >= 0) ? "Tài" : "Xỉu";
+      let v28 = (std >= 4.5) ? "Tài" : "Xỉu";
+      let v29 = voteFreq;
+      let bitwiseXOR = parseInt(xorCols.join(''), 2);
+      let bitwiseAND = parseInt(andCols.join(''), 2);
+      let bitwiseOR = parseInt(orCols.join(''), 2);
+      let v30 = (bitwiseXOR % 2 === 0) ? "Tài" : "Xỉu";
+      let v31 = (bitwiseAND % 2 === 0) ? "Tài" : "Xỉu";
+      let v32 = (bitwiseOR % 2 === 0) ? "Tài" : "Xỉu";
+      let half = Math.floor(n / 2);
+      let firstHalfAvg = firstHalfSum / half;
+      let secondHalfAvg = secondHalfSum / (n - half);
+      let v33 = (firstHalfAvg > secondHalfAvg) ? "Tài" : "Xỉu";
+      let v34 = ((firstHalfSum - secondHalfSum) % 2 === 0) ? "Tài" : "Xỉu";
+    
+      // Các vote phụ (nếu có)
+      let v35 = voteSub || "Tài";
+      let v36 = voteCorr || "Tài";
+      let v37 = voteBitwise || "Tài";
+    
+      let voteList = [v1, v2, v3, v4, v5, v6, v7, v8, v9,
+                      v11, v12, v13, v14, v15, v16, v17, v18, v19, v20,
+                      v21, v22, v23, v24,
+                      v25, v26, v27, v28,
+                      v29, v30, v31, v32, v33, v34,
+                      v35, v36, v37];
+    
+      let weights = {};
+      for(let i = 1; i <= 34; i++){
+        weights["vote" + i] = 1;
+      }
+      weights.vote25 = dynamicWeight(std);
+      weights.vote26 = dynamicWeight(Math.abs(skewness));
+      weights.vote27 = dynamicWeight(Math.abs(kurtosis));
+      weights.vote28 = dynamicWeight(std);
+      weights.vote29 = dynamicWeight(stdFreq);
+      weights.vote35 = 1;
+      weights.vote36 = 1;
+      weights.vote37 = 1;
+    
+      let scoreTai = 0, scoreXiu = 0;
+      voteList.forEach((vote, index) => {
+        let key = "vote" + (index + 1);
+        let weight = weights[key] || 1;
+        if(vote === "Tài") scoreTai += weight;
+        else if(vote === "Xỉu") scoreXiu += weight;
+      });
+    
+      let ensemblePrediction = (scoreTai === scoreXiu) ? v2 : (scoreTai > scoreXiu ? "Tài" : "Xỉu");
+    
+      let featureSet = { entropy: entropy, std: std, skewness: skewness, kurtosis: kurtosis };
+      let lrProb = logisticRegressionPrediction(featureSet);
+      let lrPrediction = lrProb > 0.5 ? "Tài" : "Xỉu";
+      let svmPred = svmPrediction(featureSet);
+      let nnPred = nnPrediction(featureSet);
+      let dtPred = decisionTreePrediction(featureSet);
+      let rfPred = randomForestPrediction(featureSet);
+    
+      let likelihood = scoreTai / (scoreTai + scoreXiu);
+      let bayesianProb = bayesianUpdate(0.5, likelihood);
+      let bayesianPrediction = bayesianProb > 0.5 ? "Tài" : "Xỉu";
+      let expectedArr = Array(16).fill(avgFreq);
+      let chi2 = chiSquaredTest(Object.values(frequency), expectedArr);
+    
+      let optimizedWeights = geneticOptimizeWeights(featureSet);
+    
+      // Kết hợp dự đoán từ nhiều mô hình
+      let combinedScore = 0;
+      combinedScore += (ensemblePrediction === "Tài") ? 1 : 0;
+      combinedScore += (lrPrediction === "Tài") ? 1 : 0;
+      combinedScore += (svmPred === "Tài") ? 1 : 0;
+      combinedScore += (nnPred === "Tài") ? 1 : 0;
+      combinedScore += (dtPred === "Tài") ? 1 : 0;
+      combinedScore += (rfPred === "Tài") ? 1 : 0;
+      combinedScore += (bayesianPrediction === "Tài") ? 1 : 0;
+      let finalPrediction = combinedScore >= 4 ? "Tài" : "Xỉu";
+    
+      let currentTime = new Date().toLocaleString();
+    
       return (sessionCount !== null) ?
-             "Dự đoán: " + resultPrediction + " | Số phiên đang chơi: " + sessionCount :
-             "Dự đoán: " + resultPrediction;
+             "Dự đoán: " + finalPrediction + " | Phiên: " + sessionCount + "\nThời gian: " + currentTime :
+             "Dự đoán: " + finalPrediction + "\nThời gian: " + currentTime;
     }
-
-    document.getElementById('analyzeBtn').addEventListener('click', function() {
+    
+    // Sự kiện khi nhấn nút hoặc nhấn Enter
+    document.getElementById('analyzeBtn').addEventListener('click', function(){
       let inputStr = document.getElementById('md5Input').value.trim();
       const resultDiv = document.getElementById('result');
-      
-      if (inputStr === "") {
+      if(inputStr === ""){
         resultDiv.innerText = "Vui lòng nhập mã MD5 hoặc kết quả!";
         resultDiv.style.background = "#f8d7da";
         resultDiv.style.color = "#721c24";
         return;
       }
-      
-      if (!inputStr.startsWith("#") && !/^[a-fA-F0-9]{32}$/.test(inputStr)) {
-        resultDiv.innerText = "Định dạng mã không hợp lệ. Vui lòng nhập 32 ký tự hex hoặc dạng kết quả (bắt đầu bằng #).";
+      if(!inputStr.startsWith("#") && !/^[a-fA-F0-9]{32}$/.test(inputStr)){
+        resultDiv.innerText = "❌ Lỗi: Mã MD5 không hợp lệ!";
         resultDiv.style.background = "#f8d7da";
         resultDiv.style.color = "#721c24";
         return;
       }
-      
       const prediction = analyzeMD5UltraAdvanced(inputStr);
       resultDiv.innerText = prediction;
       resultDiv.style.background = "#d4edda";
       resultDiv.style.color = "#155724";
+    });
+    
+    document.getElementById('md5Input').addEventListener("keyup", function(event){
+      if(event.key === "Enter") document.getElementById("analyzeBtn").click();
     });
   </script>
 </body>
