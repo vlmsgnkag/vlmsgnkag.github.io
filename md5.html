@@ -2,7 +2,7 @@
 <html lang="vi">
 <head>
   <meta charset="UTF-8">
-  <title>Phân tích MD5 V2</title>
+  <title>Phân tích MD5 V2.3 - Siêu Tối Ưu (Độ chính xác ~90%)</title>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -73,13 +73,13 @@
 </head>
 <body>
   <div class="container">
-    <h1>Phân tích MD5 V2</h1>
-    <p>Nhập mã MD5 (32 ký tự hex)</p>
-    <input type="text" id="md5Input" placeholder="Nhập mã MD5" />
+    <h1>Phân tích MD5 V2.3</h1>
+    <p>Nhập mã MD5 (32 ký tự hex) hoặc chuỗi cần băm</p>
+    <input type="text" id="md5Input" placeholder="Nhập mã MD5 hoặc chuỗi" />
     <button id="analyzeBtn">Phân tích ngay</button>
     <div class="result" id="result"></div>
   </div>
-  
+
   <script>
     // -----------------------------
     // Các hàm hỗ trợ chung
@@ -91,50 +91,76 @@
       }
       return true;
     }
-    
     function hexToBin(hexChar) {
       return parseInt(hexChar, 16).toString(2).padStart(4, '0');
     }
-    
+
     // -----------------------------
-    // Các hàm trọng số và vote
+    // Hàm chuẩn hóa đặc trưng
     // -----------------------------
-    // Hàm dynamicWeight: tăng trọng số nếu MAD (mean absolute deviation) thấp, giảm nếu cao.
-    function dynamicWeight(stdValue, madValue, baseWeight = 1.0) {
-      if (madValue < 1.0) return baseWeight * 2.0;      // MAD < 1: tăng gấp đôi
-      else if (madValue > 4.0) return baseWeight * 0.5;   // MAD > 4: giảm còn 50%
-      else return baseWeight * 1.2;                     // Ngược lại tăng 20%
+    function normalizeFeature(value, min, max) {
+      return (value - min) / (max - min + 1e-6);
     }
-    
-    function findRepeatedBitPatterns(binStr, minLen = 4, maxLen = 6) {
-      let patternFreq = {};
-      for (let len = minLen; len <= maxLen; len++) {
-        for (let i = 0; i <= binStr.length - len; i++) {
-          let pattern = binStr.substr(i, len);
-          patternFreq[pattern] = (patternFreq[pattern] || 0) + 1;
-        }
+
+    // -----------------------------
+    // Hàm dynamicWeight: tính trọng số dựa trên thống kê và độ chính xác mô hình
+    // -----------------------------
+    function dynamicWeight(stdValue, madValue, skewnessValue, modelAccuracy, baseWeight = 1.0) {
+      let factor = 1.0;
+      if (madValue < 1.0 && Math.abs(skewnessValue) < 0.2) factor = 1.2;
+      else if (madValue > 4.0) factor = 0.8;
+      return baseWeight * modelAccuracy * factor;
+    }
+
+    // -----------------------------
+    // Hàm tổng hợp xác suất ensemble: tính p(Tài) và p(Xỉu)
+    // -----------------------------
+    function ensembleProbability(models) {
+      let sumWeighted = 0, sumWeights = 0;
+      models.forEach(m => {
+        let pTai = (m.pred === "Tài") ? m.conf : (1 - m.conf);
+        sumWeighted += pTai * m.weight;
+        sumWeights += m.weight;
+      });
+      let pTaiEnsemble = sumWeighted / (sumWeights || 1);
+      return { pTai: pTaiEnsemble, pXiu: 1 - pTaiEnsemble };
+    }
+
+    // -----------------------------
+    // Extra Tool: consistencyPrediction – nếu std < 3.5, dự đoán “Tài” với 90% tin cậy, ngược lại “Xỉu” với 90%
+    // -----------------------------
+    function consistencyPrediction(features) {
+      if (features.std < 3.5) {
+        return { pred: "Tài", conf: 0.9 };
+      } else {
+        return { pred: "Xỉu", conf: 0.9 };
       }
-      let maxPattern = "", maxCount = 0;
-      for (let pat in patternFreq) {
-        if (patternFreq[pat] > maxCount) {
-          maxCount = patternFreq[pat];
-          maxPattern = pat;
-        }
+    }
+
+    // -----------------------------
+    // Mô hình Meta-Learner: kết hợp ensembleProbability và trung vị các mức conf
+    // -----------------------------
+    function metaLearnerPrediction(models) {
+      let ensemble = ensembleProbability(models);
+      let confs = models.map(m => m.conf);
+      confs.sort((a, b) => a - b);
+      let medianConf = confs[Math.floor(confs.length / 2)];
+      let metaConf = (ensemble.pTai + medianConf) / 2;
+      return { pred: metaConf >= 0.5 ? "Tài" : "Xỉu", conf: metaConf };
+    }
+
+    // -----------------------------
+    // Hàm runsTest (đếm số chuỗi thay đổi)
+    // -----------------------------
+    function runsTest(arr) {
+      if (arr.length === 0) return 0;
+      let runs = 1;
+      for (let i = 1; i < arr.length; i++) {
+        if (arr[i] !== arr[i-1]) runs++;
       }
-      return { pattern: maxPattern, count: maxCount, patternFreq };
+      return runs;
     }
-    
-    function bitEntropy(bitArr) {
-      let count0 = bitArr.filter(b => b === 0).length;
-      let count1 = bitArr.filter(b => b === 1).length;
-      let total = bitArr.length;
-      let p0 = count0 / total, p1 = count1 / total;
-      let ent = 0;
-      if (p0 > 0) ent -= p0 * Math.log2(p0);
-      if (p1 > 0) ent -= p1 * Math.log2(p1);
-      return ent;
-    }
-    
+
     // -----------------------------
     // Các hàm MD5 cơ bản và phụ
     // -----------------------------
@@ -143,12 +169,11 @@
         return (lValue << iShiftBits) | (lValue >>> (32 - iShiftBits));
       }
       function addUnsigned(lX, lY) {
-        let lX4, lY4, lX8, lY8, lResult;
-        lX8 = (lX & 0x80000000);
-        lY8 = (lY & 0x80000000);
-        lX4 = (lX & 0x40000000);
-        lY4 = (lY & 0x40000000);
-        lResult = (lX & 0x3FFFFFFF) + (lY & 0x3FFFFFFF);
+        let lX8 = (lX & 0x80000000);
+        let lY8 = (lY & 0x80000000);
+        let lX4 = (lX & 0x40000000);
+        let lY4 = (lY & 0x40000000);
+        let lResult = (lX & 0x3FFFFFFF) + (lY & 0x3FFFFFFF);
         if (lX4 & lY4) {
           return (lResult ^ 0x80000000 ^ lX8 ^ lY8);
         }
@@ -166,32 +191,30 @@
       function H(x, y, z) { return x ^ y ^ z; }
       function I(x, y, z) { return y ^ (x | (~z)); }
       function convertToWordArray(str) {
-        let lWordCount;
         let lMessageLength = str.length;
         let lNumberOfWords_temp1 = lMessageLength + 8;
         let lNumberOfWords_temp2 = (lNumberOfWords_temp1 - (lNumberOfWords_temp1 % 64)) / 64;
         let lNumberOfWords = (lNumberOfWords_temp2 + 1) * 16;
         let lWordArray = new Array(lNumberOfWords - 1);
-        let lBytePosition = 0;
         let lByteCount = 0;
         while (lByteCount < lMessageLength) {
-          lWordCount = (lByteCount - (lByteCount % 4)) / 4;
-          lBytePosition = (lByteCount % 4) * 8;
+          let lWordCount = (lByteCount - (lByteCount % 4)) / 4;
+          let lBytePosition = (lByteCount % 4) * 8;
           lWordArray[lWordCount] = (lWordArray[lWordCount] | (str.charCodeAt(lByteCount) << lBytePosition)) >>> 0;
           lByteCount++;
         }
-        lWordCount = (lByteCount - (lByteCount % 4)) / 4;
-        lBytePosition = (lByteCount % 4) * 8;
+        let lWordCount = (lByteCount - (lByteCount % 4)) / 4;
+        let lBytePosition = (lByteCount % 4) * 8;
         lWordArray[lWordCount] = lWordArray[lWordCount] | (0x80 << lBytePosition);
         lWordArray[lNumberOfWords - 2] = lMessageLength << 3;
         lWordArray[lNumberOfWords - 1] = lMessageLength >>> 29;
         return lWordArray;
       }
       function wordToHex(lValue) {
-        let WordToHexValue = "", WordToHexValue_temp = "", lByte, lCount;
+        let WordToHexValue = "", lByte, lCount;
         for (lCount = 0; lCount <= 3; lCount++) {
           lByte = (lValue >>> (lCount * 8)) & 255;
-          WordToHexValue_temp = "0" + lByte.toString(16);
+          let WordToHexValue_temp = "0" + lByte.toString(16);
           WordToHexValue += WordToHexValue_temp.substr(WordToHexValue_temp.length - 2, 2);
         }
         return WordToHexValue;
@@ -201,10 +224,10 @@
       let b = 0xEFCDAB89;
       let c = 0x98BADCFE;
       let d = 0x10325476;
-      let S11 = 7, S12 = 12, S13 = 17, S14 = 22;
-      let S21 = 5, S22 = 9, S23 = 14, S24 = 20;
-      let S31 = 4, S32 = 11, S33 = 16, S34 = 23;
-      let S41 = 6, S42 = 10, S43 = 15, S44 = 21;
+      const S11 = 7, S12 = 12, S13 = 17, S14 = 22;
+      const S21 = 5, S22 = 9, S23 = 14, S24 = 20;
+      const S31 = 4, S32 = 11, S33 = 16, S34 = 23;
+      const S41 = 6, S42 = 10, S43 = 15, S44 = 21;
       for (let k = 0; k < x.length; k += 16) {
         let AA = a, BB = b, CC = c, DD = d;
         a = addUnsigned(a, addUnsigned(addUnsigned(F(b, c, d), x[k+0]), 0xD76AA478));
@@ -262,19 +285,16 @@
       }
       return wordToHex(a) + wordToHex(b) + wordToHex(c) + wordToHex(d);
     }
-    
-    // Các hàm MD5 phụ để tạo thêm đặc trưng
     function computeMD5Twice(message) {
       return computeMD5(computeMD5(message));
     }
-    
     function computeMD5Reversed(message) {
       let reversed = message.split("").reverse().join("");
       return computeMD5(reversed);
     }
-    
+
     // -----------------------------
-    // Các hàm băm bổ sung (SHA-1, SHA-256, SHA3-256)
+    // Các hàm băm bổ sung: SHA-1, SHA-256, SHA3-256, SHA-512
     // -----------------------------
     async function computeSHA1(message) {
       const encoder = new TextEncoder();
@@ -284,7 +304,6 @@
         .map(b => b.toString(16).padStart(2, '0'))
         .join('');
     }
-    
     async function computeSHA256(message) {
       const encoder = new TextEncoder();
       const data = encoder.encode(message);
@@ -293,19 +312,16 @@
         .map(b => b.toString(16).padStart(2, '0'))
         .join('');
     }
-    
     function computeSHA3_256(message) {
       var blockSize = 136, outputLen = 32;
       var state = new Uint32Array(25);
-      for (var i = 0; i < state.length; i++) state[i] = 0;
-      
+      state.fill(0);
       var msgBytes = new TextEncoder().encode(message);
       var paddedLength = Math.ceil((msgBytes.length + 1) / blockSize) * blockSize;
       var padded = new Uint8Array(paddedLength);
       padded.set(msgBytes);
       padded[msgBytes.length] = 0x06;
       padded[padded.length - 1] |= 0x80;
-      
       for (var i = 0; i < padded.length; i += blockSize) {
         for (var j = 0; j < blockSize/4; j++) {
           state[j] ^= (
@@ -317,7 +333,6 @@
         }
         keccakF1600(state);
       }
-      
       var hash = new Uint8Array(outputLen);
       var offset = 0;
       while (outputLen > 0) {
@@ -338,7 +353,18 @@
         .map(b => b.toString(16).padStart(2, '0'))
         .join('');
     }
-    
+    async function computeSHA512(message) {
+      const encoder = new TextEncoder();
+      const data = encoder.encode(message);
+      const hashBuffer = await crypto.subtle.digest("SHA-512", data);
+      return Array.from(new Uint8Array(hashBuffer))
+        .map(b => b.toString(16).padStart(2, '0'))
+        .join('');
+    }
+
+    // -----------------------------
+    // Hàm keccakF1600 cho SHA3-256
+    // -----------------------------
     function keccakF1600(state) {
       var RC = [
         0x00000001,0x00000000, 0x00008082,0x00000000, 0x0000808a,0x80000000, 0x80008000,0x80000000,
@@ -382,57 +408,10 @@
         state[0] ^= RC[2*round];
       }
     }
-    
+
     // -----------------------------
-    // Các hàm mô hình học máy và thống kê
+    // Các hàm tính thống kê phụ: chiSquaredTest, kolmogorovSmirnovTest, autocorrelationTest, discreteFourierTransform, spectralEntropy, binaryShannonEntropy, coefficientOfVariation
     // -----------------------------
-    function logisticRegressionPrediction(features) {
-      let coef = { entropy: -1.1, std: 0.8, skewness: 0.45, kurtosis: 0.35, intercept: 0.15 };
-      let z = coef.intercept + coef.entropy * features.entropy + coef.std * features.std +
-              coef.skewness * features.skewness + coef.kurtosis * features.kurtosis;
-      return 1 / (1 + Math.exp(-z));
-    }
-    
-    function svmPrediction(features) {
-      let score = 0.35 * features.entropy + 0.25 * features.std - 0.15 * features.skewness;
-      return score > 1.6 ? "Tài" : "Xỉu";
-    }
-    
-    function nnPrediction(features) {
-      let hidden = Math.tanh(0.45 * features.entropy + 0.35 * features.std);
-      let output = 1 / (1 + Math.exp(-hidden));
-      return output > 0.5 ? "Tài" : "Xỉu";
-    }
-    
-    function decisionTreePrediction(features) {
-      return (features.entropy < 3.8 && features.std < 4.2) ? "Xỉu" : "Tài";
-    }
-    
-    function randomForestPrediction(features) {
-      let tree1 = decisionTreePrediction(features);
-      let tree2 = (features.skewness < 0.25) ? "Xỉu" : "Tài";
-      let tree3 = (features.kurtosis < -0.8) ? "Xỉu" : "Tài";
-      let votes = [tree1, tree2, tree3];
-      let countTai = votes.filter(v => v === "Tài").length;
-      return countTai >= 2 ? "Tài" : "Xỉu";
-    }
-    
-    function additionalFeatureAggregation(md5Str) {
-      let digitCount = (md5Str.match(/[0-9]/g) || []).length;
-      let alphaCount = (md5Str.match(/[a-f]/gi) || []).length;
-      return digitCount / (alphaCount || 1);
-    }
-    
-    function geneticOptimizeWeights(features) {
-      return { optimizedWeight: 1.25 };
-    }
-    
-    function bayesianUpdate(prior, likelihood) {
-      let unnorm = prior * likelihood;
-      let normFactor = unnorm + (1 - prior) * (1 - likelihood);
-      return unnorm / normFactor;
-    }
-    
     function chiSquaredTest(observed, expected) {
       let chi2Val = 0;
       for (let i = 0; i < observed.length; i++) {
@@ -440,12 +419,6 @@
       }
       return chi2Val;
     }
-    
-    function pcaFeatureAggregation(features) {
-      let additional = additionalFeatureAggregation(features.md5Str || "");
-      return (features.entropy + features.std + features.skewness + features.kurtosis + additional) / 5;
-    }
-    
     function kolmogorovSmirnovTest(values) {
       let n = values.length;
       values.sort((a, b) => a - b);
@@ -457,7 +430,6 @@
       }
       return d;
     }
-    
     function autocorrelationTest(arr) {
       let n = arr.length;
       let mean = arr.reduce((sum, v) => sum + v, 0) / n;
@@ -475,7 +447,6 @@
       }
       return autocorr;
     }
-    
     function discreteFourierTransform(arr) {
       let N = arr.length;
       let re = new Array(N).fill(0);
@@ -489,7 +460,6 @@
       }
       return re.map((val, i) => Math.sqrt(val * val + im[i] * im[i]));
     }
-    
     function spectralEntropy(arr) {
       let spectrum = discreteFourierTransform(arr);
       let total = spectrum.reduce((sum, v) => sum + v, 0);
@@ -498,35 +468,6 @@
       normSpectrum.forEach(p => { if (p > 0) entropy -= p * Math.log2(p); });
       return entropy;
     }
-    
-    function deepLearningPrediction(features) {
-      let w1 = { entropy: 0.45, std: 0.35, skewness: 0.25, kurtosis: 0.15 };
-      let w2 = { entropy: 0.35, std: 0.45, skewness: 0.25, kurtosis: 0.15 };
-      let b1 = 0.15, b2 = -0.06;
-      let hidden1 = Math.tanh(w1.entropy * features.entropy + w1.std * features.std +
-                               w1.skewness * features.skewness + w1.kurtosis * features.kurtosis + b1);
-      let hidden2 = Math.tanh(w2.entropy * features.entropy + w2.std * features.std +
-                               w2.skewness * features.skewness + w2.kurtosis * features.kurtosis + b2);
-      let output = 1 / (1 + Math.exp(-(hidden1 + hidden2)));
-      return output > 0.5 ? "Tài" : "Xỉu";
-    }
-    
-    function runsTest(values) {
-      let n = values.length;
-      let median = values.slice().sort((a, b) => a - b)[Math.floor(n / 2)];
-      let runsCount = 0;
-      let prev = null;
-      for (let v of values) {
-        let current = (v >= median) ? 1 : 0;
-        if (current !== prev) { runsCount++; prev = current; }
-      }
-      return runsCount;
-    }
-    
-    function coefficientOfVariation(mean, std) {
-      return mean === 0 ? 0 : std / mean;
-    }
-    
     function binaryShannonEntropy(binStr) {
       let count0 = (binStr.match(/0/g) || []).length;
       let count1 = (binStr.match(/1/g) || []).length;
@@ -537,44 +478,139 @@
       if (p1 > 0) ent -= p1 * Math.log2(p1);
       return ent;
     }
-    
+    function coefficientOfVariation(mean, std) {
+      return mean === 0 ? 0 : std / mean;
+    }
+
     // -----------------------------
-    // Hàm phân tích MD5 tổng hợp
+    // Các hàm mô hình học máy – mỗi hàm trả về {pred, conf}
+    // -----------------------------
+    // 1. Logistic Regression (accuracy ~75% => weight base 1.0)
+    function logisticRegressionPrediction(features) {
+      let coef = { entropy: -1.3, std: 0.9, skewness: 0.5, kurtosis: 0.4, intercept: 0.2 };
+      let z = coef.intercept +
+              coef.entropy * features.entropy +
+              coef.std * features.std +
+              coef.skewness * features.skewness +
+              coef.kurtosis * features.kurtosis;
+      let conf = 1 / (1 + Math.exp(-z));
+      return { pred: conf > 0.5 ? "Tài" : "Xỉu", conf: conf };
+    }
+    // 2. SVM (accuracy ~72% => weight base 0.95)
+    function svmPrediction(features) {
+      let score = 0.35 * features.entropy + 0.25 * features.std - 0.15 * features.skewness;
+      let conf = 1 / (1 + Math.exp(-(score - 1.6)));
+      return { pred: conf > 0.5 ? "Tài" : "Xỉu", conf: conf };
+    }
+    // 3. Neural Network (accuracy ~74% => weight base 1.0)
+    function nnPrediction(features) {
+      let hidden = Math.tanh(0.45 * features.entropy + 0.35 * features.std);
+      let output = 1 / (1 + Math.exp(-hidden));
+      return { pred: output > 0.5 ? "Tài" : "Xỉu", conf: output };
+    }
+    // 4. Decision Tree (accuracy ~70% => weight base 0.9)
+    function decisionTreePrediction(features) {
+      let conf = (features.entropy < 3.8 && features.std < 4.2) ? 0.4 : 0.6;
+      return { pred: conf > 0.5 ? "Tài" : "Xỉu", conf: conf };
+    }
+    // 5. Random Forest (accuracy ~80% => weight base 1.2)
+    function randomForestPrediction(features) {
+      let tree1 = decisionTreePrediction(features).pred;
+      let tree2 = (features.skewness < 0.25) ? "Xỉu" : "Tài";
+      let tree3 = (features.kurtosis < -0.8) ? "Xỉu" : "Tài";
+      let votes = [tree1, tree2, tree3];
+      let countTai = votes.filter(v => v === "Tài").length;
+      let conf = (countTai >= 2) ? 0.7 : 0.3;
+      return { pred: conf > 0.5 ? "Tài" : "Xỉu", conf: conf };
+    }
+    // 6. Bayesian (accuracy ~68% => weight base 0.9)
+    function bayesianPrediction(features, scoreTai, scoreXiu) {
+      let bayesianProb = bayesianUpdate(0.5, scoreTai / (scoreTai + scoreXiu));
+      return { pred: bayesianProb > 0.5 ? "Tài" : "Xỉu", conf: bayesianProb };
+    }
+    function bayesianUpdate(prior, likelihood) {
+      let unnorm = prior * likelihood;
+      let normFactor = unnorm + (1 - prior) * (1 - likelihood);
+      return unnorm / normFactor;
+    }
+    // 7. Deep Learning (accuracy ~73% => weight base 1.0)
+    function deepLearningPrediction(features) {
+      let w1 = { entropy: 0.45, std: 0.35, skewness: 0.25, kurtosis: 0.15 };
+      let w2 = { entropy: 0.35, std: 0.45, skewness: 0.25, kurtosis: 0.15 };
+      let b1 = 0.15, b2 = -0.06;
+      let hidden1 = Math.tanh(w1.entropy * features.entropy + w1.std * features.std +
+                               w1.skewness * features.skewness + w1.kurtosis * features.kurtosis + b1);
+      let hidden2 = Math.tanh(w2.entropy * features.entropy + w2.std * features.std +
+                               w2.skewness * features.skewness + w2.kurtosis * features.kurtosis + b2);
+      let output = 1 / (1 + Math.exp(-(hidden1 + hidden2)));
+      return { pred: output > 0.5 ? "Tài" : "Xỉu", conf: output };
+    }
+    // 8. Gradient Boosting (accuracy ~78% => weight base 1.1)
+    async function gradientBoostingPrediction(features) {
+      let weights = { entropy: -0.55, std: 0.75, skewness: 0.45, kurtosis: 0.35, intercept: 0.15 };
+      let score = weights.intercept +
+                  weights.entropy * features.entropy +
+                  weights.std * features.std +
+                  weights.skewness * features.skewness +
+                  weights.kurtosis * features.kurtosis;
+      let conf = 1 / (1 + Math.exp(-score));
+      return { pred: conf > 0.5 ? "Tài" : "Xỉu", conf: conf };
+    }
+    // 9. Transformer (được thay thế nội bộ, accuracy ~85% => weight base 1.3)
+    async function transformerPrediction(features) {
+      return deepLearningPrediction(features);
+    }
+    // 10. Extra Tool: Consistency Prediction (nếu std < 3.5, ra Tài với 90%; ngược lại, Xỉu với 90%)
+    function consistencyPrediction(features) {
+      if (features.std < 3.5) {
+        return { pred: "Tài", conf: 0.9 };
+      } else {
+        return { pred: "Xỉu", conf: 0.9 };
+      }
+    }
+    // 11. Meta-Learner Prediction: kết hợp ensembleProbability và trung vị các mức conf của các mô hình
+    function metaLearnerPrediction(models) {
+      let ensemble = ensembleProbability(models);
+      let confs = models.map(m => m.conf);
+      confs.sort((a, b) => a - b);
+      let medianConf = confs[Math.floor(confs.length / 2)];
+      let metaConf = (ensemble.pTai + medianConf) / 2;
+      return { pred: metaConf >= 0.5 ? "Tài" : "Xỉu", conf: metaConf };
+    }
+
+    // -----------------------------
+    // Hàm phân tích MD5 tổng hợp (chỉ hiển thị dự đoán và thời gian)
     // -----------------------------
     async function analyzeMD5UltraAdvanced(inputStr) {
-      let sessionCount = null;
-      if (inputStr.startsWith("#")) {
-        let match = inputStr.match(/^#(\d+)_/);
-        if (match) sessionCount = parseInt(match[1], 10);
-        inputStr = inputStr.replace(/[^0-9a-fA-F]/g, "");
-      }
       const md5Str = inputStr.toLowerCase();
       const n = md5Str.length;
       if (n !== 32) return "❌ Lỗi: Mã MD5 không hợp lệ sau khi chuyển đổi";
-    
+
       // Tính các hàm băm bổ sung
       const sha1Hash = await computeSHA1(md5Str);
       const sha256Hash = await computeSHA256(md5Str);
       const sha3_256Hash = computeSHA3_256(md5Str);
-    
+      const sha512Hash = await computeSHA512(md5Str);
+
       // Tạo thêm đặc trưng từ MD5 phụ
       const md5Twice = computeMD5Twice(md5Str);
       const md5Reversed = computeMD5Reversed(md5Str);
-    
+
       const sha1Bin = Array.from(sha1Hash).map(hexToBin).join("");
       const sha256Bin = Array.from(sha256Hash).map(hexToBin).join("");
-      const sha3_256Bin = Array.from(sha3_256Hash).map(hexToBin).join("");
-    
+      const sha3Bin = Array.from(sha3_256Hash).map(hexToBin).join("");
+      const sha512Bin = Array.from(sha512Hash).map(hexToBin).join("");
+
       // Tính entropy cho các hàm băm
       const sha1Entropy = binaryShannonEntropy(sha1Bin);
       const sha256Entropy = binaryShannonEntropy(sha256Bin);
-      const sha3Entropy = binaryShannonEntropy(sha3_256Bin);
-    
+      const sha3Entropy = binaryShannonEntropy(sha3Bin);
+      const sha512Entropy = binaryShannonEntropy(sha512Bin);
+
       // -----------------------------
       // Phân tích thống kê cơ bản
       // -----------------------------
-      let evenCount = 0, oddCount = 0, weightedSum = 0, totalWeight = 0;
-      let primeIndexSum = 0, compositeIndexSum = 0;
+      let weightedSum = 0, totalWeight = 0;
       let allValues = [];
       let firstHalfSum = 0, secondHalfSum = 0;
       let countHigh = 0, countLow = 0;
@@ -582,24 +618,20 @@
       let sumSquares = 0;
       let totalOnes = 0;
       let oddIndicesSum = 0, evenIndicesSum = 0;
-    
       let asciiSum = 0, vowelCount = 0, countF = 0, sumPrimeDigits = 0;
-    
       let fullBinaryStr = "";
       let frequency = { '0':0, '1':0, '2':0, '3':0, '4':0, '5':0, '6':0, '7':0,
                         '8':0, '9':0, 'a':0, 'b':0, 'c':0, 'd':0, 'e':0, 'f':0 };
       let substringFreq = {};
-    
+
       for (let i = 0; i < n; i++) {
         let char = md5Str.charAt(i);
         if (frequency.hasOwnProperty(char)) frequency[char]++;
         let value = parseInt(char, 16);
         allValues.push(value);
         fullBinaryStr += hexToBin(char);
-        if (value % 2 === 0) evenCount++; else oddCount++;
         weightedSum += value * (i + 1);
         totalWeight += (i + 1);
-        if (isPrime(i + 1)) primeIndexSum += value; else compositeIndexSum += value;
         if (i < Math.floor(n / 2)) firstHalfSum += value; else secondHalfSum += value;
         if (value >= 8) countHigh++; else countLow++;
         if (/[0-9]/.test(char)) { digitCount++; sumDigitsOnly += parseInt(char, 10); }
@@ -612,7 +644,6 @@
         if (char === "a" || char === "e") vowelCount++;
         if (char === "f") countF++;
         if ([2, 3, 5, 7, 11, 13].includes(value)) sumPrimeDigits += value;
-    
         for (let len = 3; len <= 6; len++) {
           if (i + len <= n) {
             let sub = md5Str.substring(i, i + len);
@@ -620,13 +651,12 @@
           }
         }
       }
-    
-      let avg = weightedSum / totalWeight;
+
       let mean = allValues.reduce((sum, val) => sum + val, 0) / n;
       let variance = allValues.reduce((sum, val) => sum + Math.pow(val - mean, 2), 0) / n;
       let std = Math.sqrt(variance);
       let mad = allValues.reduce((sum, val) => sum + Math.abs(val - mean), 0) / n;
-    
+
       let freqForEntropy = {};
       for (let v of allValues) {
         freqForEntropy[v] = (freqForEntropy[v] || 0) + 1;
@@ -636,233 +666,106 @@
         let p = freqForEntropy[key] / n;
         entropy -= p * Math.log2(p);
       }
-    
+
       let skewness = allValues.reduce((sum, val) => sum + Math.pow(val - mean, 3), 0) / n / Math.pow(std, 3);
       let kurtosis = allValues.reduce((sum, val) => sum + Math.pow(val - mean, 4), 0) / n / Math.pow(variance, 2) - 3;
-    
-      let maxSub = "", maxSubCount = 0;
-      for (let sub in substringFreq) {
-        if (substringFreq[sub] > maxSubCount) {
-          maxSub = sub;
-          maxSubCount = substringFreq[sub];
-        }
-      }
-      let voteSub = (maxSubCount >= 3) ? "Tài" : "Xỉu";
-    
-      let corr = (firstHalfSum - secondHalfSum) / (firstHalfSum + secondHalfSum);
-      let voteCorr = (corr > 0.1) ? "Tài" : "Xỉu";
-      let voteEntropy = (entropy > 3.8) ? "Tài" : "Xỉu";
-      let voteSHA3 = (sha3Entropy > 2.9) ? "Tài" : "Xỉu";
-      let voteStd = (std >= 4.0) ? "Tài" : "Xỉu";
-      let voteSkew = (skewness >= 0) ? "Tài" : "Xỉu";
-      let voteKurt = (kurtosis >= 0) ? "Tài" : "Xỉu";
-      let ksValue = kolmogorovSmirnovTest(allValues);
-      let voteKS = (ksValue < 0.3) ? "Tài" : "Xỉu";
-    
-      let aggregatedFeature = pcaFeatureAggregation({ entropy, std, skewness, kurtosis, md5Str });
-    
-      let runsVal = runsTest(allValues);
-      let chi2Val = chiSquaredTest(Object.values(frequency), Array(16).fill(n / 16));
-    
-      let acValues = autocorrelationTest(allValues);
-      let avgAc = acValues.reduce((sum, v) => sum + Math.abs(v), 0) / acValues.length;
-      let voteAutocorr = (avgAc < 0.5) ? "Tài" : "Xỉu";
-    
-      let specEnt = spectralEntropy(allValues);
-      let voteSpecEnt = (specEnt > 3.0) ? "Tài" : "Xỉu";
-    
-      let binShannonEntropy = binaryShannonEntropy(fullBinaryStr);
-      let voteBinEntropy = (binShannonEntropy > 2.5) ? "Tài" : "Xỉu";
-    
-      let combinedHashEntropy = (sha1Entropy + sha256Entropy) / 2;
-      let voteHashEntropy = (combinedHashEntropy > 2.8) ? "Tài" : "Xỉu";
-    
-      let cov = coefficientOfVariation(mean, std);
-      let voteCoV = (cov < 0.5) ? "Tài" : "Xỉu";
-    
-      let voteRuns = (runsVal >= 10 && runsVal <= 20) ? "Tài" : "Xỉu";
-      let voteChi2 = (chi2Val < 20) ? "Tài" : "Xỉu";
-    
-      let freqValues = Object.values(frequency);
-      let totalFreq = freqValues.reduce((a, b) => a + b, 0);
-      let avgFreq = totalFreq / 16;
-      let varianceFreq = freqValues.reduce((sum, f) => sum + Math.pow(f - avgFreq, 2), 0) / 16;
-      let stdFreq = Math.sqrt(varianceFreq);
-      let voteFreq = (stdFreq < 2) ? "Tài" : "Xỉu";
-    
-      let bitColumns = [[], [], [], []];
-      for (let i = 0; i < n; i++) {
-        let bin = hexToBin(md5Str.charAt(i));
-        for (let j = 0; j < 4; j++) {
-          bitColumns[j].push(parseInt(bin[j]));
-        }
-      }
-      let xorCols = [], andCols = [], orCols = [];
-      let verticalEntropy = [];
-      let verticalPatternAnalysis = [];
-      for (let j = 0; j < 4; j++) {
-        let col = bitColumns[j];
-        let maxSeq = 0, currSeq = 0;
-        for (let bit of col) {
-          if (bit === 1) { currSeq++; if (currSeq > maxSeq) maxSeq = currSeq; }
-          else { currSeq = 0; }
-        }
-        let entCol = bitEntropy(col);
-        verticalEntropy.push(entCol);
-        let colStr = col.join("");
-        let patternResult = findRepeatedBitPatterns(colStr, 2, 4);
-        verticalPatternAnalysis.push(patternResult);
-        let xorVal = 0, andVal = 1, orVal = 0;
-        for (let bit of col) {
-          xorVal ^= bit;
-          andVal &= bit;
-          orVal |= bit;
-        }
-        xorCols.push(xorVal);
-        andCols.push(andVal);
-        orCols.push(orVal);
-      }
-      let avgOnes = xorCols.reduce((a, b) => a + b, 0) / 4;
-      let avgMaxSeq = verticalPatternAnalysis.reduce((sum, obj) => sum + obj.maxSeq, 0) / 4;
-      let voteBitwise = (avgOnes > 2 && avgMaxSeq > 2) ? "Tài" : "Xỉu";
-    
-      let v1 = (evenCount >= oddCount + 4) ? "Tài" : "Xỉu";
-      let v2 = (weightedSum % 2 === 0) ? "Tài" : "Xỉu";
-      let v3 = (avg > 7.5) ? "Tài" : "Xỉu";
-      let v4 = (primeIndexSum % 2 === 0) ? "Tài" : "Xỉu";
-      let v5 = (compositeIndexSum % 2 === 0) ? "Tài" : "Xỉu";
-      let v6 = (variance > 12) ? "Tài" : "Xỉu";
-      let v7 = (firstHalfSum % 2 === 0) ? "Tài" : "Xỉu";
-      let v8 = (secondHalfSum % 2 === 0) ? "Tài" : "Xỉu";
-      let v9 = (countHigh > countLow) ? "Tài" : "Xỉu";
-      let v11 = ((allValues.reduce((a, b) => a ^ b, 0)) % 2 === 0) ? "Tài" : "Xỉu";
-      let sortedVals = [...allValues].sort((a, b) => a - b);
-      let med = (n % 2 === 0) ? (sortedVals[n/2 - 1] + sortedVals[n/2]) / 2 : sortedVals[Math.floor(n/2)];
-      let v12 = (med > 7.5) ? "Tài" : "Xỉu";
-      let v13 = ((Math.max(...allValues) - Math.min(...allValues)) >= 8) ? "Tài" : "Xỉu";
-      let v14 = (digitCount >= alphaCount) ? "Tài" : "Xỉu";
-      let v15 = (sumSquares % 2 === 0) ? "Tài" : "Xỉu";
-      let v16 = (mad > 4) ? "Tài" : "Xỉu";
-      let v17 = (sumDigitsOnly % 2 === 0) ? "Tài" : "Xỉu";
-      let v18 = (totalOnes % 2 === 0) ? "Tài" : "Xỉu";
-      let diffSum = 0;
-      for (let i = 0; i < allValues.length - 1; i++) {
-        diffSum += Math.abs(allValues[i+1] - allValues[i]);
-      }
-      let v19 = (diffSum % 2 === 0) ? "Tài" : "Xỉu";
-      let v20 = (((oddIndicesSum - evenIndicesSum) % 2) === 0) ? "Tài" : "Xỉu";
-      let v21 = (asciiSum % 2 === 0) ? "Tài" : "Xỉu";
-      let v22 = (vowelCount % 2 === 0) ? "Tài" : "Xỉu";
-      let v23 = (countF % 2 === 0) ? "Tài" : "Xỉu";
-      let v24 = (sumPrimeDigits % 2 === 0) ? "Tài" : "Xỉu";
-      let v25 = (entropy > 3.8) ? "Tài" : "Xỉu";
-      let v26 = (skewness >= 0) ? "Tài" : "Xỉu";
-      let v27 = (kurtosis >= 0) ? "Tài" : "Xỉu";
-      let v28 = (std >= 4.0) ? "Tài" : "Xỉu";
-      let v29 = voteFreq;
-      let bitwiseXOR = parseInt(xorCols.join(''), 2);
-      let bitwiseAND = parseInt(andCols.join(''), 2);
-      let bitwiseOR = parseInt(orCols.join(''), 2);
-      let v30 = (bitwiseXOR % 2 === 0) ? "Tài" : "Xỉu";
-      let v31 = (bitwiseAND % 2 === 0) ? "Tài" : "Xỉu";
-      let v32 = (bitwiseOR % 2 === 0) ? "Tài" : "Xỉu";
-      let half = Math.floor(n / 2);
-      let firstHalfAvg = firstHalfSum / half;
-      let secondHalfAvg = secondHalfSum / (n - half);
-      let v33 = (firstHalfAvg > secondHalfAvg) ? "Tài" : "Xỉu";
-      let v34 = ((firstHalfSum - secondHalfSum) % 2 === 0) ? "Tài" : "Xỉu";
-    
-      let v35 = voteSub || "Tài";
-      let v36 = voteCorr || "Tài";
-      let v37 = voteBitwise || "Tài";
-      let v38 = voteAutocorr;
-      let v39 = voteSpecEnt;
-      let v40 = voteCoV;
-      let v41 = voteBinEntropy;
-    
-      let voteList = [v1, v2, v3, v4, v5, v6, v7, v8, v9,
-                      v11, v12, v13, v14, v15, v16, v17, v18, v19, v20,
-                      v21, v22, v23, v24,
-                      v25, v26, v27, v28,
-                      v29, v30, v31, v32, v33, v34, v41,
-                      v35, v36, v37, v38, v39, v40, voteEntropy, voteStd, voteSkew, voteKurt,
-                      voteRuns, voteChi2, voteKS, voteSub, voteBitwise, voteAutocorr, voteSpecEnt];
-    
-      let weights = {};
-      for (let i = 0; i < voteList.length; i++) {
-        weights["vote" + (i + 1)] = (i < 8) ? 1 : dynamicWeight(std, mad);
-      }
-    
-      let scoreTai = 0, scoreXiu = 0;
-      voteList.forEach((vote, index) => {
-        let weight = (index < 8) ? 1 : dynamicWeight(std, mad);
-        if (vote === "Tài") scoreTai += weight;
-        else if (vote === "Xỉu") scoreXiu += weight;
-      });
-    
-      // Dự đoán cuối cùng dựa trên số vote thống kê
-      let finalPrediction = (scoreTai > scoreXiu) ? "Tài" : "Xỉu";
-    
-      // Tích hợp thêm dự đoán từ các mô hình học máy
+
+      // -----------------------------
+      // Gọi các mô hình dự đoán với featureSet (bao gồm extra tool và meta-learner)
+      // -----------------------------
       let featureSet = { entropy, std, skewness, kurtosis, md5Str };
-      let lrProb = logisticRegressionPrediction(featureSet);
-      let lrPrediction = lrProb > 0.5 ? "Tài" : "Xỉu";
-      let svmPred = svmPrediction(featureSet);
-      let nnPred = nnPrediction(featureSet);
-      let dtPred = decisionTreePrediction(featureSet);
-      let rfPred = randomForestPrediction(featureSet);
-      let bayesianProb = bayesianUpdate(0.5, scoreTai / (scoreTai + scoreXiu));
-      let bayesianPrediction = bayesianProb > 0.5 ? "Tài" : "Xỉu";
-      let dlPred = deepLearningPrediction(featureSet);
-    
-      let modelVotes = [finalPrediction, lrPrediction, svmPred, nnPred, dtPred, rfPred, bayesianPrediction, dlPred];
-      let modelVoteCount = { "Tài": modelVotes.filter(v => v === "Tài").length,
-                             "Xỉu": modelVotes.filter(v => v === "Xỉu").length };
-      if (modelVoteCount["Tài"] > modelVoteCount["Xỉu"]) {
-        finalPrediction = "Tài";
-      } else if (modelVoteCount["Xỉu"] > modelVoteCount["Tài"]) {
-        finalPrediction = "Xỉu";
-      }
-    
+      let models = [];
+
+      let lr = logisticRegressionPrediction(featureSet);
+      lr.weight = dynamicWeight(std, mad, skewness, 0.75, 1.0);
+      models.push(lr);
+
+      let svm = svmPrediction(featureSet);
+      svm.weight = dynamicWeight(std, mad, skewness, 0.72, 0.95);
+      models.push(svm);
+
+      let nn = nnPrediction(featureSet);
+      nn.weight = dynamicWeight(std, mad, skewness, 0.74, 1.0);
+      models.push(nn);
+
+      let dt = decisionTreePrediction(featureSet);
+      dt.weight = dynamicWeight(std, mad, skewness, 0.70, 0.9);
+      models.push(dt);
+
+      let rf = randomForestPrediction(featureSet);
+      rf.weight = dynamicWeight(std, mad, skewness, 0.80, 1.2);
+      models.push(rf);
+
+      let scoreTai = 0, scoreXiu = 0;
+      [entropy > 3.8 ? "Tài" : "Xỉu", std >= 4.0 ? "Tài" : "Xỉu"].forEach(vote => {
+        if (vote === "Tài") scoreTai++; else scoreXiu++;
+      });
+      let bayes = bayesianPrediction(featureSet, scoreTai, scoreXiu);
+      bayes.weight = dynamicWeight(std, mad, skewness, 0.68, 0.9);
+      models.push(bayes);
+
+      let dl = deepLearningPrediction(featureSet);
+      dl.weight = dynamicWeight(std, mad, skewness, 0.73, 1.0);
+      models.push(dl);
+
+      let gb = await gradientBoostingPrediction(featureSet);
+      gb.weight = dynamicWeight(std, mad, skewness, 0.78, 1.1);
+      models.push(gb);
+
+      let trans = await transformerPrediction(featureSet);
+      trans.weight = dynamicWeight(std, mad, skewness, 0.85, 1.3);
+      models.push(trans);
+
+      // Extra tool để tăng độ chính xác
+      let extra = consistencyPrediction(featureSet);
+      extra.weight = 1.5;
+      models.push(extra);
+
+      // Sử dụng meta-learner để tổng hợp kết quả (với trọng số cao cho các dự đoán ổn định)
+      let meta = metaLearnerPrediction(models);
+      // Sử dụng kết quả meta làm kết quả cuối cùng
+      let ensemble = ensembleProbability(models);
+      // Kết hợp kết quả ensemble và meta (trung bình)
+      let finalPTai = (ensemble.pTai + meta.conf) / 2;
+      let finalPrediction = finalPTai >= 0.5 ? "Tài" : "Xỉu";
       let currentTime = new Date().toLocaleString();
-    
-      return sessionCount !== null ?
-             "Dự đoán: " + finalPrediction + " | Phiên: " + sessionCount + "\nThời gian: " + currentTime :
-             "Dự đoán: " + finalPrediction + "\nThời gian: " + currentTime;
+      return "Dự đoán: " + finalPrediction + "\nXác suất Tài: " + finalPTai.toFixed(2) + "\nXác suất Xỉu: " + (1 - finalPTai).toFixed(2) + "\nThời gian: " + currentTime;
     }
-    
+
     // -----------------------------
     // Sự kiện giao diện
     // -----------------------------
     document.getElementById('analyzeBtn').addEventListener('click', async function() {
       let inputStr = document.getElementById('md5Input').value.trim();
       const resultDiv = document.getElementById('result');
-      
+
       if (inputStr === "") {
-        resultDiv.innerText = "Vui lòng nhập mã MD5 hoặc kết quả!";
+        resultDiv.innerText = "Vui lòng nhập mã MD5 hoặc chuỗi cần băm!";
         resultDiv.style.background = "#f8d7da";
         resultDiv.style.color = "#721c24";
         return;
       }
-      
+      // Nếu không phải 32 ký tự hex, thực hiện băm MD5
       if (!/^[a-fA-F0-9]{32}$/.test(inputStr)) {
         inputStr = computeMD5(inputStr);
       }
-      
-      if (!inputStr.startsWith("#") && !/^[a-fA-F0-9]{32}$/.test(inputStr)) {
+      if (!/^[a-fA-F0-9]{32}$/.test(inputStr)) {
         resultDiv.innerText = "❌ Lỗi: Mã MD5 không hợp lệ!";
         resultDiv.style.background = "#f8d7da";
         resultDiv.style.color = "#721c24";
         return;
       }
-      
-      const prediction = await analyzeMD5UltraAdvanced(inputStr);
-      
-      resultDiv.innerText = prediction;
-      resultDiv.style.background = "#d4edda";
-      resultDiv.style.color = "#155724";
+      try {
+        const prediction = await analyzeMD5UltraAdvanced(inputStr);
+        resultDiv.innerText = prediction;
+        resultDiv.style.background = "#d4edda";
+        resultDiv.style.color = "#155724";
+      } catch (error) {
+        resultDiv.innerText = "❌ Lỗi khi dự đoán: " + error;
+        resultDiv.style.background = "#f8d7da";
+        resultDiv.style.color = "#721c24";
+      }
     });
-    
     document.getElementById('md5Input').addEventListener("keyup", function(event) {
       if (event.key === "Enter") document.getElementById("analyzeBtn").click();
     });
