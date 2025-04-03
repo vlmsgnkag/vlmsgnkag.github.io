@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Remix</title>
+  <!-- Sử dụng Google Fonts cho kiểu chữ đẹp -->
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+  <style>
+    /* Reset cơ bản */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    /* Background động với gradient chuyển động */
+    body {
+      font-family: 'Roboto', sans-serif;
+      color: #ffffff;
+      line-height: 1.6;
+      background: linear-gradient(-45deg, #1db954, #1ed760, #121212, #1db954);
+      background-size: 400% 400%;
+      animation: gradient 15s ease infinite;
+    }
+    @keyframes gradient {
+      0% {
+        background-position: 0% 50%;
+      }
+      50% {
+        background-position: 100% 50%;
+      }
+      100% {
+        background-position: 0% 50%;
+      }
+    }
+    /* Header với hiệu ứng mờ và nền bán trong suốt *
+    /* Layout dạng lưới cho các bài hát */
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 20px;
+    }
+    /* Thẻ bài hát (track-card) với hiệu ứng bay nhẹ khi hover */
+    .track-card {
+      background: rgba(0, 0, 0, 0.6);
+      border-radius: 12px;
+      padding: 20px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      backdrop-filter: blur(10px);
+    }
+    .track-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 20px rgba(0,0,0,0.5);
+    }
+    .track-card h2 {
+      margin-bottom: 15px;
+      font-size: 1.5rem;
+    }
+    .track-card iframe {
+      width: 100%;
+      border: none;
+      border-radius: 8px;
+    }
+    /* Responsive cho màn hình nhỏ */
+    @media (max-width: 768px) {
+      header h1 {
+        font-size: 2rem;
+      }
+      .track-card h2 {
+        font-size: 1.3rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  
+  <div class="container">
+    <div class="grid">
+      <!-- Track Card 1 -->
+      <div class="track-card">
+        <iframe width="300" height="60" src="https://vocaroo.com/embed/1aciunDoLvJv?autoplay=0" frameborder="0" allow="autoplay"></iframe>
+      </div>
+      <!-- Track Card 2 -->
+      <div class="track-card">
+        <iframe width="300" height="60" src="https://vocaroo.com/embed/15leRYz2oLna?autoplay=0" frameborder="0" allow="autoplay"></iframe>
+      </div>
+      <!-- Track Card 3 -->
+      <div class="track-card">
+    <iframe width="300" height="60" src="https://vocaroo.com/embed/1oaCDOauCufB?autoplay=0" frameborder="0" allow="autoplay"></iframe>
+      </div>
+      <!-- Track Card 4 -->
+      <div class="track-card">
+        <iframe width="100%" height="300" scrolling="no" frameborder="no" allow="autoplay" src="https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/tracks/1966237367&color=%23ff5500&auto_play=false&hide_related=false&show_comments=true&show_user=true&show_reposts=false&show_teaser=true&visual=true"></iframe><div style="font-size: 10px; color: #cccccc;line-break: anywhere;word-break: normal;overflow: hidden;white-space: nowrap;text-overflow: ellipsis; font-family: Interstate,Lucida Grande,Lucida Sans Unicode,Lucida Sans,Garuda,Verdana,Tahoma,sans-serif;font-weight: 100;"><a href="https://soundcloud.com/himeepodiee" title="mimi" target="_blank" style="color: #cccccc; text-decoration: none;">mimi</a> · <a href="https://soundcloud.com/himeepodiee/mixtape-nghe-tren-car-2h-demo" title="Mixtape Nghe Tren Car 2h Demo - Nguoi Dung Sau Hanh Phuc - Hyuraa" target="_blank" style="color: #cccccc; text-decoration: none;">Mixtape Nghe Tren Car 2h Demo - Nguoi Dung Sau Hanh Phuc - Hyuraa</a></div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
