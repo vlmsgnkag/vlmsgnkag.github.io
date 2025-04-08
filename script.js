@@ -66,6 +66,7 @@ const songs = [
     { src: "music/40.mp3", image: "https://i.pinimg.com/236x/73/6a/0e/736a0e102da6d5e5afef0944e00c62f9.jpg" },
     { src: "music/55.mp3", image: "https://i.pinimg.com/236x/d9/ce/c1/d9cec1d5ccc81225c27c37a371c09521.jpg" },
     { src: "music/70.mp3", image: "https://i.pinimg.com/474x/b7/4e/cc/b74eccabad6d13e3e716ce226fb3295f.jpg" },
+    { src: "music/102.mp3", image: "https://i.pinimg.com/474x/8c/7d/81/8c7d81764c649d1407a62591b08667cd.jpg" },
     { src: "music/74.mp3", image: "https://i.pinimg.com/236x/60/75/ad/6075ad700bd16ea3fb7b26b979ee8081.jpg" },
     { src: "music/67.mp3", image: "https://i.pinimg.com/474x/62/a5/e4/62a5e4451b32f1d9ace7c319d419cbea.jpg" },
     { src: "music/36.mp3", image: "https://i.pinimg.com/236x/9c/70/b9/9c70b925624763a4b9ed23fdd0e8a0a6.jpg" },
@@ -98,6 +99,7 @@ const songs = [
     { src: "music/84.mp3", image: "https://i.pinimg.com/236x/c2/a7/44/c2a744ecbb75f2c4ee3aa3681866fda4.jpg" },
     { src: "music/41.mp3", image: "https://i.pinimg.com/236x/d6/80/3e/d6803e4cece581ab57aee8317f4ab47f.jpg" },
     { src: "music/69.mp3", image: "https://i.pinimg.com/236x/53/6f/59/536f5939a0d33b9b364eff921e46b9a2.jpg" },
+    { src: "music/101.mp3", image: "https://i.pinimg.com/736x/13/d3/c7/13d3c7f925a21adc7a82d4ebd466a6f7.jpg" },
     { src: "music/34.mp3", image: "https://i.pinimg.com/236x/2c/45/f7/2c45f7ffdfb9b3bf94be58148315cead.jpg" },
     { src: "music/25.mp3", image: "https://i.pinimg.com/474x/64/4b/5d/644b5d581a4fb29e91523c1318f9e32c.jpg" }
         
