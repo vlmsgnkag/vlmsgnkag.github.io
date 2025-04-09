@@ -3,17 +3,10 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title></title>
+  <title>Phân tích kết quả 3 xúc xắc – Tỉ lệ hợp nhất</title>
   <style>
-    /* Import Google Font Poppins */
     @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap');
-
-    /* Reset cơ bản */
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
       font-family: 'Poppins', sans-serif;
       background: linear-gradient(135deg, #74ABE2, #5563DE);
@@ -23,50 +16,6 @@
       align-items: center;
       padding: 1rem;
     }
-    /* Container cho biểu tượng nhấp nháy, ban đầu ẩn */
-    .result-indicator {
-      display: none;
-      justify-content: center;
-      align-items: center;
-      gap: 1.5rem;
-      background: rgba(255,255,255,0.95);
-      padding: 1.5rem 2rem;
-      border-radius: 2rem;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.15);
-      margin-bottom: 1rem;
-    }
-    .indicator-circle {
-      width: 60px;
-      height: 60px;
-      border-radius: 50%;
-      background: #ccc;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      font-weight: 600;
-      font-size: 0.9rem;
-      color: #fff;
-      text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
-    }
-    #taiIndicator {
-      background: #00aa00; /* xanh cho Tài */
-    }
-    #xiuIndicator {
-      background: #ee0000; /* đỏ cho Xỉu */
-    }
-    .dragon-icon {
-      width: 50px;
-      height: 50px;
-    }
-    /* Hiệu ứng nhấp nháy */
-    @keyframes blinkAnimation {
-      0%, 100% { opacity: 1; }
-      50% { opacity: 0.2; }
-    }
-    .blink {
-      animation: blinkAnimation 1s infinite;
-    }
-    /* Container nhập liệu và hiển thị kết quả */
     .app-container {
       background: rgba(255,255,255,0.95);
       border-radius: 15px;
@@ -77,15 +26,8 @@
       margin-bottom: 2rem;
       text-align: center;
     }
-    h1 {
-      color: #333;
-      margin-bottom: 1rem;
-      font-weight: 600;
-    }
-    p.description {
-      color: #555;
-      margin-bottom: 1.5rem;
-    }
+    h1 { color: #333; margin-bottom: 1rem; font-weight: 600; }
+    p.description { color: #555; margin-bottom: 1.5rem; }
     input[type="text"] {
       width: 100%;
       padding: 0.75rem 1rem;
@@ -109,63 +51,89 @@
       cursor: pointer;
       transition: background 0.3s ease;
     }
-    button:hover {
-      background: #4251BB;
+    button:hover { background: #4251BB; }
+    .result-indicator {
+      display: none;
+      justify-content: center;
+      align-items: center;
+      gap: 1rem;
+      background: rgba(255,255,255,0.95);
+      padding: 1.5rem 2rem;
+      border-radius: 2rem;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.15);
     }
-    .result-box {
-      margin-top: 1.5rem;
+    .indicator-circle {
+      width: 70px;
+      height: 70px;
+      border-radius: 50%;
+      background: #ccc;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-weight: 600;
       font-size: 1rem;
-      color: #333;
-      line-height: 1.6;
-      text-align: left;
+      color: #fff;
+      text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+      text-align: center;
     }
-    .result-box strong {
-      font-size: 1.1rem;
+    #taiIndicator { background: #00aa00; }
+    #xiuIndicator { background: #ee0000; }
+    .sunwin-icon { width: 100px; height: 100px; }
+    @keyframes blinkAnimation {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.2; }
     }
-    @media (max-width: 600px) {
-      .app-container {
-        padding: 1.5rem 1rem;
-      }
-      .indicator-circle {
-        width: 50px;
-        height: 50px;
-        font-size: 0.8rem;
-      }
-      .dragon-icon {
-        width: 40px;
-        height: 40px;
-      }
-      input[type="text"] {
-        font-size: 0.9rem;
-      }
-      button {
-        padding: 0.75rem 1.5rem;
-      }
-    }
+    .blink { animation: blinkAnimation 1s infinite; }
+    .result-box { display: none; }
   </style>
 </head>
 <body>
-  
-  <!-- Container nhập liệu và hiển thị kết quả -->
+
   <div class="app-container">
-    <p class="description">Nhập chuỗi kết quả (0: Xỉu, 1: Tài)</p>
-    <input type="text" id="inputString" maxlength="13" placeholder="VD: 1000000110111 hoặc nhập lịch sử kết quả">
-    <button onclick="processString()">Dự đoán</button>
+    <h1>Phân tích kết quả 3 xúc xắc</h1>
+    <p class="description">
+      Nhập dãy kết quả tổng của 3 xúc xắc (các số từ 3 đến 18), cách nhau bởi dấu phẩy hoặc khoảng trắng.<br>
+      Ví dụ: <strong>9,13,9</strong>
+    </p>
+    <input type="text" id="inputResult" placeholder="Nhập kết quả..." />
+    <button onclick="processInput()">Phân tích</button>
     <div class="result-box" id="resultBox"></div>
   </div>
 
-    <!-- Container biểu tượng nhấp nháy; ban đầu ẩn -->
-    <div class="result-indicator" id="indicatorContainer" style="display: none;">
-      <div class="indicator-circle" id="taiIndicator"><span>Tài</span></div>
-      <img src="https://i.pinimg.com/736x/ba/f0/ad/baf0ad593d7a25c64635d8e4a4bd11bf.jpg" alt="Icon" class="dragon-icon">
-      <div class="indicator-circle" id="xiuIndicator"><span>Xỉu</span></div>
-    </div>
+  <div class="result-indicator" id="indicatorContainer">
+    <div class="indicator-circle" id="taiIndicator"><span>Tài</span></div>
+    <img src="https://i.pinimg.com/736x/ba/f0/ad/baf0ad593d7a25c64635d8e4a4bd11bf.jpg" alt="SunWin Icon" class="sunwin-icon" />
+    <div class="indicator-circle" id="xiuIndicator"><span>Xỉu</span></div>
+  </div>
 
   <script>
-    /*********************
-     * Dữ liệu mẫu 13 ký tự và kết quả dự đoán (Tài/Xỉu)
-     *********************/
-     const dataChuan = {
+    // --- Dữ liệu mẫu: dataChuan và datacauchuan2 ---
+    // dataChuan: key là chuỗi kết quả mẫu (các tổng của 3 xúc xắc, cách nhau bởi dấu phẩy),
+    // value của key là mảng dự đoán của phiên tiếp theo (ở đây chỉ lấy phần tử đầu tiên).
+    const dataChuan = {
+      "13,12,9,7,11,14,11,10,13,7,13,9,12,15,3,7,9,9,6,10,9,9,8,8,11,12,10,10,12,7,12,7,8,3,4,6,12,16,12,12,11,11,12,10": [10],
+      "6,6,13,12,9,7,11,14,11,10,13,7,13,9,12,15,3,7,9,9,6,10,9,9,8,8,11,12,10,10,12,7,12,7,8,3,4,6,12,16,12,12,11,11,12": [12],
+      "9,7,11,14,11,10,13,7,13,9,12,15,3,7,9,9,6,10,9,9,8,8,11,12,10,10,12,7,12,7,8,3,4,6,12,16,12,12,11,11,12,12,10,11": [11],
+      "8,13,6,6,13,12,9,7,11,14,11,10,13,7,13,9,12,15,3,7,9,9,6,10,9,9,8,8,11,12,10,10,12,7,12,7,8,3,11": [4],
+      "12,11,11,6,17,13,6,8,10,13,8,13,6,6,13,12,9,7,11,14,11,10,13,7,13,9,12,15,3,7,9,9,6,10,9,9,8,8,11": [11],
+      "3,12,11,11,6,17,13,6,8,10,13,8,13,6,6,13,12,9,7,11,14,11,10,13,7,13,9,12,15,3,7,9,9,6,10,9,9,8,8,11": [11],
+      "11,13,3,12,11,11,6,17,13,6,8,10,13,8,13,6,6,13,12,9,7,11,14,11,10,13,7,13,9,12,15,3,7,9,9,6,10,9,9,8,8,11": [11],
+      "11,11,11,7,15,13,11,11,12,9,6,7,12,4,8,6,10,9,10,11,13,3,12,11,11,6,17,13,6,10,8,13,8,13,6,6,13,12,9,7,11": [11],
+      "15,14,15,9,13,6,12,13,14,13,7,10,11,7,4,9,11,11,11,7,15,13,11,11,12,9,6,7,12,4,8,6,10,9,10,11,13,3,12,11,11,6,17,13": [13],
+      "11,13,9,11,7,6,8,10,6,15,14,15,9,13,6,12,13,14,13,7,10,11,7,4,9,11,11,11,7,15,13,11,11,12,9,6,7,12,4,8,6,10,9,10,11": [11],
+      "11,6,11,13,9,11,7,6,8,10,6,15,14,15,9,13,6,12,13,14,13,7,10,11,7,4,9,11,11,11,7,15,13,11,11,12,9,6,7,12,4,8": [8],
+      "10,12,10,11,6,11,13,9,11,7,6,8,10,6,15,14,15,9,13,6,12,13,14,13,7,10,11,7,4,9,11,11,11,7,15,13,11,11,12": [12],
+      "14,7,12,11,12,14,10,12,10,11,6,11,13,9,11,7,6,8,10,6,15,14,15,9,13,6,12,13,14,13,7,10,11,7,4,9": [9],
+      "15,13,10,14,7,12,11,12,14,10,12,11,6,11,13,9,11,7,6,8,10,6,15,14,15,9,13,6,12,13,14,13,7": [7],
+      "13,9,9,10,13,16,12,9,10,11,7,15,13,10,14,7,12,11,12,14,10,12,10,11,6,11,13,9,11,7,6,8": [8],
+      "7,11,11,9,9,9,11,6,8,8,7,13,9,9,10,13,16,12,9,10,11,7,15,13,10,14,7,12,11,12,14,10,12,10,11": [11],
+      "11,12,,10,10,12,7,12,7,8,3,4,6,12,16,12,12,11,11,12,12,10,11,17,12,10,9,10,6,10,12,9,10,6,12,10,11,6,10,16,14,6,16": [16],
+      "3,7,9,9,6,10,9,9,8,8,11,12,10,10,12,7,12,7,8,3,4,6,12,16,12,12,11,11,12,12,10,11,17,12,10,9,10,6,10,12,9,10,6,12,10,11,6,10,16,14": [14],
+      "16,6,10,9,10,7,10,9,6,15,9,8,6,12,9,10,10,7,8,12,6,8,10,12,11,8,10,8,9,10,12,11,6,12,8,9,9,14,5,12,9,9,7,16,13,13,6,11,7,11,10,8,11,9,13,9,9,8,14,8,15,13,12,8,11,14,15,10,10,13,12,8,8,13,13,10,9,9,15,17,12": [11],
+    };
+
+
+    const datacauchuan2  = {
       "1000000110111": "Xỉu", "0000001101110": "Xỉu",
       "0011110001000": "Tài", "0110111001100": "Xỉu",
       "1101110011000": "Xỉu", "1011100110000": "Xỉu",
@@ -291,189 +259,142 @@
       "0011011111111": "Xỉu", "0110111111110": "Tài",
       "1011111111011": "Xỉu", "0111111110110": "Xỉu",
       "1111111101100": "Xỉu", "1111111011000": "Xỉu",
+      "1110011001100": "Xỉu", "1100110011000": "Tài",
+      "0001010100001": "Xỉu", "0010101000010": "Xỉu",
     };
 
-    /*********************
-     * Các hàm so sánh & phân tích
-     *********************/
-
-    // Hamming Distance: số ký tự khác nhau giữa 2 chuỗi có độ dài bằng nhau
-    function hammingDistance(str1, str2) {
-      let dist = 0;
-      for (let i = 0; i < str1.length; i++) {
-        if (str1[i] !== str2[i]) {
-          dist++;
-        }
-      }
-      return dist;
+    // --- Hàm chuyển đổi tổng 3 xúc xắc thành nhãn "Tài" hay "Xỉu" ---
+    // Quy ước: nếu tổng >= 11 thì là "Tài", ngược lại là "Xỉu"
+    function convertToTaiXiu(sum) {
+      const num = parseInt(sum, 10);
+      if (isNaN(num) || num < 3 || num > 18) return null;
+      return (num >= 11) ? "Tài" : "Xỉu";
     }
 
-    // Weighted Difference: tính điểm sai lệch, ưu tiên các vị trí bên trái
-    function weightedDifference(s1, s2) {
-      let score = 0;
-      const n = s1.length;
-      for (let i = 0; i < n; i++) {
-        if (s1[i] !== s2[i]) {
-          score += (n - i);
-        }
-      }
-      return score;
+    // Hàm chuyển nhãn thành số: "Tài" => "1", "Xỉu" => "0"
+    function labelToBinary(label) {
+      return (label === "Tài") ? "1" : (label === "Xỉu") ? "0" : "";
     }
 
-    // Longest Common Prefix (LCP): số ký tự khớp liên tiếp từ bên trái
-    function longestCommonPrefixLength(str1, str2) {
-      let lcp = 0;
-      for (let i = 0; i < Math.min(str1.length, str2.length); i++) {
-        if (str1[i] === str2[i]) {
-          lcp++;
-        } else {
-          break;
-        }
-      }
-      return lcp;
-    }
-
-    // Levenshtein Distance: tính khoảng cách chỉnh sửa giữa 2 chuỗi
-    function levenshteinDistance(a, b) {
-      const matrix = [];
-      const aLen = a.length;
-      const bLen = b.length;
-      // Nếu một chuỗi rỗng, khoảng cách là độ dài chuỗi còn lại
-      if (aLen === 0) return bLen;
-      if (bLen === 0) return aLen;
-      // Khởi tạo hàng đầu tiên
-      for (let i = 0; i <= bLen; i++) {
-        matrix[i] = [i];
-      }
-      // Khởi tạo cột đầu tiên
-      for (let j = 0; j <= aLen; j++) {
-        matrix[0][j] = j;
-      }
-      // Tính toán khoảng cách
-      for (let i = 1; i <= bLen; i++) {
-        for (let j = 1; j <= aLen; j++) {
-          if (b.charAt(i - 1) === a.charAt(j - 1)) {
-            matrix[i][j] = matrix[i - 1][j - 1];
-          } else {
-            matrix[i][j] = Math.min(
-              matrix[i - 1][j] + 1,      // xóa ký tự
-              matrix[i][j - 1] + 1,      // chèn ký tự
-              matrix[i - 1][j - 1] + 1   // thay thế ký tự
-            );
-          }
-        }
-      }
-      return matrix[bLen][aLen];
-    }
-
-    /*********************
-     * Hàm xử lý dự đoán kết quả dựa trên chuỗi nhập
-     *********************/
-    function processString() {
-      const input = document.getElementById("inputString").value.trim();
-      const resultBox = document.getElementById("resultBox");
-
-      if (!input) {
-        resultBox.innerHTML = `<strong>Vui lòng nhập chuỗi.</strong>`;
-        resultBox.style.color = "red";
-        return;
-      }
-      if (input.length > 13) {
-        resultBox.innerHTML = `<strong>Số ký tự tối đa là 13.</strong>`;
-        resultBox.style.color = "red";
-        return;
-      }
-
-      let predictedResult = "";
-      let analysisDetails = "";
-      
-      // Ngưỡng quyết định mẫu phù hợp
-      const thresholdFull = 15;   // cho chuỗi 13 ký tự đầy đủ
-      const thresholdPartial = 8; // cho chuỗi nhập chưa đủ
-      
-      // Nếu nhập đủ 13 ký tự:
-      if (input.length === 13) {
-        if (dataChuan.hasOwnProperty(input)) {
-          predictedResult = dataChuan[input];
-          analysisDetails = `Exact match được tìm thấy.`;
-        } else {
-          // Tính toán điểm cho mỗi mẫu dựa trên 4 thước đo
-          let bestKey = null;
-          let bestScore = Infinity;
-          for (let key in dataChuan) {
-            const wDiff = weightedDifference(input, key);
-            const hamming = hammingDistance(input, key);
-            const lcp = longestCommonPrefixLength(input, key);
-            const levenshtein = levenshteinDistance(input, key);
-            // Hệ số điều chỉnh cho Levenshtein
-            const levenshteinCoefficient = 1;
-            let combinedScore = wDiff + hamming - 2 * lcp + levenshteinCoefficient * levenshtein;
-            if (combinedScore < bestScore) {
-              bestScore = combinedScore;
-              bestKey = key;
-            }
-          }
-          // Nếu không có mẫu nào đạt ngưỡng, hiển thị thông báo cảnh báo
-          if (bestScore > thresholdFull) {
-            analysisDetails = `Không có mẫu nào đủ gần (score cao: ${bestScore}). Dự đoán dựa trên mẫu gần nhất: ${bestKey}.`;
-          } else {
-            analysisDetails = `(Combined Score) Mẫu gần nhất: ${bestKey} với score: ${bestScore}.`;
-          }
-          predictedResult = dataChuan[bestKey];
-        }
-      }
-      // Nếu nhập chuỗi dưới 13 ký tự:
-      else {
-        let bestKeyPartial = null;
-        let bestScorePartial = Infinity;
-        for (let key in dataChuan) {
-          const prefix = key.substring(0, input.length);
-          const wDiff = weightedDifference(input, prefix);
-          const hamming = hammingDistance(input, prefix);
-          const lcp = longestCommonPrefixLength(input, prefix);
-          const levenshtein = levenshteinDistance(input, prefix);
-          const levenshteinCoefficient = 1;
-          let combinedScore = wDiff + hamming - 2 * lcp + levenshteinCoefficient * levenshtein;
-          if (combinedScore < bestScorePartial) {
-            bestScorePartial = combinedScore;
-            bestKeyPartial = key;
-          }
-        }
-        if (bestScorePartial > thresholdPartial) {
-          analysisDetails = `Không có mẫu phù hợp (score cao: ${bestScorePartial}). Dự đoán ký tự tiếp theo từ mẫu gần nhất: ${bestKeyPartial}.`;
-        } else {
-          analysisDetails = `(Partial Combined Score) Mẫu gần nhất: ${bestKeyPartial} với score: ${bestScorePartial}.`;
-        }
-        const nextChar = bestKeyPartial.charAt(input.length);
-        predictedResult = (nextChar === "1") ? "Tài" : "Xỉu";
-      }
-      
-      // Hiển thị kết quả và phân tích
-      resultBox.innerHTML = `<strong>Kết quả dự đoán: ${predictedResult}</strong><br>${analysisDetails}`;
-      resultBox.style.color = (predictedResult === "Tài") ? "green" : "blue";
-
-      // Hiển thị khung biểu tượng nếu chưa hiển thị
-      document.getElementById("indicatorContainer").style.display = "flex";
-      // Cập nhật hiệu ứng nhấp nháy cho biểu tượng tương ứng
-      showIndicator(predictedResult);
-    }
-
-    /*********************
-     * Hiệu ứng nhấp nháy cho biểu tượng Tài và Xỉu
-     *********************/
-    function showIndicator(result) {
+    // Hàm hiển thị kết quả với hiệu ứng nhấp nháy và tỉ lệ %
+    // Ví dụ: "Tài (1) (85%)" hoặc "Xỉu (0) (90%)"
+    function showResult(label, percent) {
+      const indicator = document.getElementById("indicatorContainer");
       const taiIndicator = document.getElementById("taiIndicator");
       const xiuIndicator = document.getElementById("xiuIndicator");
-      // Xóa lớp "blink" nếu đang có
+      
+      indicator.style.display = "flex";
       taiIndicator.classList.remove("blink");
       xiuIndicator.classList.remove("blink");
 
-      if (result === "Tài") {
+      const percentText = `(${percent}%)`;
+      if (label === "Tài") {
+        taiIndicator.innerHTML = `<span>${label} (${labelToBinary(label)}) ${percentText}</span>`;
+        xiuIndicator.innerHTML = `<span>Xỉu (0)</span>`;
         taiIndicator.classList.add("blink");
-      } else if (result === "Xỉu") {
+      } else if (label === "Xỉu") {
+        xiuIndicator.innerHTML = `<span>${label} (${labelToBinary(label)}) ${percentText}</span>`;
+        taiIndicator.innerHTML = `<span>Tài (1)</span>`;
         xiuIndicator.classList.add("blink");
       }
     }
+
+    // --- Hàm tính best match cho bộ dữ liệu mẫu theo chuỗi nhập ---
+    // Nhận vào object mẫu (dataObj) và mảng các phần tử nhập (parts).
+    // Trả về một object với:
+    //    bestKey: key có số phần tử trùng (prefix match) cao nhất
+    //    percent: tỉ lệ khớp tính theo (số phần tử trùng) / (số phần tử nhập) * 100
+    //    outcome: kết quả dự đoán (nhãn) ở vị trí ngay sau chuỗi nhập (nếu tồn tại)
+    function getBestMatch(dataObj, parts) {
+      let bestKey = null;
+      let bestCount = 0;
+      let outcome = null;
+      for (let key in dataObj) {
+        const arrKey = key.split(",");
+        let currentCount = 0;
+        for (let i = 0; i < Math.min(parts.length, arrKey.length); i++) {
+          if (parts[i] === arrKey[i]) {
+            currentCount++;
+          } else {
+            break;
+          }
+        }
+        if (currentCount > bestCount) {
+          bestCount = currentCount;
+          bestKey = key;
+        }
+      }
+      const percent = Math.round((bestCount / parts.length) * 100);
+      if (bestKey) {
+        const arrKey = bestKey.split(",");
+        const nextIndex = parts.length; // vị trí phần tử dự đoán
+        if (nextIndex < arrKey.length) {
+          // Dự đoán là tổng (số) -> chuyển sang nhãn "Tài" hay "Xỉu"
+          outcome = convertToTaiXiu(arrKey[nextIndex]);
+        }
+      }
+      return { bestKey, percent, outcome };
+    }
+
+    // --- Hàm xử lý khi người dùng nhập chuỗi kết quả ---
+    function processInput() {
+      const inputStr = document.getElementById("inputResult").value.trim();
+      const resultBox = document.getElementById("resultBox");
+      const indicator = document.getElementById("indicatorContainer");
+      
+      // Ẩn kết quả cũ
+      indicator.style.display = "none";
+      resultBox.innerHTML = "";
+      resultBox.style.display = "none";
+      
+      // Tách chuỗi theo dấu phẩy hoặc khoảng trắng
+      const parts = inputStr.split(/[\s,]+/).filter(e => e !== "");
+      
+      if (parts.length < 1) {
+        alert("Vui lòng nhập ít nhất 1 kết quả tổng của 3 xúc xắc!");
+        return;
+      }
+      
+      // Kiểm tra từng phần có phải là số từ 3 đến 18 không
+      for (let i = 0; i < parts.length; i++) {
+        const num = parseInt(parts[i], 10);
+        if (isNaN(num) || num < 3 || num > 18) {
+          alert("Các kết quả phải là số từ 3 đến 18!");
+          return;
+        }
+      }
+      
+      // Lấy best match từ dataChuan
+      const match1 = getBestMatch(dataChuan, parts);
+      // Lấy best match từ datacauchuan2
+      const match2 = getBestMatch(datacauchuan2, parts);
+      
+      // Nếu cả hai không có dự đoán (nghĩa là không khớp với bất kỳ mẫu nào)
+      if (!match1.outcome && !match2.outcome) {
+        alert("Không tìm thấy mẫu dữ liệu phù hợp để dự đoán!");
+        return;
+      }
+      
+      // Nếu cả hai cho cùng 1 kết quả thì tổng hợp tỉ lệ là trung bình
+      // Ngược lại, chọn kết quả có tỉ lệ khớp cao hơn
+      let finalOutcome, overallPercent;
+      if (match1.outcome === match2.outcome && match1.outcome !== null) {
+        overallPercent = Math.round((match1.percent + match2.percent) / 2);
+        finalOutcome = match1.outcome;
+      } else {
+        if (match1.percent >= match2.percent) {
+          finalOutcome = match1.outcome;
+          overallPercent = match1.percent;
+        } else {
+          finalOutcome = match2.outcome;
+          overallPercent = match2.percent;
+        }
+      }
+      
+      // Hiển thị kết quả cuối cùng
+      showResult(finalOutcome, overallPercent);
+    }
   </script>
+
 </body>
 </html>
