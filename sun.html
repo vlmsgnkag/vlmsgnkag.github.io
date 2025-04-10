@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="vi">
 <head>
@@ -130,7 +131,16 @@
       "11,12,,10,10,12,7,12,7,8,3,4,6,12,16,12,12,11,11,12,12,10,11,17,12,10,9,10,6,10,12,9,10,6,12,10,11,6,10,16,14,6,16": [16],
       "3,7,9,9,6,10,9,9,8,8,11,12,10,10,12,7,12,7,8,3,4,6,12,16,12,12,11,11,12,12,10,11,17,12,10,9,10,6,10,12,9,10,6,12,10,11,6,10,16,14": [14],
       "16,6,10,9,10,7,10,9,6,15,9,8,6,12,9,10,10,7,8,12,6,8,10,12,11,8,10,8,9,10,12,11,6,12,8,9,9,14,5,12,9,9,7,16,13,13,6,11,7,11,10,8,11,9,13,9,9,8,14,8,15,13,12,8,11,14,15,10,10,13,12,8,8,13,13,10,9,9,15,17,12": [11],
+      "5,10,10,11,7,10,15,7,11,9,9,18,6,19,11,8,12,13,8,11,7,11,15,5,8,8,9,15,7,10,8,12,13,12,13,12,12,10,11,13,6,8,10": [10],
+      "11,8,9,8,12,12,12,8,7,9,8,7,9,10,9,12,9,13,10,10,11,12,6,8,10,8,10,9,10,15,9,9,5,10,13,16,15,15,8,7,11,8,11,12,10": [10],
+      "16,12,7,8,7,5,8,6,11,10,13,15,11,12,11,9,13,11,11,14,11,14,8,11,10,16,10,10,8,6,7,13,13,9,13,7,6,12,9,8,10,11,14,10,9,11": [11],
+      "11,16,12,14,10,14,7,5,16,13,12,4,8,9,9,9,16,8,10,14,12": [12],
+      "15,15,4,7,12,8,12,11,18,11,6,12,9,8,10,9,10,13,9,11,10": [10],
+      "6,14,8,13,9,10,7,10,12,6,10,10,14,10,12,8,14,9,9,11,12,15,15,4,7,12,8,12,11,18,11,6,12": [12],
+      "10,12,14,8,9,16,9,12,9,8,9,9,7,8,11,9,11,13,12,9,15,8,11,4,11,8,3,11,11,7,11,18,6,11,9,15,9,4,13,12,11,10,14,9,6,11,11,13,6,16,4,12,17,15,8,15,12,14,11,10,14,11,15,10,5,13,12,14,12,4,11,11,8,10,5,8,5,9,13,17,3,14,9,5,9,9,7": [9],
     };
+
+
 
 
     const datacauchuan2  = {
@@ -260,7 +270,16 @@
       "1011111111011": "Xỉu", "0111111110110": "Xỉu",
       "1111111101100": "Xỉu", "1111111011000": "Xỉu",
       "1110011001100": "Xỉu", "1100110011000": "Tài",
-      "0001010100001": "Xỉu", "0010101000010": "Xỉu",
+      "0001010100001": "Xỉu", "1010010001100": "Tài",
+      "1010100000110": "Tài", "1101010000011": "Xỉu",
+      "1111101010000": "Xỉu", "1011111101010": "Xỉu",
+      "0101111101111": "Tài", "1111100001100": "Xỉu",
+      "0001110110010": "Tài", "0011101100101": "Xỉu",
+      "0111011001010": "Xỉu", "1110110010100": "Xỉu",
+      "1010101001101": "Tài", "0101010011011": "Xỉu",
+      "1011100111101": "Tài", "0111001111011": "Xỉu",
+      "1100000011010": "Xỉu", "1000000110100": "Xỉu",
+      "0000110100000": "Xỉu", "0001101000000": "Xỉu",
     };
 
     // --- Hàm chuyển đổi tổng 3 xúc xắc thành nhãn "Tài" hay "Xỉu" ---
@@ -270,6 +289,7 @@
       if (isNaN(num) || num < 3 || num > 18) return null;
       return (num >= 11) ? "Tài" : "Xỉu";
     }
+    
 
     // Hàm chuyển nhãn thành số: "Tài" => "1", "Xỉu" => "0"
     function labelToBinary(label) {
@@ -299,6 +319,13 @@
       }
     }
 
+    function cleanKeyPattern(keyStr) {
+  // Trường hợp mẫu có chứa dạng không mong muốn nào đó thì xử lý ở đây.
+  // Ví dụ: loại bỏ khoảng trắng thừa, hoặc nếu key chứa kí tự đặt ngoài chuỗi số (nhưng theo mẫu của bạn thì không cần).
+  return keyStr;
+}
+
+
     // --- Hàm tính best match cho bộ dữ liệu mẫu theo chuỗi nhập ---
     // Nhận vào object mẫu (dataObj) và mảng các phần tử nhập (parts).
     // Trả về một object với:
@@ -306,94 +333,90 @@
     //    percent: tỉ lệ khớp tính theo (số phần tử trùng) / (số phần tử nhập) * 100
     //    outcome: kết quả dự đoán (nhãn) ở vị trí ngay sau chuỗi nhập (nếu tồn tại)
     function getBestMatch(dataObj, parts) {
-      let bestKey = null;
-      let bestCount = 0;
-      let outcome = null;
-      for (let key in dataObj) {
-        const arrKey = key.split(",");
-        let currentCount = 0;
-        for (let i = 0; i < Math.min(parts.length, arrKey.length); i++) {
-          if (parts[i] === arrKey[i]) {
-            currentCount++;
-          } else {
-            break;
-          }
-        }
-        if (currentCount > bestCount) {
-          bestCount = currentCount;
-          bestKey = key;
-        }
+  let bestKey = null;
+  let bestScore = 0;  // Sử dụng điểm số thay vì chỉ số phần tử khớp liên tiếp
+  let outcome = null;
+  
+  // Hàm tính điểm so sánh
+  // Ở đây ta chỉ dùng điểm theo cách đơn giản: mỗi phần tử khớp sẽ cộng 1 điểm;
+  // nếu muốn phức tạp hơn, bạn có thể áp dụng trọng số theo vị trí.
+  function computeScore(arrKey, parts) {
+    let score = 0;
+    for (let i = 0; i < Math.min(parts.length, arrKey.length); i++) {
+      if (parts[i] === arrKey[i]) {
+        score += 1;
       }
-      const percent = Math.round((bestCount / parts.length) * 100);
-      if (bestKey) {
-        const arrKey = bestKey.split(",");
-        const nextIndex = parts.length; // vị trí phần tử dự đoán
-        if (nextIndex < arrKey.length) {
-          // Dự đoán là tổng (số) -> chuyển sang nhãn "Tài" hay "Xỉu"
-          outcome = convertToTaiXiu(arrKey[nextIndex]);
-        }
-      }
-      return { bestKey, percent, outcome };
     }
+    return score;
+  }
+  
+  for (let key in dataObj) {
+    // Loại bỏ giá trị dự đoán trong key (nếu key chứa thêm giá trị ở cuối cần bỏ đi)
+    // Ở đây ta giả sử key chỉ chứa chuỗi kết quả cần so sánh.
+    const cleanKey = key;
+    const arrKey = cleanKey.split(",").map(e => e.trim()).filter(e => e !== "");
+    
+    const score = computeScore(arrKey, parts);
+    if (score > bestScore) {
+      bestScore = score;
+      bestKey = cleanKey;
+    }
+  }
+  
+  // Tính tỷ lệ khớp theo số điểm so với số phần tử nhập vào
+  const percent = Math.round((bestScore / parts.length) * 100);
+  
+  // Dự đoán: lấy phần tử ngay sau chuỗi dữ liệu nhập
+  if (bestKey) {
+    const arrKey = bestKey.split(",").map(e => e.trim()).filter(e => e !== "");
+    const nextIndex = parts.length;
+    if (nextIndex < arrKey.length) {
+      outcome = convertToTaiXiu(arrKey[nextIndex]);
+    }
+  }
+  
+  return { bestKey, percent, outcome };
+}
 
     // --- Hàm xử lý khi người dùng nhập chuỗi kết quả ---
     function processInput() {
-      const inputStr = document.getElementById("inputResult").value.trim();
-      const resultBox = document.getElementById("resultBox");
-      const indicator = document.getElementById("indicatorContainer");
-      
-      // Ẩn kết quả cũ
-      indicator.style.display = "none";
-      resultBox.innerHTML = "";
-      resultBox.style.display = "none";
-      
-      // Tách chuỗi theo dấu phẩy hoặc khoảng trắng
-      const parts = inputStr.split(/[\s,]+/).filter(e => e !== "");
-      
-      if (parts.length < 1) {
-        alert("Vui lòng nhập ít nhất 1 kết quả tổng của 3 xúc xắc!");
-        return;
-      }
-      
-      // Kiểm tra từng phần có phải là số từ 3 đến 18 không
-      for (let i = 0; i < parts.length; i++) {
-        const num = parseInt(parts[i], 10);
-        if (isNaN(num) || num < 3 || num > 18) {
-          alert("Các kết quả phải là số từ 3 đến 18!");
-          return;
-        }
-      }
-      
-      // Lấy best match từ dataChuan
-      const match1 = getBestMatch(dataChuan, parts);
-      // Lấy best match từ datacauchuan2
-      const match2 = getBestMatch(datacauchuan2, parts);
-      
-      // Nếu cả hai không có dự đoán (nghĩa là không khớp với bất kỳ mẫu nào)
-      if (!match1.outcome && !match2.outcome) {
-        alert("Không tìm thấy mẫu dữ liệu phù hợp để dự đoán!");
-        return;
-      }
-      
-      // Nếu cả hai cho cùng 1 kết quả thì tổng hợp tỉ lệ là trung bình
-      // Ngược lại, chọn kết quả có tỉ lệ khớp cao hơn
-      let finalOutcome, overallPercent;
-      if (match1.outcome === match2.outcome && match1.outcome !== null) {
-        overallPercent = Math.round((match1.percent + match2.percent) / 2);
-        finalOutcome = match1.outcome;
-      } else {
-        if (match1.percent >= match2.percent) {
-          finalOutcome = match1.outcome;
-          overallPercent = match1.percent;
-        } else {
-          finalOutcome = match2.outcome;
-          overallPercent = match2.percent;
-        }
-      }
-      
-      // Hiển thị kết quả cuối cùng
-      showResult(finalOutcome, overallPercent);
+  const inputStr = document.getElementById("inputResult").value.trim();
+  const resultBox = document.getElementById("resultBox");
+  const indicator = document.getElementById("indicatorContainer");
+  
+  // Ẩn kết quả cũ
+  indicator.style.display = "none";
+  resultBox.innerHTML = "";
+  resultBox.style.display = "none";
+  
+  // Tách chuỗi theo dấu phẩy hoặc khoảng trắng
+  const parts = inputStr.split(/[\s,]+/).filter(e => e !== "");
+  
+  if (parts.length < 1) {
+    alert("Vui lòng nhập ít nhất 1 kết quả tổng của 3 xúc xắc!");
+    return;
+  }
+  
+  // Kiểm tra từng phần có phải là số từ 3 đến 18 không
+  for (let i = 0; i < parts.length; i++) {
+    const num = parseInt(parts[i], 10);
+    if (isNaN(num) || num < 3 || num > 18) {
+      alert("Các kết quả phải là số từ 3 đến 18!");
+      return;
     }
+  }
+  
+  // Lấy best match từ dataChuan (đã loại bỏ datacauchuan2)
+  const match = getBestMatch(dataChuan, parts);
+  
+  if (!match.outcome) {
+    alert("Không tìm thấy mẫu dữ liệu phù hợp để dự đoán!");
+    return;
+  }
+  
+  // Hiển thị kết quả cuối cùng với tỉ lệ khớp
+  showResult(match.outcome, match.percent);
+}
   </script>
 
 </body>
