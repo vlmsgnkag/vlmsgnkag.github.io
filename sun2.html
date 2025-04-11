@@ -1,0 +1,187 @@
+
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Soi cầu tổng 3 xúc xắc – So sánh mẫu cầu</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap');
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(135deg, #74ABE2, #5563DE);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 1rem;
+    }
+    .app-container {
+      background: rgba(255,255,255,0.95);
+      border-radius: 15px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+      padding: 2rem 3rem;
+      max-width: 700px;
+      width: 100%;
+      margin-bottom: 2rem;
+      text-align: center;
+    }
+    h1 { color: #333; margin-bottom: 1rem; font-weight: 600; }
+    p.description { color: #555; margin-bottom: 1.5rem; }
+    input[type="text"] {
+      width: 100%;
+      padding: 0.75rem 1rem;
+      font-size: 1rem;
+      border: 2px solid #ddd;
+      border-radius: 8px;
+      margin-bottom: 1rem;
+    }
+    button {
+      background: #5563DE;
+      color: white;
+      border: none;
+      padding: 0.75rem 2rem;
+      border-radius: 8px;
+      font-size: 1rem;
+      cursor: pointer;
+    }
+    button:hover { background: #4251BB; }
+    .result-output {
+      margin-top: 1.5rem;
+      background: #fff;
+      border-radius: 10px;
+      padding: 1rem;
+      font-size: 1.1rem;
+      color: #333;
+      box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+      text-align: left;
+      line-height: 1.6;
+    }
+    .result-row { margin-bottom: 0.8rem; }
+    .result-title { font-weight: bold; }
+  </style>
+</head>
+<body>
+  <div class="app-container">
+    <h1>Soi cầu tổng 3 xúc xắc</h1>
+    <p class="description">
+      Nhập dãy tổng của 3 xúc xắc (số từ 3 đến 18), cách nhau bởi dấu phẩy hoặc khoảng trắng.<br>
+      Ví dụ: <strong>11,10,8,13,11</strong>
+    </p>
+    <input type="text" id="inputResult" placeholder="Nhập kết quả...">
+    <button onclick="processInput()">Phân tích</button>
+    <div id="output" class="result-output"></div>
+  </div>
+  
+  <script>
+    // Data mẫu của hệ thống: chỉ giữ các chuỗi bên trong dấu nháy.
+    const dataChuan = {
+      "11,13,3,12,11,11,6,17,13,6,8,10,13,8,13,6,6,13,12,9,7,11,14,11,10,13,7,13,9,12,15,3,7,9,9,6,10,9,9,8,8,11,12,10,10,12,7,12,7,8,3,11,4,6,12,16,12,12,11,11,12,10": [10],
+      "6,6,13,12,9,7,11,14,11,10,13,7,13,9,12,15,3,7,9,9,6,10,9,9,8,8,11,12,10,10,12,7,12,7,8,3,4,6,12,16,12,12,11,11,12": [12],
+      "9,7,11,14,11,10,13,7,13,9,12,15,3,7,9,9,6,10,9,9,8,8,11,12,10,10,12,7,12,7,8,3,4,6,12,16,12,12,11,11,12,12,10,11": [11],
+      "15,14,15,9,13,6,12,13,14,13,7,10,11,7,4,9,11,11,11,7,15,13,11,11,12,9,6,7,12,4,8,6,10,9,10,11,13,3,12,11,11,6,17,13": [13],
+      "7,11,11,9,9,9,11,6,8,8,7,13,9,9,10,13,16,12,9,10,11,7,15,13,10,14,7,12,11,12,14,10,12,10,11,6,11,13,9,11,7,6,8,10,6,15,14,15,9,13,6,12,13,14,13,7,10,11,7,4,9,11,11,11,7,15,13,11,11,12,9,6,7,12,4,8,6,10,9,10,11": [11],
+      "15,13,10,14,7,12,11,12,14,10,12,11,6,11,13,9,11,7,6,8,10,6,15,14,15,9,13,6,12,13,14,13,7": [7],
+      "3,7,9,9,6,10,9,9,8,8,11,12,10,10,12,7,12,7,8,3,4,6,12,16,12,12,11,11,12,12,10,11,17,12,10,9,10,6,10,12,9,10,6,12,10,11,6,10,16,14,6,16": [16],
+      "16,6,10,9,10,7,10,9,6,15,9,8,6,12,9,10,10,7,8,12,6,8,10,12,11,8,10,8,9,10,12,11,6,12,8,9,9,14,5,12,9,9,7,16,13,13,6,11,7,11,10,8,11,9,13,9,9,8,14,8,15,13,12,8,11,14,15,10,10,13,12,8,8,13,13,10,9,9,15,17,12": [11],
+      "5,10,10,11,7,10,15,7,11,9,9,18,6,19,11,8,12,13,8,11,7,11,15,5,8,8,9,15,7,10,8,12,13,12,13,12,12,10,11,13,6,8,10": [10],
+      "11,8,9,8,12,12,12,8,7,9,8,7,9,10,9,12,9,13,10,10,11,12,6,8,10,8,10,9,10,15,9,9,5,10,13,16,15,15,8,7,11,8,11,12,10": [10],
+      "16,12,7,8,7,5,8,6,11,10,13,15,11,12,11,9,13,11,11,14,11,14,8,11,10,16,10,10,8,6,7,13,13,9,13,7,6,12,9,8,10,11,14,10,9,11": [11],
+      "11,16,12,14,10,14,7,5,16,13,12,4,8,9,9,9,16,8,10,14,12": [12],
+      "15,15,4,7,12,8,12,11,18,11,6,12,9,8,10,9,10,13,9,11,10": [10],
+      "6,14,8,13,9,10,7,10,12,6,10,10,14,10,12,8,14,9,9,11,12,15,15,4,7,12,8,12,11,18,11,6,12": [12],
+      "10,12,14,8,9,16,9,12,9,8,9,9,7,8,11,9,11,13,12,9,15,8,11,4,11,8,3,11,11,7,11,18,6,11,9,15,9,4,13,12,11,10,14,9,6,11,11,13,6,16,4,12,17,15,8,15,12,14,11,10,14,11,15,10,5,13,12,14,12,4,11,11,8,10,5,8,5,9,13,17,3,14,9,5,9,9,7": [9],
+      "11,7,10,8,13,7,7,7,13,14,6,10,13,7,5,12,9,11,10,8,13,11,9,13,8,9,11,9,14,13,6,8,10,10,8,12,15,10,10,11,6,16,12,11,8,10,11,9,9,9,9,13,13,12,10": [10],
+    };
+
+    // Hàm tính điểm khớp có trọng số giữa chuỗi mẫu (arrKey) và chuỗi nhập (parts)
+    function computeWeightedScore(arrKey, parts, useReversed = false) {
+      let score = 0;
+      let totalWeight = 0;
+      const n = parts.length;
+      for (let i = 0; i < Math.min(n, arrKey.length); i++) {
+        // Tính trọng số theo hai công thức:
+        // Nếu useReversed = false, dùng weight(i) = i + 1; nếu true, dùng weight(i) = (n - i)
+        let weight = useReversed ? (n - i) : (i + 1);
+        totalWeight += weight;
+        if (parts[i] === arrKey[i]) {
+          score += weight;
+        }
+      }
+      return { score, totalWeight };
+    }
+
+    // Hàm tìm mẫu phù hợp nhất trong dataChuan dựa trên chuỗi nhập và công thức tính trọng số
+    function getBestMatch(dataObj, parts, useReversed = false) {
+      let bestKey = null;
+      let bestScoreFraction = 0;
+      let outcome = null;
+      
+      for (let key in dataObj) {
+        const arrKey = key.split(",").map(e => e.trim());
+        const { score, totalWeight } = computeWeightedScore(arrKey, parts, useReversed);
+        const matchFraction = score / totalWeight;
+        if (matchFraction > bestScoreFraction) {
+          bestScoreFraction = matchFraction;
+          bestKey = key;
+        }
+      }
+      
+      if (bestKey) {
+        const arrKey = bestKey.split(",").map(e => e.trim());
+        const nextIndex = parts.length;
+        if (nextIndex < arrKey.length) {
+          outcome = arrKey[nextIndex];
+        } else if (dataObj[bestKey] && dataObj[bestKey][0]) {
+          outcome = dataObj[bestKey][0].toString();
+        }
+      }
+      
+      // Nếu không tìm được mẫu phù hợp, sử dụng fallback:
+      if (!outcome) {
+        let newTrend = parts.length >= 3 ? parts.slice(parts.length - 3) : parts.slice();
+        let oldTrend = parts.slice(0, parts.length - newTrend.length);
+        let sum = newTrend.reduce((total, num) => total + parseInt(num,10), 0);
+        outcome = Math.round(sum / newTrend.length).toString();
+        return { bestKey: null, percent: 0, outcome, fallback: { oldTrend, newTrend } };
+      } else {
+        return { bestKey, percent: Math.round(bestScoreFraction * 100), outcome };
+      }
+    }
+
+    // Hàm xử lý khi người dùng bấm nút "Phân tích"
+    function processInput() {
+      const inputStr = document.getElementById("inputResult").value.trim();
+      const parts = inputStr.split(/[\\s,]+/).filter(e => e !== "");
+      const output = document.getElementById("output");
+      output.innerHTML = "";
+
+      // Kiểm tra tính hợp lệ của dữ liệu nhập: các giá trị phải là số từ 3 đến 18
+      for (let i = 0; i < parts.length; i++) {
+        const num = parseInt(parts[i], 10);
+        if (isNaN(num) || num < 3 || num > 18) {
+          alert("Tất cả các giá trị phải nằm trong khoảng từ 3 đến 18.");
+          return;
+        }
+      }
+
+      // Thực hiện so sánh mẫu theo cả hai phương pháp trọng số
+      const matchDefault = getBestMatch(dataChuan, parts, false); // weight(i) = i + 1
+      const matchReversed = getBestMatch(dataChuan, parts, true);  // weight(i) = (n - i)
+
+      // Hiển thị kết quả cho cả hai phương pháp
+      let html = '';
+      html += '<div class="result-row"><span class="result-title">Phương pháp weight(i) = i + 1:</span><br>';
+      html += `<b>Tỉ lệ khớp:</b> ${matchDefault.percent}%<br>`;
+      html += `<b>Dự đoán tổng tiếp theo:</b> <strong>${matchDefault.outcome}</strong></div><hr>`;
+      
+      html += '<div class="result-row"><span class="result-title">Phương pháp weight(i) = (n - i):</span><br>';
+      html += `<b>Tỉ lệ khớp:</b> ${matchReversed.percent}%<br>`;
+      html += `<b>Dự đoán tổng tiếp theo:</b> <strong>${matchReversed.outcome}</strong></div>`;
+      
+      output.innerHTML = html;
+    }
+  </script>
+</body>
+</html>
