@@ -1,0 +1,41 @@
+<!-- index.html -->
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MD5 Tài Xỉu</title>
+  <link rel="stylesheet" href="md5vip.css">
+  <!-- Chart.js from CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs"></script>
+</head>
+<body>
+  <div class="container">
+    <h1>MD5 Tài Xỉu</h1>
+    <form id="predict-form">
+      <label for="md5-input">Nhập MD5:</label>
+      <input type="text" id="md5-input" placeholder="d41d8cd98f00b204e9800998ecf8427e" required>
+      <button type="submit">Dự đoán</button>
+    </form>
+
+    <div id="result" class="card" hidden>
+      <h2>Kết quả dự đoán</h2>
+      <p id="pattern"></p>
+      <p id="prob"></p>
+      <p id="prediction"></p>
+    </div>
+
+    <div class="chart-container card">
+      <h2>Lịch sử xác suất (%)</h2>
+      <canvas id="history-chart"></canvas>
+    </div>
+
+    <div class="dice-container">
+      <div class="dice">🎲</div>
+    </div>
+  </div>
+
+  <script src="md5vip.js"></script>
+</body>
+</html>

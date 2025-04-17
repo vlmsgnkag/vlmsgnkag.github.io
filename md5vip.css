@@ -1,0 +1,75 @@
+:root {
+    --bg-color: #f0f0f5;
+    --text-color: #222;
+    --card-bg: #fff;
+    --primary: #4caf50;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg-color: #18181b;
+      --text-color: #eee;
+      --card-bg: #242629;
+      --primary: #66bb6a;
+    }
+  }
+  body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: var(--bg-color);
+    color: var(--text-color);
+  }
+  .container {
+    max-width: 600px;
+    margin: 2rem auto;
+    padding: 1rem;
+  }
+  h1 {
+    text-align: center;
+  }
+  form {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+  }
+  input[type=text] {
+    flex: 1;
+    padding: 0.5rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+  }
+  button {
+    padding: 0.5rem 1rem;
+    background: var(--primary);
+    border: none;
+    border-radius: 4px;
+    color: #fff;
+    cursor: pointer;
+  }
+  button:hover {
+    opacity: 0.9;
+  }
+  .card {
+    background: var(--card-bg);
+    padding: 1rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    margin-bottom: 1rem;
+  }
+  .chart-container {
+    position: relative;
+    height: 200px;
+  }
+  .dice-container {
+    text-align: center;
+    margin-top: 1rem;
+  }
+  .dice {
+    display: inline-block;
+    font-size: 3rem;
+    animation: rotateDice 1.5s linear infinite;
+  }
+  @keyframes rotateDice {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+  }
+  
