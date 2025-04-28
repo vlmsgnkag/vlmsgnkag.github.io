@@ -4,455 +4,517 @@
 <meta charset="UTF-8">
 <title>Dự đoán Tài Xỉu MD5</title>
 <style>
-body { font-family: Arial, sans-serif; background-color: #f9f9f9; color: #333; }
-.container { max-width: 500px; margin: 50px auto; padding: 20px; border: 1px solid #ddd; border-radius: 8px; background: #fff; }
-input[type="text"] { width: 100%; padding: 10px; font-size: 1em; margin-bottom: 10px; box-sizing: border-box; }
-button { width: 100%; padding: 10px; font-size: 1em; background-color: #28a745; color: white; border: none; border-radius: 4px; cursor: pointer; }
-button:hover { background-color: #218838; }
-#result { margin-top: 20px; font-size: 2em; text-align: center; font-weight: bold; }
+  body {
+    font-family: Arial, sans-serif; background-color: #f9f9f9; color: #333;
+  }
+  .container {
+    max-width: 600px; margin: 50px auto; padding: 20px;
+    border: 1px solid #ddd; border-radius: 8px; background: #fff;
+  }
+  input[type="text"] {
+    width: 100%; padding: 10px; font-size: 1em;
+    margin-bottom: 10px; box-sizing: border-box;
+  }
+  button {
+    width: 100%; padding: 10px; font-size: 1em;
+    background-color: #28a745; color: white; border: none;
+    border-radius: 4px; cursor: pointer;
+  }
+  button:hover {
+    background-color: #218838;
+  }
+  #result {
+    margin-top: 20px; font-size: 1.2em;
+  }
+  /* Bảng thống kê phiếu và confidence */
+  table {
+    width: 100%; border-collapse: collapse; margin-top: 20px;
+  }
+  th, td {
+    border: 1px solid #ccc; padding: 8px; text-align: center;
+  }
+  th {
+    background-color: #f2f2f2;
+  }
 </style>
 </head>
 <body>
 <div class="container">
-  <h1 style="text-align:center;">Dự đoán Tài Xỉu  MD5</h1>
-  <input type="text" id="md5Input" placeholder="Nhập chuỗi MD5">
+  <h1 style="text-align:center;">Dự đoán Tài Xỉu từ MD5</h1>
+  <input type="text" id="md5Input" placeholder="Nhập chuỗi MD5 (32 ký tự hex)">
   <button id="predictButton">Dự đoán</button>
   <div id="result"></div>
 </div>
 <script>
-
-function hexToBin(hexChar) {
-      let hex = parseInt(hexChar, 16);
-      return hex.toString(2).padStart(4, '0');
-    }
-    // Tính entropy Shannon (bit string)
-    function bitEntropy(bitArray) {
-      let count0 = bitArray.filter(b => b === 0).length;
-      let count1 = bitArray.length - count0;
-      let p0 = count0 / bitArray.length;
-      let p1 = count1 / bitArray.length;
-      let entropy = 0;
-      if (p0 > 0) entropy -= p0 * Math.log2(p0);
-      if (p1 > 0) entropy -= p1 * Math.log2(p1);
-      return entropy;
-    }
-    // Tính độ dài chuỗi bit dài nhất cho giá trị bitValue (0 hoặc 1)
-    function longestRun(bitArray, bitValue) {
-      let maxRun = 0, current = 0;
-      bitArray.forEach(bit => {
-        if (bit === bitValue) {
-          current++;
-          if (current > maxRun) maxRun = current;
-        } else {
-          current = 0;
-        }
-      });
-      return maxRun;
-    }
-    // Rút trích đặc trưng từ chuỗi MD5
-    function extractFeatures(md5Str) {
-      let n = md5Str.length;
-      let hexVals = [];
-      for (let i = 0; i < n; i++) {
-        hexVals.push(parseInt(md5Str.charAt(i), 16));
-      }
-      // Chuyển toàn bộ MD5 thành mảng bit (0/1)
-      let bitArray = [];
-      for (let ch of md5Str) {
-        let bits = hexToBin(ch).split('').map(Number);
-        bitArray.push(...bits);
-      }
-      // Tính các đặc trưng bit cơ bản
-      let longestRun1 = longestRun(bitArray, 1);
-      let longestRun0 = longestRun(bitArray, 0);
-      let transitions = 0;
-      for (let i = 1; i < bitArray.length; i++) {
-        if (bitArray[i] !== bitArray[i-1]) transitions++;
-      }
-      let globalEntropy = bitEntropy(bitArray);
-      // Đặc trưng tăng/giảm (hex values)
-      let diffs = [];
-      let increases = 0, decreases = 0;
-      for (let i = 1; i < hexVals.length; i++) {
-        diffs.push(Math.abs(hexVals[i] - hexVals[i-1]));
-        if (hexVals[i] > hexVals[i-1]) increases++;
-        if (hexVals[i] < hexVals[i-1]) decreases++;
-      }
-      let sumDiff = diffs.reduce((a,b)=>a+b, 0);
-      // Blockwise features: chia thành 4 block mỗi block 32 bit
-      let blockEntropy = [], blockTransitions = [];
-      for (let b = 0; b < 4; b++) {
-        let blockBits = bitArray.slice(b*32, (b+1)*32);
-        blockEntropy[b] = bitEntropy(blockBits);
-        let bt = 0;
-        for (let i = 1; i < blockBits.length; i++) {
-          if (blockBits[i] !== blockBits[i-1]) bt++;
-        }
-        blockTransitions[b] = bt;
-      }
-      // Một số đặc trưng đơn giản khác
-      let evenCount = hexVals.filter(v => v % 2 === 0).length;
-      let oddCount = hexVals.length - evenCount;
-      let weightedSum = hexVals.reduce((sum, v, idx) => sum + (idx+1)*v, 0);
-      // Trả về đối tượng đặc trưng
-      return {
-        evenCount, oddCount, weightedSum,
-        longestRun1, longestRun0, transitions,
-        globalEntropy,
-        sumDiff, increases, decreases,
-        blockEntropy, blockTransitions
-      };
-    }
-    // Dự đoán bằng mô phỏng XGBoost
-    function xgboostPredict(features) {
-      let score = 0;
-      if (features.globalEntropy > 0.9) score += 2;
-      if (features.longestRun1 > 10) score += 1;
-      if (features.transitions > 60) score += 1;
-      if (features.sumDiff > 10) score += 1;
-      return score >= 3 ? "Tài" : "Xỉu";
-    }
-    // Dự đoán bằng mạng nơ-ron giả lập (2 nơ-ron ẩn)
-    function nnPredict(features) {
-      let h1 = Math.max(0, 0.2*features.longestRun1 + 0.1*features.increases - 0.1*features.decreases + 0.5);
-      let h2 = Math.max(0, 0.3*features.blockEntropy[0] - 0.2*features.blockEntropy[2] + 0.1);
-      let out = 0.3*h1 + 0.4*h2 - 0.1;
-      return out > 0 ? "Tài" : "Xỉu";
-    }
-    // Dự đoán bằng mô hình Naive Bayes giả lập
-    function naiveBayesPredict(features) {
-      let pTai = 1.0, pXiu = 1.0;
-      if (features.longestRun1 > 8) { pTai *= 0.7; pXiu *= 0.3; }
-      else { pTai *= 0.4; pXiu *= 0.6; }
-      if (features.globalEntropy < 0.5) { pTai *= 0.6; pXiu *= 0.4; }
-      else { pTai *= 0.3; pXiu *= 0.7; }
-      if (features.transitions > 50) { pTai *= 0.7; pXiu *= 0.3; }
-      else { pTai *= 0.5; pXiu *= 0.5; }
-      return pTai > pXiu ? "Tài" : "Xỉu";
-    }
-    // Dự đoán logistic giả lập
-    function logisticPredict(features) {
-      let z = 0.1*features.evenCount - 0.1*features.oddCount + 0.2;
-      let prob = 1/(1+Math.exp(-z));
-      return prob > 0.5 ? "Tài" : "Xỉu";
-    }
-// Chuyển chuỗi MD5 (hex) sang mảng bit
+// Chuyển chuỗi MD5 (hex) thành mảng bit (0/1)
 function hexToBits(hex) {
-    let bits = [];
-    for (let i = 0; i < hex.length; i++) {
-        let nibble = parseInt(hex[i], 16);
-        for (let j = 3; j >= 0; j--) {
-            bits.push((nibble >> j) & 1);
-        }
+  let bits = [];
+  for (let i = 0; i < hex.length; i++) {
+    let nibble = parseInt(hex[i], 16);
+    for (let j = 3; j >= 0; j--) {
+      bits.push((nibble >> j) & 1);
     }
-    return bits;
+  }
+  return bits;
 }
-// Kiểm tra định dạng MD5 hợp lệ (32 ký tự hex)
-function isValidMD5(str) {
-    return /^[a-fA-F0-9]{32}$/.test(str);
+// Tính hàm Shannon entropy trên mảng bit
+function bitEntropy(bitArray) {
+  let count0 = bitArray.filter(b => b === 0).length;
+  let count1 = bitArray.length - count0;
+  let p0 = count0 / bitArray.length;
+  let p1 = count1 / bitArray.length;
+  let entropy = 0;
+  if (p0 > 0) entropy -= p0 * Math.log2(p0);
+  if (p1 > 0) entropy -= p1 * Math.log2(p1);
+  return entropy;
+}
+// Tìm độ dài dãy con liên tục dài nhất có giá trị bit = bitValue
+function longestRun(bits, bitValue) {
+  let maxRun = 0, current = 0;
+  for (let bit of bits) {
+    if (bit === bitValue) {
+      current++;
+      if (current > maxRun) maxRun = current;
+    } else {
+      current = 0;
+    }
+  }
+  return maxRun;
 }
 // Đếm số bit 1 ở vị trí chẵn và lẻ
 function countEvenOddBits(bits) {
-    let evenCount = 0, oddCount = 0;
-    for (let i = 0; i < bits.length; i++) {
-        if (i % 2 === 0) evenCount += bits[i];
-        else oddCount += bits[i];
-    }
-    return {evenCount, oddCount};
+  let evenCount = 0, oddCount = 0;
+  for (let i = 0; i < bits.length; i++) {
+    if (i % 2 === 0) evenCount += bits[i];
+    else oddCount += bits[i];
+  }
+  return {evenCount: evenCount, oddCount: oddCount};
 }
-// Tính entropy của chuỗi bit
-function computeEntropy(bits) {
-    let count1 = bits.reduce((acc, b) => acc + b, 0);
-    let count0 = bits.length - count1;
-    let p0 = count0 / bits.length;
-    let p1 = count1 / bits.length;
-    let ent = 0;
-    if (p0 > 0) ent -= p0 * Math.log2(p0);
-    if (p1 > 0) ent -= p1 * Math.log2(p1);
-    return ent;
+// Kiểm tra định dạng MD5 hợp lệ (32 ký tự hex)
+function isValidMD5(str) {
+  return /^[a-fA-F0-9]{32}$/.test(str);
 }
-// Tính skewness của chuỗi bit
-function computeSkewness(bits) {
-    let n = bits.length;
-    let mean = bits.reduce((a, b) => a + b, 0) / n;
-    let sumDiff3 = bits.reduce((acc, b) => acc + Math.pow(b - mean, 3), 0);
-    let m2 = bits.reduce((acc, b) => acc + Math.pow(b - mean, 2), 0) / n;
-    let std = Math.sqrt(m2);
-    if (std === 0) return 0;
-    return (sumDiff3 / n) / (std * std * std);
+// Hàm trích đặc trưng đơn giản từ MD5
+function extractFeatures(md5) {
+  let bits = hexToBits(md5);
+  let longestRun1 = longestRun(bits, 1);
+  let longestRun0 = longestRun(bits, 0);
+  let transitions = 0;
+  for (let i = 1; i < bits.length; i++) {
+    if (bits[i] !== bits[i-1]) transitions++;
+  }
+  let globalEntropy = bitEntropy(bits);
+  // Tính tổng chênh lệch giữa các chữ số hex liền kề
+  let hexVals = md5.split('').map(c => parseInt(c, 16));
+  let sumDiff = 0, increases = 0, decreases = 0;
+  for (let i = 1; i < hexVals.length; i++) {
+    let diff = Math.abs(hexVals[i] - hexVals[i-1]);
+    sumDiff += diff;
+    if (hexVals[i] > hexVals[i-1]) increases++;
+    else if (hexVals[i] < hexVals[i-1]) decreases++;
+  }
+  let evenCount = hexVals.filter(v => v % 2 === 0).length;
+  let oddCount = hexVals.length - evenCount;
+  return {
+    bits: bits,
+    longestRun1: longestRun1, longestRun0: longestRun0,
+    transitions: transitions, globalEntropy: globalEntropy,
+    sumDiff: sumDiff, increases: increases, decreases: decreases,
+    evenCount: evenCount, oddCount: oddCount
+  };
 }
-// Tính kurtosis của chuỗi bit
-function computeKurtosis(bits) {
-    let n = bits.length;
-    let mean = bits.reduce((a, b) => a + b, 0) / n;
-    let m2 = bits.reduce((acc, b) => acc + Math.pow(b - mean, 2), 0) / n;
-    let m4 = bits.reduce((acc, b) => acc + Math.pow(b - mean, 4), 0) / n;
-    if (m2 === 0) return 0;
-    return m4 / (m2 * m2);
-}
-// Tính tần suất ký tự hex
-function computeHexFrequency(md5) {
-    let freq = {};
-    for (let i = 0; i < md5.length; i++) {
-        let c = md5[i].toLowerCase();
-        if (/[0-9a-f]/.test(c)) {
-            freq[c] = (freq[c] || 0) + 1;
-        }
-    }
-    return freq;
-}
-// Tìm mẫu bit lặp lại dài nhất
-function findRepeatedPatterns(bits) {
-    let n = bits.length;
-    let bitString = bits.join('');
-    let maxLen = 0;
-    let pattern = '';
-    for (let len = n - 2; len >= 2; len--) {
-        for (let i = 0; i <= n - len; i++) {
-            let substr = bitString.substr(i, len);
-            if (bitString.indexOf(substr, i + len) !== -1) {
-                if (len > maxLen) {
-                    maxLen = len;
-                    pattern = substr;
-                }
-                break;
-            }
-        }
-        if (maxLen > 0) break;
-    }
-    return {length: maxLen, pattern: pattern};
-}
-// Tính tính dự đoán tuyến tính (so sánh bit liên tiếp)
-function linearPredictability(bits) {
-    let countEq = 0;
-    for (let i = 1; i < bits.length; i++) {
-        if (bits[i] === bits[i - 1]) countEq++;
-    }
-    return countEq / (bits.length - 1);
-}
-// Tính tần số phổ lớn nhất của chuỗi bit
-function computeDominantFrequency(bits) {
-    let n = bits.length;
-    let bitSignal = bits.map(b => b);
-    let maxMag = 0;
-    let domFreq = 0;
-    for (let k = 1; k < n; k++) {
-        let re = 0, im = 0;
-        for (let t = 0; t < n; t++) {
-            let angle = 2 * Math.PI * k * t / n;
-            re += bitSignal[t] * Math.cos(angle);
-            im -= bitSignal[t] * Math.sin(angle);
-        }
-        let mag = Math.sqrt(re * re + im * im);
-        if (mag > maxMag) {
-            maxMag = mag;
-            domFreq = k;
-        }
-    }
-    return domFreq;
-}
-// Rule Engine
+
+// === Các thuật toán dự đoán (mỗi hàm trả về {label: 0/1, confidence: xác suất}): ===
+
+// Rule Engine: các quy tắc đơn giản dựa trên ký tự đầu, tần suất 0, parity bit
 function ruleEnginePrediction(md5) {
-    let bits = hexToBits(md5);
-    let hexFreq = computeHexFrequency(md5);
-    let firstHex = md5[0].toLowerCase();
-    // Rule 1: nếu ký tự đầu là chữ (a-f) và bit đầu là 1 -> Tài
-    if ('abcdef'.includes(firstHex) && bits[0] === 1) {
-        return 1;
+  let bits = hexToBits(md5);
+  let firstHex = md5[0].toLowerCase();
+  // Quy tắc 1: nếu ký tự đầu là chữ (a-f) và bit đầu là 1 -> Tài
+  if ('abcdef'.includes(firstHex) && bits[0] === 1) {
+    return {label:1, confidence:0.6};
+  }
+  // Quy tắc 2: nếu có nhiều chữ số '0' (hex) -> Xỉu
+  let hexFreq0 = (md5.match(/0/g) || []).length;
+  if (hexFreq0 > 1) {
+    return {label:0, confidence:0.6};
+  }
+  // Quy tắc 3: nếu có ít nhất 4 lần xuất hiện ba bit liên tiếp giống nhau -> Tài
+  let repCount = 0;
+  for (let i = 2; i < bits.length; i++) {
+    if (bits[i] === bits[i-1] && bits[i-1] === bits[i-2]) {
+      repCount++;
+      if (repCount >= 4) {
+        return {label:1, confidence:0.6};
+      }
     }
-    // Rule 2: nếu có nhiều số 0 hex -> Xỉu
-    if (hexFreq['0'] && hexFreq['0'] > 1) {
-        return 0;
-    }
-    // Mẫu bit lặp
-    let rep = findRepeatedPatterns(bits);
-    if (rep.length >= 4) {
-        return 1;
-    }
-    // Tần số Fourier cao -> Xỉu
-    let domFreq = computeDominantFrequency(bits);
-    if (domFreq > bits.length / 4) {
-        return 0;
-    }
-    // Mặc định: tính parity của số bit 1
-    let onesCount = bits.reduce((a, b) => a + b, 0);
-    return (onesCount % 2 === 0) ? 1 : 0;
+  }
+  // Quy tắc 4: nếu nhiều biến đổi bit liên tục (transitions cao) -> Xỉu
+  let transitions = 0;
+  for (let i = 1; i < bits.length; i++) {
+    if (bits[i] !== bits[i-1]) transitions++;
+  }
+  if (transitions > bits.length/2) {
+    return {label:0, confidence:0.6};
+  }
+  // Mặc định: tính parity của số bit 1
+  let onesCount = bits.reduce((a,b) => a + b, 0);
+  if (onesCount % 2 === 0) {
+    return {label:1, confidence:0.5};
+  } else {
+    return {label:0, confidence:0.5};
+  }
 }
-// Logistic Regression
+
+// Logistic Regression giả lập
 function logisticRegressionPrediction(md5) {
-    let bits = hexToBits(md5);
-    let evenOdd = countEvenOddBits(bits);
-    let entropy = computeEntropy(bits);
-    let linearPred = linearPredictability(bits);
-    let skew = computeSkewness(bits);
-    let kurt = computeKurtosis(bits);
-    let onesCount = bits.reduce((a, b) => a + b, 0);
-    // Tính z = w0 + w1*entropy + ...
-    let z = -1.5;
-    z += 0.5 * entropy;
-    z += 0.2 * linearPred;
-    z += 0.1 * skew;
-    z += 0.1 * kurt;
-    z += 0.3 * (evenOdd.evenCount - evenOdd.oddCount);
-    z += 0.1 * onesCount;
-    let prob = 1 / (1 + Math.exp(-z));
-    return (prob >= 0.5) ? 1 : 0;
+  let bits = hexToBits(md5);
+  let evenOdd = countEvenOddBits(bits);
+  let entropy = bitEntropy(bits);
+  let onesCount = bits.reduce((a,b) => a + b, 0);
+  // Hàm kích hoạt sigmoid z = w0 + w1*entropy + w2*(even-odd) + w3*onesCount
+  let z = -1.5;
+  z += 0.5 * entropy;
+  z += 0.3 * (evenOdd.evenCount - evenOdd.oddCount);
+  z += 0.1 * onesCount;
+  let prob = 1/(1 + Math.exp(-z));
+  let label = (prob >= 0.5) ? 1 : 0;
+  let confidence = (label === 1) ? prob : (1 - prob);
+  return {label: label, confidence: confidence};
 }
+
 // SVM giả lập (linear)
 function svmPrediction(md5) {
-    let bits = hexToBits(md5);
-    let evenOdd = countEvenOddBits(bits);
-    // z = w1*evenCount + w2*oddCount + b
-    let z = 0.8 * evenOdd.evenCount - 1.2 * evenOdd.oddCount + 0.5;
-    return (z >= 0) ? 1 : 0;
+  let bits = hexToBits(md5);
+  let evenOdd = countEvenOddBits(bits);
+  // z = 0.8*(số bit ở vị trí chẵn) -1.2*(số bit ở vị trí lẻ) + 0.5
+  let z = 0.8 * evenOdd.evenCount - 1.2 * evenOdd.oddCount + 0.5;
+  let prob = 1/(1 + Math.exp(-z));
+  let label = (z >= 0) ? 1 : 0;
+  let confidence = (label === 1) ? prob : (1 - prob);
+  return {label: label, confidence: confidence};
 }
-// Neural Network giả lập (một lớp ẩn)
-function neuralNetworkPrediction(md5) {
-    let bits = hexToBits(md5);
-    let evenOdd = countEvenOddBits(bits);
-    let entropy = computeEntropy(bits);
-    // Đầu vào
-    let inputs = [entropy, evenOdd.evenCount - evenOdd.oddCount];
-    // Tầng ẩn (2 neuron)
-    let w_hidden = [
-        {weights: [0.7, -0.5], bias: 0.1},
-        {weights: [-0.3, 0.9], bias: -0.2}
-    ];
-    function sigmoid(x) {
-        return 1 / (1 + Math.exp(-x));
-    }
-    let hiddenOutputs = [];
-    for (let i = 0; i < w_hidden.length; i++) {
-        let sum = w_hidden[i].bias;
-        for (let j = 0; j < inputs.length; j++) {
-            sum += w_hidden[i].weights[j] * inputs[j];
-        }
-        hiddenOutputs.push(sigmoid(sum));
-    }
-    // Tầng đầu ra
-    let w_output = {weights: [1.2, -0.7], bias: 0.3};
-    let outputSum = w_output.bias;
-    for (let j = 0; j < hiddenOutputs.length; j++) {
-        outputSum += w_output.weights[j] * hiddenOutputs[j];
-    }
-    let output = sigmoid(outputSum);
-    return (output >= 0.5) ? 1 : 0;
-}
-// Decision Tree (quyết định cây)
-function decisionTreePrediction(md5) {
-    let bits = hexToBits(md5);
-    let entropy = computeEntropy(bits);
-    let evenOdd = countEvenOddBits(bits);
-    let skew = computeSkewness(bits);
-    if (entropy > 0.95) {
-        if (evenOdd.evenCount > evenOdd.oddCount) return 1;
-        else return 0;
-    } else {
-        if (skew < 0) return 0;
-        else return 1;
-    }
-}
-// Random Forest (kết hợp nhiều cây đơn giản)
-function randomForestPrediction(md5) {
-    let bits = hexToBits(md5);
-    let evenOdd = countEvenOddBits(bits);
-    let entropy = computeEntropy(bits);
-    let preds = [];
-    // Cây 1
-    preds.push(entropy > 0.9 ? 1 : 0);
-    // Cây 2
-    preds.push(evenOdd.evenCount > evenOdd.oddCount + 5 ? 1 : 0);
-    // Cây 3
-    preds.push(evenOdd.oddCount > evenOdd.evenCount ? 0 : 1);
-    // Đếm phiếu
-    let taiVotes = preds.filter(x => x === 1).length;
-    return (taiVotes >= 2) ? 1 : 0;
-}
-// Gradient Boosting (mô phỏng với 2 cây ngắn)
-function gradientBoostingPrediction(md5) {
-    let bits = hexToBits(md5);
-    let evenOdd = countEvenOddBits(bits);
-    let featuresSum = evenOdd.evenCount - evenOdd.oddCount;
-    let score = 0;
-    // Cây gốc 1
-    if (featuresSum > 10) score += 0.7;
-    else score -= 0.7;
-    // Cây gốc 2
-    let onesCount = bits.reduce((a, b) => a + b, 0);
-    if (onesCount > 64) score += 0.5;
-    else score -= 0.5;
-    return (score >= 0) ? 1 : 0;
-}
-// Bayesian Update (lập cập nhật xác suất từ các thuật toán)
-function bayesianPrediction(md5) {
-    let preds = [];
-    preds.push(ruleEnginePrediction(md5));
-    preds.push(logisticRegressionPrediction(md5));
-    preds.push(svmPrediction(md5));
-    preds.push(neuralNetworkPrediction(md5));
-    preds.push(decisionTreePrediction(md5));
-    preds.push(randomForestPrediction(md5));
-    preds.push(gradientBoostingPrediction(md5));
-    preds.push({label: xgboostPredict(features), weight: 3});
-    preds.push({label: nnPredict(features), weight: 4});
-    preds.push({label: naiveBayesPredict(features), weight: 1});
-    preds.push({label: logisticPredict(features), weight: 2});
-    let pTai = 0.5, pXiu = 0.5;
-    let accuracy = 0.6;
-    preds.forEach(pred => {
-        if (pred === 1) {
-            pTai *= accuracy;
-            pXiu *= (1 - accuracy);
-        } else {
-            pTai *= (1 - accuracy);
-            pXiu *= accuracy;
-        }
-        let sum = pTai + pXiu;
-        if (sum > 0) {
-            pTai /= sum;
-            pXiu /= sum;
-        }
-    });
-    return (pTai >= 0.5) ? 1 : 0;
-}
-// Voting Ensemble kết hợp
-function votingEnsemble(md5) {
-    let features = extractFeatures(md5);
-    let preds = [];
-    preds.push(ruleEnginePrediction(md5));
-    preds.push(logisticRegressionPrediction(md5));
-    preds.push(svmPrediction(md5));
-    preds.push(neuralNetworkPrediction(md5));
-    preds.push(decisionTreePrediction(md5));
-    preds.push(randomForestPrediction(md5));
-    preds.push(gradientBoostingPrediction(md5));
-    preds.push({label: xgboostPredict(features), weight: 3});
-    preds.push({label: nnPredict(features), weight: 4});
-    preds.push({label: naiveBayesPredict(features), weight: 1});
-    preds.push({label: logisticPredict(features), weight: 2});
 
-    let taiVotes = preds.filter(x => x === 1).length;
-    let xiuVotes = preds.filter(x => x === 0).length;
-    if (taiVotes > xiuVotes) return 1;
-    if (xiuVotes > taiVotes) return 0;
-    // Nếu hòa, dùng Bayesian làm trọng tài
-    return bayesianPrediction(md5);
-}
-// Hàm chính dự đoán cuối cùng
-function predictMD5(md5) {
-    let finalPred = votingEnsemble(md5);
-    return (finalPred === 1) ? "Tài" : "Xỉu";
-}
-// Xử lý khi nhấn nút
-document.getElementById('predictButton').addEventListener('click', function() {
-    let md5 = document.getElementById('md5Input').value.trim();
-    let resultDiv = document.getElementById('result');
-    if (!isValidMD5(md5)) {
-        resultDiv.innerText = "Chuỗi MD5 không hợp lệ!";
-        return;
+// Mạng nơ-ron đơn giản (1 tầng ẩn)
+function neuralNetworkPrediction(md5) {
+  let bits = hexToBits(md5);
+  let evenOdd = countEvenOddBits(bits);
+  let entropy = bitEntropy(bits);
+  let inputs = [evenOdd.evenCount - evenOdd.oddCount, entropy];
+  // Tầng ẩn (2 neurons, hàm kích hoạt ReLU)
+  let w_hidden = [
+    {weights: [0.7, -0.5], bias: 0.1},
+    {weights: [-0.3, 0.9], bias: -0.2}
+  ];
+  let hiddenOutputs = [];
+  for (let i = 0; i < w_hidden.length; i++) {
+    let sum = w_hidden[i].bias;
+    for (let j = 0; j < inputs.length; j++) {
+      sum += w_hidden[i].weights[j] * inputs[j];
     }
-    let result = predictMD5(md5);
-    resultDiv.innerText = result;
+    hiddenOutputs[i] = Math.max(0, sum); // ReLU
+  }
+  // Tầng đầu ra (sigmoid)
+  let w_output = {weights: [1.2, -0.7], bias: 0.3};
+  let outputSum = w_output.bias;
+  for (let j = 0; j < hiddenOutputs.length; j++) {
+    outputSum += w_output.weights[j] * hiddenOutputs[j];
+  }
+  let output = 1/(1 + Math.exp(-outputSum));
+  let label = (output >= 0.5) ? 1 : 0;
+  let confidence = (label === 1) ? output : (1 - output);
+  return {label: label, confidence: confidence};
+}
+
+// Decision Tree đơn giản
+function decisionTreePrediction(md5) {
+  let bits = hexToBits(md5);
+  let entropy = bitEntropy(bits);
+  let evenOdd = countEvenOddBits(bits);
+  if (entropy > 0.95) {
+    if (evenOdd.evenCount > evenOdd.oddCount) {
+      return {label:1, confidence:0.8};
+    } else {
+      return {label:0, confidence:0.8};
+    }
+  } else {
+    let skew = evenOdd.evenCount - evenOdd.oddCount;
+    if (skew < 0) {
+      return {label:0, confidence:0.7};
+    } else {
+      return {label:1, confidence:0.7};
+    }
+  }
+}
+
+// Random Forest (3 cây nhỏ)
+function randomForestPrediction(md5) {
+  let bits = hexToBits(md5);
+  let evenOdd = countEvenOddBits(bits);
+  let entropy = bitEntropy(bits);
+  let preds = [];
+  // Cây 1
+  preds.push(entropy > 0.9 ? 1 : 0);
+  // Cây 2
+  preds.push(evenOdd.evenCount > evenOdd.oddCount + 5 ? 1 : 0);
+  // Cây 3
+  preds.push(evenOdd.oddCount > evenOdd.evenCount ? 0 : 1);
+  let taiVotes = preds.filter(x => x === 1).length;
+  let label = (taiVotes >= 2) ? 1 : 0;
+  let confidence = taiVotes / preds.length; // tỷ lệ phiếu Tai
+  if (label === 0) {
+    confidence = (preds.length - taiVotes) / preds.length;
+  }
+  return {label: label, confidence: confidence};
+}
+
+// Gradient Boosting giả lập
+function gradientBoostingPrediction(md5) {
+  let bits = hexToBits(md5);
+  let evenOdd = countEvenOddBits(bits);
+  let featuresSum = evenOdd.evenCount - evenOdd.oddCount;
+  let score = 0;
+  if (featuresSum > 10) score += 0.7;
+  else score -= 0.7;
+  let onesCount = bits.reduce((a,b) => a + b, 0);
+  if (onesCount > 64) score += 0.5;
+  else score -= 0.5;
+  let prob = 1/(1 + Math.exp(-score));
+  let label = (score >= 0) ? 1 : 0;
+  let confidence = (label === 1) ? prob : (1 - prob);
+  return {label: label, confidence: confidence};
+}
+
+// XGBoost giả lập
+function xgboostPredict(md5) {
+  let f = extractFeatures(md5);
+  let score = 0;
+  if (f.globalEntropy > 0.9) score += 2;
+  if (f.longestRun1 > 10) score += 1;
+  if (f.transitions > 60) score += 1;
+  if (f.sumDiff > 10) score += 1;
+  let label = (score >= 3) ? 1 : 0;
+  let confidence = score / 5;
+  if (label === 0) {
+    confidence = 1 - confidence;
+  }
+  return {label: label, confidence: confidence};
+}
+
+// LightGBM giả lập
+function lightgbmPredict(md5) {
+  let f = extractFeatures(md5);
+  let score = 0;
+  if (f.increases > 8) score++;
+  if (f.decreases > 8) score++;
+  if (f.globalEntropy > 0.7) score++;
+  if (f.sumDiff > 20) score++;
+  if (f.transitions > 30) score++;
+  let label = (score >= 3) ? 1 : 0;
+  let confidence = score / 5;
+  if (label === 0) {
+    confidence = 1 - confidence;
+  }
+  return {label: label, confidence: confidence};
+}
+
+// CatBoost giả lập
+function catboostPredict(md5) {
+  let f = extractFeatures(md5);
+  let score = 0;
+  if (f.longestRun0 > 12) score++;
+  if (f.evenCount > 10) score++;
+  if (f.globalEntropy < 0.4) score++;
+  if (f.transitions < 40) score++;
+  let label = (score >= 2) ? 1 : 0;
+  let confidence = score / 4;
+  if (label === 0) {
+    confidence = 1 - confidence;
+  }
+  return {label: label, confidence: confidence};
+}
+
+// ExtraTrees giả lập
+function extraTreesPredict(md5) {
+  let f = extractFeatures(md5);
+  let score = 0;
+  if (f.longestRun0 > 10) score++;
+  if (f.increases > 10) score++;
+  if (f.sumDiff > 15) score++;
+  let label = (score >= 2) ? 1 : 0;
+  let confidence = score / 3;
+  if (label === 0) {
+    confidence = 1 - confidence;
+  }
+  return {label: label, confidence: confidence};
+}
+
+// Transformer giả lập (lấy trung bình bit đầu/cuối/giữa)
+function transformerPredict(md5) {
+  let bits = hexToBits(md5);
+  let score = (bits[0] + bits[bits.length-1] + bits[Math.floor(bits.length/2)]) / 3;
+  let label = (score >= 0.5) ? 1 : 0;
+  let confidence = (label === 1) ? score : (1 - score);
+  return {label: label, confidence: confidence};
+}
+
+// Naive Bayes giả lập
+function naiveBayesPredict(md5) {
+  let f = extractFeatures(md5);
+  let pTai = 1.0, pXiu = 1.0;
+  if (f.longestRun1 > 8) { pTai *= 0.7; pXiu *= 0.3; }
+  else { pTai *= 0.4; pXiu *= 0.6; }
+  if (f.globalEntropy < 0.5) { pTai *= 0.6; pXiu *= 0.4; }
+  else { pTai *= 0.3; pXiu *= 0.7; }
+  if (f.transitions > 50) { pTai *= 0.7; pXiu *= 0.3; }
+  else { pTai *= 0.5; pXiu *= 0.5; }
+  let label = (pTai > pXiu) ? 1 : 0;
+  let total = pTai + pXiu;
+  let confidence = total > 0 ? ((label === 1) ? pTai/total : pXiu/total) : 0;
+  return {label: label, confidence: confidence};
+}
+
+// KNN Voting giả lập
+function knnVotingPrediction(md5) {
+  // Sử dụng một phần của MD5 để giả lập điểm số
+  let val = parseInt(md5.substring(0, 4), 16);
+  let score = (val % 100) / 100.0;
+  let label = (score >= 0.5) ? 1 : 0;
+  let confidence = (label === 1) ? score : (1 - score);
+  return {label: label, confidence: confidence};
+}
+
+// Deep Neural Network (2 tầng ẩn)
+function deepNN2Predict(md5) {
+  let bits = hexToBits(md5);
+  let evenOdd = countEvenOddBits(bits);
+  let entropy = bitEntropy(bits);
+  let inputs = [evenOdd.evenCount - evenOdd.oddCount, entropy];
+  // Tầng ẩn 1 (2 neurons)
+  let w1 = [
+    {weights: [0.8, -0.6], bias: 0.2},
+    {weights: [-0.3, 0.7], bias: -0.1}
+  ];
+  let out1 = [];
+  for (let i = 0; i < w1.length; i++) {
+    let sum = w1[i].bias;
+    for (let j = 0; j < inputs.length; j++) sum += w1[i].weights[j] * inputs[j];
+    out1[i] = Math.max(0, sum);
+  }
+  // Tầng ẩn 2 (2 neurons)
+  let w2 = [
+    {weights: [0.4, 0.7], bias: 0.0},
+    {weights: [-0.5, 0.6], bias: 0.3}
+  ];
+  let out2 = [];
+  for (let i = 0; i < w2.length; i++) {
+    let sum = w2[i].bias;
+    for (let j = 0; j < out1.length; j++) sum += w2[i].weights[j] * out1[j];
+    out2[i] = Math.max(0, sum);
+  }
+  // Tầng đầu ra
+  let w_out = {weights: [1.0, -1.2], bias: 0.1};
+  let outSum = w_out.bias;
+  for (let j = 0; j < out2.length; j++) outSum += w_out.weights[j] * out2[j];
+  let output = 1/(1 + Math.exp(-outSum));
+  let label = (output >= 0.5) ? 1 : 0;
+  let confidence = (label === 1) ? output : (1 - output);
+  return {label: label, confidence: confidence};
+}
+
+// Deep Neural Network (3 tầng ẩn)
+function deepNN3Predict(md5) {
+  let bits = hexToBits(md5);
+  let evenOdd = countEvenOddBits(bits);
+  let entropy = bitEntropy(bits);
+  let inputs = [evenOdd.evenCount - evenOdd.oddCount, entropy];
+  // Tầng ẩn 1 (2 neurons)
+  let w1 = [
+    {weights: [0.8, -0.2], bias: 0.2},
+    {weights: [-0.3, 0.7], bias: -0.1}
+  ];
+  let o1 = [];
+  for (let i = 0; i < w1.length; i++) {
+    let sum = w1[i].bias;
+    for (let j = 0; j < inputs.length; j++) sum += w1[i].weights[j] * inputs[j];
+    o1[i] = Math.max(0, sum);
+  }
+  // Tầng ẩn 2 (2 neurons)
+  let w2 = [
+    {weights: [0.5, 0.4], bias: 0.1},
+    {weights: [-0.6, 0.9], bias: 0.0}
+  ];
+  let o2 = [];
+  for (let i = 0; i < w2.length; i++) {
+    let sum = w2[i].bias;
+    for (let j = 0; j < o1.length; j++) sum += w2[i].weights[j] * o1[j];
+    o2[i] = Math.max(0, sum);
+  }
+  // Tầng ẩn 3 (1 neuron)
+  let w3 = {weights: [0.3, -0.5], bias: 0.0};
+  let sum3 = w3.bias;
+  for (let j = 0; j < o2.length; j++) sum3 += w3.weights[j] * o2[j];
+  let o3 = 1/(1 + Math.exp(-sum3));
+  let label = (o3 >= 0.5) ? 1 : 0;
+  let confidence = (label === 1) ? o3 : (1 - o3);
+  return {label: label, confidence: confidence};
+}
+
+// === Xử lý khi nhấn nút Dự đoán ===
+document.getElementById('predictButton').addEventListener('click', function() {
+  let md5 = document.getElementById('md5Input').value.trim();
+  let resultDiv = document.getElementById('result');
+  if (!isValidMD5(md5)) {
+    resultDiv.innerText = "Chuỗi MD5 không hợp lệ!";
+    return;
+  }
+  // Tập hợp dự đoán từ tất cả thuật toán
+  let predictions = [];
+  predictions.push(ruleEnginePrediction(md5));
+  predictions.push(logisticRegressionPrediction(md5));
+  predictions.push(svmPrediction(md5));
+  predictions.push(neuralNetworkPrediction(md5));
+  predictions.push(decisionTreePrediction(md5));
+  predictions.push(randomForestPrediction(md5));
+  predictions.push(gradientBoostingPrediction(md5));
+  predictions.push(xgboostPredict(md5));
+  predictions.push(lightgbmPredict(md5));
+  predictions.push(catboostPredict(md5));
+  predictions.push(extraTreesPredict(md5));
+  predictions.push(transformerPredict(md5));
+  predictions.push(naiveBayesPredict(md5));
+  predictions.push(knnVotingPrediction(md5));
+  predictions.push(deepNN2Predict(md5));
+  predictions.push(deepNN3Predict(md5));
+  // Đếm số phiếu và tổng confidence cho mỗi nhãn
+  let votesTai = 0, votesXiu = 0;
+  let confTai = 0, confXiu = 0;
+  predictions.forEach(p => {
+    if (p.label === 1) {
+      votesTai++;
+      confTai += p.confidence;
+    } else {
+      votesXiu++;
+      confXiu += p.confidence;
+    }
+  });
+  // Xác định kết quả cuối cùng
+  let finalLabel;
+  if (votesTai > votesXiu) {
+    finalLabel = "Tài";
+  } else if (votesXiu > votesTai) {
+    finalLabel = "Xỉu";
+  } else {
+    // Nếu hòa, chọn nhãn có tổng confidence lớn hơn
+    finalLabel = (confTai >= confXiu) ? "Tài" : "Xỉu";
+  }
+  // Hiển thị kết quả và bảng thống kê
+  resultDiv.innerHTML = "<div style='font-size:1.5em;'><strong>Kết quả:</strong> " + finalLabel + "</div>";
+  resultDiv.innerHTML += "<table>";
+  resultDiv.innerHTML += "<tr><th></th><th>Số phiếu</th><th>Tổng confidence</th></tr>";
+  resultDiv.innerHTML += "<tr><td>Tài</td><td>" + votesTai + "</td><td>" + confTai.toFixed(2) + "</td></tr>";
+  resultDiv.innerHTML += "<tr><td>Xỉu</td><td>" + votesXiu + "</td><td>" + confXiu.toFixed(2) + "</td></tr>";
+  resultDiv.innerHTML += "</table>";
 });
 </script>
 </body>
