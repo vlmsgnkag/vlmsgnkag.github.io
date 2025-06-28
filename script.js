@@ -13,6 +13,7 @@ const songs = [
     { src: "music/52.mp3", image: "https://i.pinimg.com/236x/23/45/99/234599f7ce757dcfbabf12f525ea969e.jpg" },
     { src: "music/93.mp3", image: "https://i.pinimg.com/474x/39/02/e7/3902e7a3e2e57df9dc5e254e41cde03d.jpg" },
     { src: "music/46.mp3", image: "https://i.pinimg.com/236x/2f/b2/c4/2fb2c4bec0fd90d0abe57c9c022c26c9.jpg" },
+    { src: "music/104.mp3", image: "https://i.pinimg.com/736x/73/ef/c3/73efc363be837db7b71ab779d87e4dcd.jpg" },
     { src: "music/15.mp3", image: "https://i.pinimg.com/474x/2e/0a/69/2e0a69997dec782e80b42b84e86297a4.jpg" },
     { src: "music/75.mp3", image: "https://i.pinimg.com/236x/82/05/f4/8205f41df2398d0faf622078fe5ec529.jpg" },
     { src: "music/26.mp3", image: "https://i.pinimg.com/474x/4c/0c/c5/4c0cc5ffc23b1a6329d4e3f5d803c006.jpg" },
