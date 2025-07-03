@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tiện Ích Facebook</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+  <style>
+    *{margin:0;padding:0;box-sizing:border-box}
+    body{font-family:'Inter',sans-serif;background:#f4f7fa;color:#333;display:flex;min-height:100vh}
+    .sidebar{width:200px;background:#4267B2;display:flex;flex-direction:column;padding-top:20px}
+    .sidebar h2{color:#fff;text-align:center;margin-bottom:20px;font-size:1.2rem}
+    .nav-link{display:block;padding:12px 16px;color:#e2e8f0;text-decoration:none;font-weight:500;transition:background .2s}
+    .nav-link:hover,.nav-link.active{background:#365899}
+    .main{flex:1;padding:20px;overflow-y:auto}
+    .page{display:none;animation:fadeIn .3s ease}
+    .page.active{display:block}
+    h1{font-size:1.6rem;margin-bottom:16px;color:#2c3e50}
+    .card{background:#fff;border-radius:8px;padding:20px;box-shadow:0 2px 8px rgba(0,0,0,0.1);margin-bottom:20px}
+    .btn{padding:10px 16px;background:#4267B2;color:#fff;border:none;border-radius:6px;cursor:pointer;font-weight:500;transition:background .2s}
+    .btn:hover{background:#365899}
+    input, textarea{width:100%;padding:10px;border:1px solid #ccd6e0;border-radius:6px;margin-bottom:12px}
+    #codeDisplay{font-size:2.5rem;letter-spacing:6px;text-align:center;margin:16px 0}
+    #progressBar{width:100%;height:6px;background:#e0e0e0;border-radius:3px;overflow:hidden}
+    #progress{height:100%;width:100%;background:#4267B2;transition:width 1s linear}
+    .toast{position:fixed;bottom:30px;right:30px;background:#2ecc71;color:#fff;padding:12px 20px;border-radius:6px;font-weight:500;opacity:0;transform:translateY(20px);transition:all .3s ease;z-index:9999}
+    .toast.show{opacity:1;transform:translateY(0)}
+    @keyframes fadeIn{from{opacity:0}to{opacity:1}}
+  </style>
+</head>
+<body>
+  <nav class="sidebar">
+    <h2>Tiện Ích FB</h2>
+    <a href="#totp" class="nav-link active" onclick="showPage(event,'totp')">🔑 Get 2FA</a>
+  </nav>
+  <section class="main">
+    <div id="totp" class="page active">
+      <h1>2FA Generator</h1>
+      <div class="card">
+        <p>Nhập Secret Key (có thể có hoặc không khoảng cách):</p>
+        <input type="text" id="secretKey" placeholder="6AN5 FGAD O37G UB4R BE5H PAPU 6BT5 273Z">
+        <button class="btn" onclick="startTOTP()">Bắt Đầu</button>
+        <div id="totpSection" style="display:none;">
+          <div id="codeDisplay">------</div>
+          <div id="progressBar"><div id="progress"></div></div>
+          <button class="btn" onclick="copyCode()">Sao Chép Mã</button>
+        </div>
+      </div>
+    </div>
+  </section>
+  <div id="toast" class="toast">Đã sao chép mã!</div>
+  <script>
+    function showPage(e,id){
+      e.preventDefault();
+      document.querySelectorAll('.nav-link').forEach(x=>x.classList.remove('active'));
+      e.currentTarget.classList.add('active');
+      document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+      document.getElementById(id).classList.add('active');
+    }
+
+    const alphabet='ABCDEFGHIJKLMNOPQRSTUVWXYZ234567';
+
+    async function generateTOTP(secret){
+      secret = secret.replace(/\s+/g, '').toUpperCase();
+      let bits='';
+      for(let c of secret){
+        const val = alphabet.indexOf(c);
+        if(val < 0) continue;
+        bits += val.toString(2).padStart(5,'0');
+      }
+      const keyBytes=new Uint8Array(bits.match(/.{1,8}/g).map(b=>parseInt(b.padEnd(8,'0'),2)));
+      const epoch=Math.floor(Date.now()/1000);
+      const t=Math.floor(epoch/30);
+      const buf=new ArrayBuffer(8),dv=new DataView(buf);
+      dv.setUint32(4,t);
+      const key=await crypto.subtle.importKey('raw',keyBytes,{name:'HMAC',hash:'SHA-1'},false,['sign']);
+      const sig=new Uint8Array(await crypto.subtle.sign('HMAC',key,buf));
+      const o=sig[sig.length-1]&0xf;
+      let code=((sig[o]&0x7f)<<24)|((sig[o+1]&0xff)<<16)|((sig[o+2]&0xff)<<8)|(sig[o+3]&0xff);
+      return(code % 1e6).toString().padStart(6,'0');
+    }
+
+    let iv;
+    function startTOTP(){
+      const s=document.getElementById('secretKey').value.trim();
+      if(!s) return;
+      document.getElementById('totpSection').style.display='block';
+      clearInterval(iv);
+      update();
+      iv = setInterval(update,1000);
+      async function update(){
+        const otp=await generateTOTP(s);
+        document.getElementById('codeDisplay').textContent=otp;
+        const r=(30-(Math.floor(Date.now()/1000)%30))/30*100;
+        document.getElementById('progress').style.width=r+'%';
+      }
+    }
+
+    function copyCode(){
+      navigator.clipboard.writeText(document.getElementById('codeDisplay').textContent);
+      const toast = document.getElementById('toast');
+      toast.classList.add('show');
+      setTimeout(() => toast.classList.remove('show'), 2000);
+    }
+  </script>
+</body>
+</html>
