@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Get UID Facebook</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(to right, #2c3e50, #3498db);
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .container {
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(12px);
+      border-radius: 16px;
+      padding: 40px 30px;
+      width: 100%;
+      max-width: 400px;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+      color: #fff;
+      text-align: center;
+    }
+    h2 {
+      margin-bottom: 20px;
+      font-size: 24px;
+      letter-spacing: 1px;
+    }
+    input {
+      width: 100%;
+      padding: 12px;
+      border-radius: 8px;
+      border: none;
+      outline: none;
+      font-size: 16px;
+      margin-bottom: 15px;
+      background: rgba(255, 255, 255, 0.2);
+      color: #fff;
+    }
+    input::placeholder {
+      color: #ccc;
+    }
+    button {
+      padding: 12px 20px;
+      background: #00c6ff;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      color: white;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+    button:hover {
+      background: #007acc;
+    }
+    .result {
+      margin-top: 20px;
+      font-size: 16px;
+    }
+    .uid-box {
+      margin-top: 10px;
+      background: rgba(255, 255, 255, 0.15);
+      padding: 10px 12px;
+      border-radius: 8px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-weight: bold;
+      word-break: break-all;
+    }
+    .copy-btn {
+      background: #27ae60;
+      color: white;
+      border: none;
+      padding: 6px 10px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 13px;
+      margin-left: 10px;
+    }
+    .loading {
+      font-style: italic;
+      color: #ffd700;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>🔍 Get UID Facebook</h2>
+    <input id="fbLink" type="text" placeholder="Nhập link Facebook (https://...)">
+    <button onclick="getUID()">Lấy UID</button>
+    <div id="result" class="result"></div>
+  </div>
+
+  <script>
+    function getUID() {
+      const link = document.getElementById("fbLink").value.trim();
+      const resultBox = document.getElementById("result");
+
+      if (!link.includes("facebook.com")) {
+        resultBox.innerHTML = `<span style="color:#f55;">❌ Link không hợp lệ!</span>`;
+        return;
+      }
+
+      resultBox.innerHTML = `<span class="loading">⏳ Đang xử lý...</span>`;
+
+      fetch(`https://ffb.vn/api/tool/get-id-fb?idfb=${encodeURIComponent(link)}`)
+        .then(res => res.json())
+        .then(data => {
+          if (data && data.uid) {
+            resultBox.innerHTML = `
+              ✅ UID:
+              <div class="uid-box">
+                <span>${data.uid}</span>
+                <button class="copy-btn" onclick="copyUID('${data.uid}')">Copy</button>
+              </div>
+            `;
+          } else {
+            resultBox.innerHTML = `<span style="color:#f55;">❌ Không tìm thấy UID!</span>`;
+          }
+        })
+        .catch(() => {
+          resultBox.innerHTML = `<span style="color:#f55;">❌ Lỗi khi gọi API!</span>`;
+        });
+    }
+
+    function copyUID(uid) {
+      navigator.clipboard.writeText(uid).then(() => {
+        alert("✅ UID đã được copy!");
+      });
+    }
+  </script>
+</body>
+</html>
