@@ -3,22 +3,9 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Website Xem Phim</title>
+  <title>Xem Phim HD</title>
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700&display=swap" rel="stylesheet" />
   <style>
-    :root {
-      --bg-color: #0e0e0e;
-      --text-color: #fff;
-      --card-bg: #1b1b1b;
-      --highlight: #f5fcfb;
-    }
-
-    body.light {
-      --bg-color: #f0f0f0;
-      --text-color: #000;
-      --card-bg: #fff;
-    }
-
     * {
       box-sizing: border-box;
       margin: 0;
@@ -27,54 +14,25 @@
 
     body {
       font-family: 'Outfit', sans-serif;
-      background-color: var(--bg-color);
-      color: var(--text-color);
+      background-color: #0e0e0e;
+      color: #fff;
       min-height: 100vh;
-      transition: background 0.3s, color 0.3s;
     }
 
     header {
       background: #111;
       padding: 20px 40px;
       text-align: center;
-      box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
     }
 
     header h1 {
       font-size: 2em;
-      color: var(--highlight);
-    }
-
-    .mode-toggle {
-      background-color: var(--highlight);
-      color: black;
-      border: none;
-      padding: 10px 20px;
-      border-radius: 8px;
-      font-weight: bold;
-      cursor: pointer;
-      margin-top: 10px;
-    }
-
-    .nav-buttons {
-      text-align: center;
-      margin: 20px;
-    }
-
-    .nav-buttons button {
-      background-color: var(--highlight);
-      color: black;
-      padding: 10px 20px;
-      margin: 0 10px;
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
-      font-weight: bold;
+      color: #f6f8fa94;
     }
 
     .player-section {
       display: none;
-      justify-content: center;
       flex-direction: column;
       align-items: center;
       margin: 40px auto 0;
@@ -82,33 +40,58 @@
     }
 
     .video-player {
+      width: 90%;
+      max-width: 1000px;
+      border-radius: 16px;
+      overflow: hidden;
+      background: #000;
       position: relative;
-      width: 100%;
-      max-width: 100%;
-      aspect-ratio: 16 / 9;
-      background: black;
+      transition: all 0.3s ease;
     }
 
-    .video-player iframe {
+    .video-player.fullscreen-active {
+      width: 100vw;
+      height: 100vh;
+      max-width: none;
+      max-height: none;
+      border-radius: 0;
+    }
+
+    iframe {
+      width: 100%;
+      height: 500px;
+      border: none;
+    }
+
+    .video-player.fullscreen-active iframe {
       width: 100%;
       height: 100%;
-      border: none;
     }
 
-    .fullscreen-button {
-      margin: 10px auto;
-      text-align: center;
-    }
-
-    .fullscreen-button button {
-      background-color: var(--highlight);
+    .fullscreen-btn {
+      position: absolute;
+      bottom: 10px;
+      right: 10px;
+      background: rgba(255, 255, 255, 0.1);
+      color: #fff;
       border: none;
-      padding: 10px 20px;
-      font-weight: bold;
-      font-size: 16px;
-      border-radius: 8px;
+      padding: 10px 16px;
+      border-radius: 6px;
       cursor: pointer;
-      color: #000;
+      z-index: 10;
+    }
+
+    .notice {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background: rgba(0, 0, 0, 0.7);
+      color: #fff;
+      padding: 10px 14px;
+      border-radius: 8px;
+      font-size: 0.9em;
+      display: none;
+      z-index: 10000;
     }
 
     .movie-list {
@@ -121,16 +104,17 @@
     }
 
     .movie-card {
-      background: var(--card-bg);
+      background: #1b1b1b;
       border-radius: 12px;
       overflow: hidden;
-      transition: 0.3s;
       cursor: pointer;
+      position: relative;
+      transition: 0.3s;
     }
 
     .movie-card:hover {
       transform: scale(1.05);
-      box-shadow: 0 0 10px var(--highlight);
+      box-shadow: 0 0 10px #f9fafa;
     }
 
     .movie-thumb {
@@ -145,51 +129,41 @@
       font-weight: 600;
     }
 
-    .episode-list {
-      display: none;
-      margin-top: 10px;
-      padding: 12px;
-      background: #1c1c1c;
-      border-radius: 12px;
-      overflow-x: auto;
-      white-space: nowrap;
-      scroll-behavior: smooth;
-    }
-
-    .episode-list button {
-      display: inline-block;
-      background: #2a2a2a;
-      color: white;
-      border: 2px solid transparent;
-      margin: 5px 6px;
-      padding: 10px 18px;
-      border-radius: 10px;
-      font-weight: bold;
-    }
-
-    .episode-list button:hover {
-      background: var(--highlight);
-      color: black;
-      border-color: var(--highlight);
-    }
-
-    #fullscreenHint {
-      position: fixed;
-      top: 20px;
-      right: 20px;
+    .movie-info {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
       background: rgba(0, 0, 0, 0.85);
-      color: white;
-      padding: 10px 16px;
-      border-radius: 8px;
-      font-size: 14px;
-      z-index: 9999;
-      display: none;
-      animation: fadeIn 0.3s ease-in-out;
+      color: #fff;
+      padding: 10px;
+      font-size: 0.85em;
+      opacity: 0;
+      visibility: hidden;
+      transform: translateY(100%);
+      transition: all 0.3s ease;
+      pointer-events: none;
     }
 
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(-10px); }
-      to { opacity: 1; transform: translateY(0); }
+    .movie-card:hover .movie-info {
+      opacity: 1;
+      visibility: visible;
+      transform: translateY(0);
+      pointer-events: auto;
+    }
+
+    @media (max-width: 768px) {
+      iframe {
+        height: 240px;
+      }
+
+      .movie-title {
+        font-size: 0.9em;
+      }
+
+      .movie-thumb {
+        height: 180px;
+      }
     }
 
     footer {
@@ -200,117 +174,127 @@
       background: #111;
       margin-top: 40px;
     }
-
-    @media (max-width: 768px) {
-      .movie-thumb { height: 180px; }
-      iframe { height: auto; }
-    }
   </style>
 </head>
 <body>
   <header>
     <h1>Chúc Các Bạn Xem Phim Vui Vẻ!</h1>
-    <button class="mode-toggle" onclick="toggleMode()">Sáng / Tối</button>
   </header>
 
-  <div class="nav-buttons">
-    <button onclick="filterMovies('all')">Tất Cả</button>
-    <button onclick="filterMovies('series')">Phim Bộ</button>
-  </div>
+  <div class="notice" id="fullscreenNotice">Nhấn ESC hoặc F11 để thoát toàn màn hình</div>
 
   <div class="player-section" id="playerSection">
+    <div style="text-align: center; margin-bottom: 10px;">
+      <h2 id="movieTitleDisplay">Đang xem: </h2>
+    </div>
     <div class="video-player" id="videoPlayer">
       <iframe id="videoFrame" allow="autoplay"></iframe>
-    </div>
-    <div class="fullscreen-button">
-      <button onclick="toggleFullScreen()">⛶ Toàn màn hình</button>
+      <button class="fullscreen-btn" onclick="toggleFullScreen()">⛶ Full màn hình</button>
     </div>
   </div>
 
-  <!-- THÔNG BÁO ESC -->
-  <div id="fullscreenHint"> Nhấn Esc để thoát toàn màn hình</div>
-
-  <div class="movie-list" id="movieList">
-    <!-- Phim lẻ -->
-    <div class="movie-card" data-type="single" onclick="playMovie('1xqew_LWw2zhqljjpNcYutpn220wbM8NL')">
+  <div class="movie-list">
+    <div class="movie-card" onclick="playMovie('1xqew_LWw2zhqljjpNcYutpn220wbM8NL')">
       <img class="movie-thumb" src="https://i.imgur.com/CiXEbw8.jpeg" alt="Phim 1">
-      <div class="movie-title">Nhà Gia Tiên</div>
+      <div class="movie-title">Nhà Gia Tiên - Full HD</div>
+      <div class="movie-info">
+        <strong>Thể loại:</strong> Tâm linh – Chính kịch – Hài<br>
+        <strong>Thời lượng:</strong> 117 phút<br>
+        <strong>Năm:</strong> 2025<br>
+        <strong>Đạo diễn:</strong> Huỳnh Lập
+      </div>
     </div>
 
-    <div class="movie-card" data-type="single" onclick="playMovie('16fzMYxAGil4Nih1vK84FAzJcR33iuw1c')">
+    <div class="movie-card" onclick="playMovie('16fzMYxAGil4Nih1vK84FAzJcR33iuw1c')">
       <img class="movie-thumb" src="https://i.imgur.com/rnqG3ME.jpeg" alt="Phim 2">
       <div class="movie-title">Chị Dâu - Full HD</div>
+      <div class="movie-info">
+        <strong>Thể loại:</strong> Tâm lý, Hài hước<br>
+        <strong>Thời lượng:</strong> 100 phút<br>
+        <strong>Năm:</strong> 2024<br>
+        <strong>Đạo diễn:</strong> Khương Ngọc
+      </div>
     </div>
 
+    <div class="movie-card" onclick="playMovie('1JNJo8PYjCbLRbzS1noAoSB8hmo9WPN66')">
+      <img class="movie-thumb" src="https://i.imgur.com/76EMXUH.jpeg" alt="Phim 3">
+      <div class="movie-title">Con Nhót Mót Chồng - Full HD</div>
+      <div class="movie-info">
+        <strong>Thể loại:</strong> Chính kịch, Hài Hước<br>
+        <strong>Thời lượng:</strong> 112 phút<br>
+        <strong>Năm:</strong> 2023<br>
+        <strong>Đạo diễn:</strong> Vũ Ngọc Đãng
+      </div>
+    </div>
+
+    <div class="movie-card" onclick="playMovie('1SPiQZYqJYe6IP3mel9WpZNapK6tnmPu_')">
+      <img class="movie-thumb" src="https://i.imgur.com/rV7LHuQ.jpeg" alt="Phim 4">
+      <div class="movie-title">Đất Rừng Phương Nam - Full HD</div>
+      <div class="movie-info">
+        <strong>Thể loại:</strong> Chiến Tranh, Chính kịch, Gia Đình<br>
+        <strong>Thời lượng:</strong> 100 phút<br>
+        <strong>Năm:</strong> 2023<br>
+        <strong>Đạo diễn:</strong> Nguyễn Quang Dũng
+      </div>
+    </div>
+
+    <div class="movie-card" onclick="playMovie('11fdIwCxj2GaxgdUG3SyokArC7890vsnJ')">
+      <img class="movie-thumb" src="https://i.imgur.com/NZkvEEU.jpeg" alt="Phim 5">
+      <div class="movie-title">Công Tử Bạc Liêu - Full HD</div>
+      <div class="movie-info">
+        <strong>Thể loại:</strong> Gia Đình, Hài Hước<br>
+        <strong>Thời lượng:</strong> 106 phút<br>
+        <strong>Năm:</strong> 2024<br>
+        <strong>Đạo diễn:</strong> Lý Minh Thắng
+      </div>
+    </div>
+
+  </div>
 
   <footer>
     &copy; 2025 - Thiết kế bởi Lê Minh Võ
   </footer>
 
   <script>
-    let currentEpisodeBtn = null;
+    const movieData = {
+      "1xqew_LWw2zhqljjpNcYutpn220wbM8NL": "Nhà Gia Tiên - Full HD",
+      "16fzMYxAGil4Nih1vK84FAzJcR33iuw1c": "Chị Dâu - Full HD",
+      "1JNJo8PYjCbLRbzS1noAoSB8hmo9WPN66": "Con Nhót Mót Chồng - Full HD",
+      "1SPiQZYqJYe6IP3mel9WpZNapK6tnmPu_": "Đất Rừng Phương Nam Full HD",
+      "11fdIwCxj2GaxgdUG3SyokArC7890vsnJ": "Công Tử Bạc Liêu - Full HD"
+    };
 
     function playMovie(driveId) {
       const iframe = document.getElementById("videoFrame");
-      const section = document.getElementById("playerSection");
+      const playerSection = document.getElementById("playerSection");
+      const titleDisplay = document.getElementById("movieTitleDisplay");
+
       iframe.src = `https://drive.google.com/file/d/${driveId}/preview`;
-      section.style.display = "flex";
+      playerSection.style.display = "flex";
       window.scrollTo({ top: 0, behavior: "smooth" });
-    }
 
-    function playEpisode(button, driveId) {
-      currentEpisodeBtn = button;
-      playMovie(driveId);
-    }
-
-    function filterMovies(type) {
-      document.querySelectorAll('.movie-card').forEach(card => {
-        const cardType = card.getAttribute('data-type');
-        card.style.display = (type === 'all' || cardType === type) ? 'block' : 'none';
-      });
-    }
-
-    function toggleEpisodes(card) {
-      const list = card.querySelector('.episode-list');
-      document.querySelectorAll('.episode-list').forEach(el => {
-        if (el !== list) el.style.display = 'none';
-      });
-      list.style.display = (list.style.display === 'block') ? 'none' : 'block';
+      const title = movieData[driveId] || "Không rõ tên phim";
+      titleDisplay.textContent = `Đang xem: ${title}`;
     }
 
     function toggleFullScreen() {
-      const videoContainer = document.getElementById("videoPlayer");
-      const hint = document.getElementById("fullscreenHint");
+      const player = document.getElementById("videoPlayer");
+      const notice = document.getElementById("fullscreenNotice");
 
-      if (videoContainer.requestFullscreen) {
-        videoContainer.requestFullscreen();
-      } else if (videoContainer.webkitRequestFullscreen) {
-        videoContainer.webkitRequestFullscreen();
-      } else if (videoContainer.msRequestFullscreen) {
-        videoContainer.msRequestFullscreen();
+      if (!document.fullscreenElement) {
+        player.classList.add("fullscreen-active");
+        player.requestFullscreen?.();
+        notice.style.display = "block";
+        setTimeout(() => notice.style.display = "none", 4000);
+      } else {
+        document.exitFullscreen();
       }
-
-      hint.style.display = "block";
-      setTimeout(() => { hint.style.display = "none"; }, 5000);
     }
 
-    function toggleMode() {
-      document.body.classList.toggle("light");
-      localStorage.setItem("mode", document.body.classList.contains("light") ? "light" : "dark");
-    }
-
-    // Tự động phát tập tiếp theo
-    window.addEventListener("message", function(event) {
-      if (event.data === "ended" && currentEpisodeBtn) {
-        const nextBtn = currentEpisodeBtn.nextElementSibling;
-        if (nextBtn) nextBtn.click();
-      }
+    document.addEventListener("fullscreenchange", () => {
+      if (!document.fullscreenElement)
+        document.getElementById("videoPlayer").classList.remove("fullscreen-active");
     });
-
-    window.onload = () => {
-      const savedMode = localStorage.getItem("mode");
-      if (savedMode === "light") document.body.classList.add("light");
-    };
   </script>
 </body>
 </html>
