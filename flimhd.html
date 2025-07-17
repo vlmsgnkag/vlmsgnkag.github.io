@@ -3,9 +3,22 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title></title>
+  <title>Website Xem Phim</title>
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700&display=swap" rel="stylesheet" />
   <style>
+    :root {
+      --bg-color: #0e0e0e;
+      --text-color: #fff;
+      --card-bg: #1b1b1b;
+      --highlight: #f5fcfb;
+    }
+
+    body.light {
+      --bg-color: #f0f0f0;
+      --text-color: #000;
+      --card-bg: #fff;
+    }
+
     * {
       box-sizing: border-box;
       margin: 0;
@@ -14,42 +27,88 @@
 
     body {
       font-family: 'Outfit', sans-serif;
-      background-color: #0e0e0e;
-      color: #fff;
+      background-color: var(--bg-color);
+      color: var(--text-color);
       min-height: 100vh;
+      transition: background 0.3s, color 0.3s;
     }
 
     header {
       background: #111;
       padding: 20px 40px;
-      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
       text-align: center;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.4);
     }
 
     header h1 {
       font-size: 2em;
-      color: #1973a794;
+      color: var(--highlight);
+    }
+
+    .mode-toggle {
+      background-color: var(--highlight);
+      color: black;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 8px;
+      font-weight: bold;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+
+    .nav-buttons {
+      text-align: center;
+      margin: 20px;
+    }
+
+    .nav-buttons button {
+      background-color: var(--highlight);
+      color: black;
+      padding: 10px 20px;
+      margin: 0 10px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: bold;
     }
 
     .player-section {
       display: none;
       justify-content: center;
+      flex-direction: column;
+      align-items: center;
       margin: 40px auto 0;
       width: 100%;
     }
 
     .video-player {
-      width: 90%;
-      max-width: 1000px;
-      border-radius: 16px;
-      overflow: hidden;
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.7);
+      position: relative;
+      width: 100%;
+      max-width: 100%;
+      aspect-ratio: 16 / 9;
+      background: black;
     }
 
-    iframe {
+    .video-player iframe {
       width: 100%;
-      height: 500px;
+      height: 100%;
       border: none;
+    }
+
+    .fullscreen-button {
+      margin: 10px auto;
+      text-align: center;
+    }
+
+    .fullscreen-button button {
+      background-color: var(--highlight);
+      border: none;
+      padding: 10px 20px;
+      font-weight: bold;
+      font-size: 16px;
+      border-radius: 8px;
+      cursor: pointer;
+      color: #000;
     }
 
     .movie-list {
@@ -62,7 +121,7 @@
     }
 
     .movie-card {
-      background: #1b1b1b;
+      background: var(--card-bg);
       border-radius: 12px;
       overflow: hidden;
       transition: 0.3s;
@@ -71,7 +130,7 @@
 
     .movie-card:hover {
       transform: scale(1.05);
-      box-shadow: 0 0 10px #00ffc8;
+      box-shadow: 0 0 10px var(--highlight);
     }
 
     .movie-thumb {
@@ -86,6 +145,53 @@
       font-weight: 600;
     }
 
+    .episode-list {
+      display: none;
+      margin-top: 10px;
+      padding: 12px;
+      background: #1c1c1c;
+      border-radius: 12px;
+      overflow-x: auto;
+      white-space: nowrap;
+      scroll-behavior: smooth;
+    }
+
+    .episode-list button {
+      display: inline-block;
+      background: #2a2a2a;
+      color: white;
+      border: 2px solid transparent;
+      margin: 5px 6px;
+      padding: 10px 18px;
+      border-radius: 10px;
+      font-weight: bold;
+    }
+
+    .episode-list button:hover {
+      background: var(--highlight);
+      color: black;
+      border-color: var(--highlight);
+    }
+
+    #fullscreenHint {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background: rgba(0, 0, 0, 0.85);
+      color: white;
+      padding: 10px 16px;
+      border-radius: 8px;
+      font-size: 14px;
+      z-index: 9999;
+      display: none;
+      animation: fadeIn 0.3s ease-in-out;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
     footer {
       text-align: center;
       padding: 20px;
@@ -96,56 +202,115 @@
     }
 
     @media (max-width: 768px) {
-      iframe {
-        height: 240px;
-      }
-
-      .movie-title {
-        font-size: 0.9em;
-      }
-
-      .movie-thumb {
-        height: 180px;
-      }
+      .movie-thumb { height: 180px; }
+      iframe { height: auto; }
     }
   </style>
 </head>
 <body>
   <header>
     <h1>Chúc Các Bạn Xem Phim Vui Vẻ!</h1>
+    <button class="mode-toggle" onclick="toggleMode()">Sáng / Tối</button>
   </header>
 
-  <!-- Phần hiện video khi click -->
+  <div class="nav-buttons">
+    <button onclick="filterMovies('all')">Tất Cả</button>
+    <button onclick="filterMovies('series')">Phim Bộ</button>
+  </div>
+
   <div class="player-section" id="playerSection">
-    <div class="video-player">
+    <div class="video-player" id="videoPlayer">
       <iframe id="videoFrame" allow="autoplay"></iframe>
+    </div>
+    <div class="fullscreen-button">
+      <button onclick="toggleFullScreen()">⛶ Toàn màn hình</button>
     </div>
   </div>
 
-  <!-- Danh sách phim -->
-  <div class="movie-list">
-    <div class="movie-card" onclick="playMovie('1xqew_LWw2zhqljjpNcYutpn220wbM8NL')">
+  <!-- THÔNG BÁO ESC -->
+  <div id="fullscreenHint"> Nhấn Esc để thoát toàn màn hình</div>
+
+  <div class="movie-list" id="movieList">
+    <!-- Phim lẻ -->
+    <div class="movie-card" data-type="single" onclick="playMovie('1xqew_LWw2zhqljjpNcYutpn220wbM8NL')">
       <img class="movie-thumb" src="https://i.imgur.com/CiXEbw8.jpeg" alt="Phim 1">
-      <div class="movie-title">Nhà Gia Tiên - Full HD</div>
+      <div class="movie-title">Nhà Gia Tiên</div>
     </div>
-    <div class="movie-card" onclick="playMovie('16fzMYxAGil4Nih1vK84FAzJcR33iuw1c')">
+
+    <div class="movie-card" data-type="single" onclick="playMovie('16fzMYxAGil4Nih1vK84FAzJcR33iuw1c')">
       <img class="movie-thumb" src="https://i.imgur.com/rnqG3ME.jpeg" alt="Phim 2">
       <div class="movie-title">Chị Dâu - Full HD</div>
     </div>
-  </div>
+
 
   <footer>
     &copy; 2025 - Thiết kế bởi Lê Minh Võ
   </footer>
 
   <script>
+    let currentEpisodeBtn = null;
+
     function playMovie(driveId) {
       const iframe = document.getElementById("videoFrame");
-      const playerSection = document.getElementById("playerSection");
+      const section = document.getElementById("playerSection");
       iframe.src = `https://drive.google.com/file/d/${driveId}/preview`;
-      playerSection.style.display = "flex";
+      section.style.display = "flex";
       window.scrollTo({ top: 0, behavior: "smooth" });
     }
+
+    function playEpisode(button, driveId) {
+      currentEpisodeBtn = button;
+      playMovie(driveId);
+    }
+
+    function filterMovies(type) {
+      document.querySelectorAll('.movie-card').forEach(card => {
+        const cardType = card.getAttribute('data-type');
+        card.style.display = (type === 'all' || cardType === type) ? 'block' : 'none';
+      });
+    }
+
+    function toggleEpisodes(card) {
+      const list = card.querySelector('.episode-list');
+      document.querySelectorAll('.episode-list').forEach(el => {
+        if (el !== list) el.style.display = 'none';
+      });
+      list.style.display = (list.style.display === 'block') ? 'none' : 'block';
+    }
+
+    function toggleFullScreen() {
+      const videoContainer = document.getElementById("videoPlayer");
+      const hint = document.getElementById("fullscreenHint");
+
+      if (videoContainer.requestFullscreen) {
+        videoContainer.requestFullscreen();
+      } else if (videoContainer.webkitRequestFullscreen) {
+        videoContainer.webkitRequestFullscreen();
+      } else if (videoContainer.msRequestFullscreen) {
+        videoContainer.msRequestFullscreen();
+      }
+
+      hint.style.display = "block";
+      setTimeout(() => { hint.style.display = "none"; }, 5000);
+    }
+
+    function toggleMode() {
+      document.body.classList.toggle("light");
+      localStorage.setItem("mode", document.body.classList.contains("light") ? "light" : "dark");
+    }
+
+    // Tự động phát tập tiếp theo
+    window.addEventListener("message", function(event) {
+      if (event.data === "ended" && currentEpisodeBtn) {
+        const nextBtn = currentEpisodeBtn.nextElementSibling;
+        if (nextBtn) nextBtn.click();
+      }
+    });
+
+    window.onload = () => {
+      const savedMode = localStorage.getItem("mode");
+      if (savedMode === "light") document.body.classList.add("light");
+    };
   </script>
 </body>
 </html>
