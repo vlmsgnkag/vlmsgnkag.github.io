@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title></title>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700&display=swap" rel="stylesheet" />
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Outfit', sans-serif;
+      background-color: #0e0e0e;
+      color: #fff;
+      min-height: 100vh;
+    }
+
+    header {
+      background: #111;
+      padding: 20px 40px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+      text-align: center;
+    }
+
+    header h1 {
+      font-size: 2em;
+      color: #1973a794;
+    }
+
+    .player-section {
+      display: none;
+      justify-content: center;
+      margin: 40px auto 0;
+      width: 100%;
+    }
+
+    .video-player {
+      width: 90%;
+      max-width: 1000px;
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.7);
+    }
+
+    iframe {
+      width: 100%;
+      height: 500px;
+      border: none;
+    }
+
+    .movie-list {
+      padding: 40px;
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+      gap: 24px;
+      max-width: 1200px;
+      margin: auto;
+    }
+
+    .movie-card {
+      background: #1b1b1b;
+      border-radius: 12px;
+      overflow: hidden;
+      transition: 0.3s;
+      cursor: pointer;
+    }
+
+    .movie-card:hover {
+      transform: scale(1.05);
+      box-shadow: 0 0 10px #00ffc8;
+    }
+
+    .movie-thumb {
+      width: 100%;
+      height: 220px;
+      object-fit: cover;
+    }
+
+    .movie-title {
+      padding: 10px;
+      text-align: center;
+      font-weight: 600;
+    }
+
+    footer {
+      text-align: center;
+      padding: 20px;
+      font-size: 0.9em;
+      color: #aaa;
+      background: #111;
+      margin-top: 40px;
+    }
+
+    @media (max-width: 768px) {
+      iframe {
+        height: 240px;
+      }
+
+      .movie-title {
+        font-size: 0.9em;
+      }
+
+      .movie-thumb {
+        height: 180px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Chúc Các Bạn Xem Phim Vui Vẻ!</h1>
+  </header>
+
+  <!-- Phần hiện video khi click -->
+  <div class="player-section" id="playerSection">
+    <div class="video-player">
+      <iframe id="videoFrame" allow="autoplay"></iframe>
+    </div>
+  </div>
+
+  <!-- Danh sách phim -->
+  <div class="movie-list">
+    <div class="movie-card" onclick="playMovie('1xqew_LWw2zhqljjpNcYutpn220wbM8NL')">
+      <img class="movie-thumb" src="https://i.imgur.com/CiXEbw8.jpeg" alt="Phim 1">
+      <div class="movie-title">Nhà Gia Tiên - Full HD</div>
+    </div>
+    <div class="movie-card" onclick="playMovie('16fzMYxAGil4Nih1vK84FAzJcR33iuw1c')">
+      <img class="movie-thumb" src="https://i.imgur.com/rnqG3ME.jpeg" alt="Phim 2">
+      <div class="movie-title">Chị Dâu - Full HD</div>
+    </div>
+  </div>
+
+  <footer>
+    &copy; 2025 - Thiết kế bởi Lê Minh Võ
+  </footer>
+
+  <script>
+    function playMovie(driveId) {
+      const iframe = document.getElementById("videoFrame");
+      const playerSection = document.getElementById("playerSection");
+      iframe.src = `https://drive.google.com/file/d/${driveId}/preview`;
+      playerSection.style.display = "flex";
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+  </script>
+</body>
+</html>
