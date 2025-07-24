@@ -450,6 +450,16 @@ movieLinks.forEach(link => {
   });
 });
 
+    
+window.addEventListener("orientationchange", () => {
+  if (videoPlayer.classList.contains("fullscreen-mobile")) {
+    setTimeout(() => {
+      window.scrollTo(0, 1);
+    }, 500); // delay để browser cập nhật layout
+  }
+});
+
+    
 function playMovie(driveId, title) {
   const bgMusic = document.getElementById("bgMusic");
   bgMusic.pause();
