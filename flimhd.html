@@ -6,10 +6,57 @@
   <title>Xem Phim HD</title>
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700&display=swap" rel="stylesheet" />
   <style>
+    .sakura {
+  position: fixed;
+  top: -50px;
+  width: 20px;
+  height: 20px;
+  background-image: url('https://cdn.pixabay.com/photo/2022/08/30/07/46/sakura-7420567_960_720.png'); /* ảnh hoa anh đào trong suốt */
+  background-size: contain;
+  background-repeat: no-repeat;
+  pointer-events: none;
+  z-index: 1;
+  animation: fall linear infinite;
+  opacity: 0.8;
+}
+
+@keyframes fall {
+  0% {
+    transform: translateY(0) rotate(0deg);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(100vh) rotate(360deg);
+    opacity: 0;
+  }
+}
+
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body { font-family: 'Outfit', sans-serif; background-color: #0e0e0e; color: #fff; min-height: 100vh; }
     header { background: #111; padding: 20px 40px; text-align: center; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4); }
-    header h1 { font-size: 2em; color: #f6f8fa94; }
+    header h1 {
+  font-size: 2.5em;
+  background: linear-gradient(90deg, #ff6a00, #ff0080, #00f2fe, #ff6a00);
+  background-size: 300% 300%;
+  -webkit-background-clip: text;  /* Vendor prefix for Safari/Chrome */
+  background-clip: text;          /* Standard (won't work without webkit in many cases) */
+  -webkit-text-fill-color: transparent;
+  color: transparent;             /* Fallback for some browsers */
+  animation: gradientMove 6s ease infinite, pulse 3s infinite;
+  font-weight: 700;
+  letter-spacing: 2px;
+}
+
+@keyframes gradientMove {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+@keyframes pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.07); }
+}
 
     .player-section { display: none; flex-direction: column; align-items: center; margin: 40px auto 0; width: 100%; }
     .video-player { width: 90%; max-width: 1000px; border-radius: 16px; overflow: hidden; background: #000; position: relative; transition: all 0.3s ease; }
@@ -19,89 +66,153 @@
     .video-player.fullscreen-active iframe { width: 100%; height: 100%; }
 
     .fullscreen-btn { position: absolute; bottom: 10px; right: 10px; background: rgba(255, 255, 255, 0.1); color: #fff; border: none; padding: 10px 16px; border-radius: 6px; cursor: pointer; z-index: 10; }
+    .exit-fullscreen-btn { position: absolute; bottom: 10px; left: 10px; background: rgba(255, 255, 255, 0.1); color: #fff; border: none; padding: 10px 16px; border-radius: 6px; cursor: pointer; z-index: 10; }
 
     .notice { position: fixed; top: 20px; right: 20px; background: rgba(0, 0, 0, 0.7); color: #fff; padding: 10px 14px; border-radius: 8px; font-size: 0.9em; display: none; z-index: 10000; }
 
     .movie-list { padding: 40px; display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 24px; max-width: 1200px; margin: auto; }
     .movie-card { background: #1b1b1b; border-radius: 12px; overflow: hidden; cursor: pointer; position: relative; transition: 0.3s; }
-    .movie-card:hover { transform: scale(1.05); box-shadow: 0 0 10px #f9fafa; }
+    .movie-card {
+  background: #1b1b1b;
+  border-radius: 12px;
+  overflow: hidden;
+  cursor: pointer;
+  position: relative;
+  transition: transform 0.3s ease;
+  z-index: 1;
+}
+
+.movie-card::before {
+  content: '';
+  position: absolute;
+  top: -2px; left: -2px; right: -2px; bottom: -2px;
+  background: conic-gradient(from 0deg, red, orange, yellow, green, cyan, blue, violet, red);
+  border-radius: 14px;
+  z-index: -1;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  animation: borderLight 3s linear infinite;
+  filter: blur(4px);
+}
+
+.movie-card:hover {
+  transform: scale(1.05);
+}
+
+.movie-card:hover::before {
+  opacity: 1;
+}
+
+@keyframes borderLight {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
     .movie-thumb { width: 100%; height: 220px; object-fit: cover; }
     .movie-title { padding: 10px; text-align: center; font-weight: 600; }
     .movie-info { position: absolute; bottom: 0; left: 0; right: 0; background: rgba(0, 0, 0, 0.85); color: #fff; padding: 10px; font-size: 0.85em; opacity: 0; visibility: hidden; transform: translateY(100%); transition: all 0.3s ease; pointer-events: none; }
     .movie-card:hover .movie-info { opacity: 1; visibility: visible; transform: translateY(0); pointer-events: auto; }
 
+    .welcome-modal {
+      position: fixed;
+      top: 0; left: 0; width: 100vw; height: 100vh;
+      background: rgba(0,0,0,0.75);
+      display: flex; align-items: center; justify-content: center;
+      opacity: 0; visibility: hidden;
+      transition: opacity 0.4s ease, visibility 0.4s;
+      z-index: 100000;
+    }
+    .welcome-modal.active {
+      opacity: 1; visibility: visible;
+    }
 
-.welcome-modal {
-  position: fixed;
-  top: 0; left: 0; width: 100vw; height: 100vh;
-  background: rgba(0,0,0,0.75);
-  display: flex; align-items: center; justify-content: center;
-  opacity: 0; visibility: hidden;
-  transition: opacity 0.4s ease, visibility 0.4s;
-  z-index: 100000;
-}
-.welcome-modal.active {
-  opacity: 1; visibility: visible;
-}
+    
 
-.welcome-content {
-  background: #111;
-  padding: 30px 40px;
-  border-radius: 12px;
-  text-align: center;
-  max-width: 90%; width: 360px;
-  box-shadow: 0 6px 20px rgba(0,0,0,0.6);
-  animation: slideDown 0.5s ease-out;
-  position: relative;
-}
+    .welcome-content {
+      background: #111;
+      padding: 30px 40px;
+      border-radius: 12px;
+      text-align: center;
+      max-width: 90%; width: 360px;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.6);
+      animation: slideDown 0.5s ease-out;
+      position: relative;
+    }
 
-
-.welcome-icon {
-  width: 80px;
-  margin: 0 auto 20px;
-  display: block;
-}
-
-
-.welcome-content h2 {
-  font-size: 1.8em;
-  margin-bottom: 10px;
-  color: #fff;
-}
-.welcome-content p {
-  font-size: 1em;
-  margin-bottom: 20px;
-  color: #ccc;
+    @keyframes ripple {
+  to {
+    transform: translate(-50%, -50%) scale(3);
+    opacity: 0;
+  }
 }
 
+    .welcome-content button::after {
+  content: "";
+  position: absolute;
+  width: 100px;
+  height: 100px;
+  top: 50%;
+  left: 50%;
+  pointer-events: none;
+  transform: translate(-50%, -50%) scale(0);
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.4);
+  animation: ripple 0.6s linear;
+  opacity: 0;
+}
 
-.welcome-content button {
+    .welcome-icon {
+      width: 80px;
+      margin: 0 auto 20px;
+      display: block;
+    }
+
+    .welcome-content h2 {
+      font-size: 1.8em;
+      margin-bottom: 10px;
+      color: #fff;
+    }
+    .welcome-content p {
+      font-size: 1em;
+      margin-bottom: 20px;
+      color: #ccc;
+    }
+
+    .welcome-content button {
   display: inline-flex;
   align-items: center;
   padding: 10px 20px;
   font-size: 1em;
-  background: #f6f5f5;
+  background: linear-gradient(135deg, #ff6a00, #ee0979);
   border: none;
-  border-radius: 6px;
-  color: #1f1d1d;
+  border-radius: 8px;
+  color: #fff;
   cursor: pointer;
-  transition: background 0.3s;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  overflow: hidden;
+  position: relative;
 }
-.welcome-content button:hover {
-  background: #fdfbfb;
+    .welcome-content button:hover {
+  transform: scale(1.05);
+  box-shadow: 0 6px 20px rgba(255, 106, 0, 0.5);
+}
+.welcome-content button:active {
+  transform: scale(0.97);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
 }
 
-.btn-icon {
-  width: 20px;
-  height: 20px;
-  margin-right: 8px;
-}
 
-/* Hiệu ứng xuất hiện */
-@keyframes slideDown {
-  from { transform: translateY(-20px); opacity: 0; }
-  to   { transform: translateY(0);     opacity: 1; }
-}
+    .btn-icon {
+      width: 20px;
+      height: 20px;
+      margin-right: 8px;
+    }
+
+    /* Hiệu ứng xuất hiện */
+    @keyframes slideDown {
+      from { transform: translateY(-20px); opacity: 0; }
+      to   { transform: translateY(0);     opacity: 1; }
+    }
 
     @media (max-width: 768px) {
       iframe { height: 240px; }
@@ -109,38 +220,84 @@
       .movie-thumb { height: 180px; }
     }
 
-    /* Mobile fullscreen overrides */
-    @media (max-width: 768px) {
-      .mobile-fullscreen header,
-      .mobile-fullscreen .movie-list,
-      .mobile-fullscreen footer,
-      .mobile-fullscreen .notice {
-        display: none !important;
-      }
-      .mobile-fullscreen .video-player {
-        width: 100vw !important;
-        height: 100vh !important;
-        border-radius: 0 !important;
-      }
-      .mobile-fullscreen .video-player iframe {
-        width: 100%; height: 100%;
-      }
-      .mobile-fullscreen .fullscreen-btn { display: none !important; }
+    /* Hide fullscreen buttons on larger screens (desktop) */
+    @media only screen and (min-width: 769px) {
+      .fullscreen-btn, .exit-fullscreen-btn { display: none !important; }
     }
+
+    .now-watching {
+  position: relative;
+  font-size: 1.4em;
+  margin-bottom: 20px;
+  padding: 12px 24px;
+  background: linear-gradient(135deg, #ff416c, #ff4b2b);
+  color: #fff;
+  border-radius: 16px;
+  display: inline-block;
+  animation: fadeSlide 0.6s ease-in-out;
+  box-shadow: 0 0 12px rgba(255, 65, 108, 0.4);
+  overflow: hidden;
+  z-index: 1;
+  isolation: isolate;
+}
+
+.now-watching::before {
+  content: "";
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: conic-gradient(from 0deg, #ff0000, #ff9900, #ffff00, #00ff00, #00ffff, #0000ff, #ff00ff, #ff0000);
+  animation: rotateBorder 5s linear infinite;
+  z-index: -1;
+  filter: blur(20px);
+}
+
+.now-watching span {
+  font-weight: 600;
+  margin-right: 6px;
+  animation: pulseGlow 2s infinite ease-in-out;
+}
+
+.now-watching strong {
+  font-weight: 800;
+  color: #fffbe6;
+  text-shadow: 0 1px 4px rgba(0,0,0,0.5);
+}
+
+@keyframes fadeSlide {
+  from { opacity: 0; transform: translateY(-10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes pulseGlow {
+  0%, 100% { text-shadow: 0 0 10px #fff; }
+  50%      { text-shadow: 0 0 20px #ff9a9e; }
+}
+
+@keyframes rotateBorder {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
 
     footer { text-align: center; padding: 20px; font-size: 0.9em; color: #aaa; background: #111; margin-top: 40px; }
   </style>
 </head>
 <body>
+  <audio id="bgMusic" loop>
+  <source src="flimmusic.mp3" type="audio/mpeg">
+</audio>
+
   <div id="welcomeModal" class="welcome-modal">
     <div class="welcome-content">
-      <!-- Icon PNG ở trên cùng -->
       <img src="https://img6.thuthuatphanmem.vn/uploads/2022/03/04/hinh-anh-dong-welcome-dang-yeu_021900448.gif" alt="Chào mừng" class="welcome-icon" />
       <h2>Chào Mừng!</h2>
-      <p>Chúc bạn có những giây phút xem phim thư giãn và thú vị</p>
+      <p>Chúc bạn có những giây phút xem phim thư giãn và thú vị. 
+        Nhạc nền sẽ tự động bật đến khi bạn chọn phim sẽ tắt.
+      </p>
       <button id="closeWelcome">
-        <!-- Icon PNG bên trái chữ -->
-        <img src="https://img.lovepik.com/png/20231020/red-start-button-png-picture-pictures-play_271598_wh860.png" alt="" class="btn-icon" />
+        <img src="https://i.imgur.com/F27rb7w.png" alt="" class="btn-icon" />
         Bắt Đầu
       </button>
     </div>
@@ -151,13 +308,17 @@
 
   <div class="notice" id="fullscreenNotice">Nhấn ESC hoặc F11 để thoát toàn màn hình</div>
 
-  <div class="player-section" id="playerSection">
+    <div class="player-section" id="playerSection" style="display: none;">
     <div style="text-align: center; margin-bottom: 10px;">
-      <h2 id="movieTitleDisplay">Đang xem: </h2>
+      <div class="now-watching">
+  <span>Đang xem:</span>
+  <strong id="movieTitleDisplay">Chưa chọn phim</strong>
+</div>
     </div>
     <div class="video-player" id="videoPlayer">
-      <iframe id="videoFrame" allow="autoplay"></iframe>
-      <button class="fullscreen-btn" onclick="toggleFullScreen()">⛶ Full màn hình</button>
+      <iframe id="videoFrame" allow="autoplay; fullscreen" allowfullscreen webkitallowfullscreen mozallowfullscreen></iframe>
+      <button id="fullscreenBtn" class="fullscreen-btn">⛶ Full màn hình</button>
+      <button id="exitFullscreenBtn" class="exit-fullscreen-btn" style="display:none;">Thoát toàn màn hình</button>
     </div>
   </div>
 
@@ -218,86 +379,166 @@
     </div>
 
     <div class="movie-card" onclick="playMovie('1qkyNzvQVUV_bFB5lGAP6-cP4WfSJoX-p')">
-      <img class="movie-thumb" src="https://i.imgur.com/zmQcsRn.jpeg" alt="Phim 5">
-      <div class="movie-title">Thanh Gươm Diệt Quỷ: Vô Hạn Thành  - Tập Full</div>
+      <img class="movie-thumb" src="https://i.imgur.com/zmQcsRn.jpeg" alt="Phim 6">
+      <div class="movie-title">Thanh Gươm Diệt Quỷ: Vô Hạn Thành - Tập Full VietSub</div>
       <div class="movie-info">
-        <strong>Thể loại:</strong> Shonen, hành động, phiêu lưu, kỳ ảo đen tối và kiếm thuật<br>
+        <strong>Thể loại:</strong> Shonen, Hành động, Phiêu lưu, Kỳ ảo đen tối và Kiếm thuật<br>
         <strong>Thời lượng:</strong> 155 phút<br>
         <strong>Năm:</strong> 2025<br>
         <strong>Tác Giả :</strong> Koyoharu Gotouge
       </div>
     </div>
-  </div>
 
+    <div class="movie-card" onclick="playMovie('1xrxkuwi3UsfOqZuhIUTGePno7qhvkZjt')">
+      <img class="movie-thumb" src="https://i.imgur.com/Duf9vHu.jpeg" alt="Phim 7">
+      <div class="movie-title">Bí Kíp Luyện Rồng - Full HD VietSub</div>
+      <div class="movie-info">
+        <strong>Thể loại:</strong> Chính kịch, Gia Đình, Hành Động, Tâm Lý, Viễn Tưởng,<br>
+        <strong>Thời lượng:</strong> 125 phút<br>
+        <strong>Năm:</strong> 2025<br>
+        <strong>Đạo Diễn :</strong> Dean DeBlois
+      </div>
+    </div>
+
+  </div>
 
   <footer>
     &copy; 2025 - Thiết kế bởi Lê Minh Võ
   </footer>
 
   <script>
-    document.addEventListener('DOMContentLoaded', () => {
-    const modal = document.getElementById('welcomeModal');
-    const btnClose = document.getElementById('closeWelcome');
-    setTimeout(() => {
-      modal.classList.add('active');
-    }, 300);
-    btnClose.addEventListener('click', () => {
-      modal.classList.remove('active');
-    });
-    modal.addEventListener('click', (e) => {
-      if (e.target === modal) {
-        modal.classList.remove('active');
-      }
-    });
+
+    const btnClose = document.getElementById("closeModalBtn");
+const modal = document.getElementById("modal");
+const movieLinks = document.querySelectorAll(".movie-link");
+const playerIframe = document.getElementById("playerIframe");
+const titleDisplay = document.getElementById("movieTitleDisplay");
+const bgMusic = document.getElementById("bgMusic");
+window.addEventListener("click", () => {
+  const bgMusic = document.getElementById("bgMusic");
+  bgMusic?.play().catch(e => console.warn("Chặn autoplay:", e));
+}, { once: true });
+
+movieLinks.forEach(link => {
+  link.addEventListener("click", function(e) {
+    e.preventDefault();
+    const driveId = this.getAttribute("data-id");
+    const title = this.getAttribute("data-title") || "Không rõ tiêu đề";
+    playMovie(driveId, title);
   });
+});
+
+function playMovie(driveId, title) {
+  const bgMusic = document.getElementById("bgMusic");
+  bgMusic.pause();
+  bgMusic.currentTime = 0;
+
+  const iframe = document.getElementById("videoFrame");
+  const playerSection = document.getElementById("playerSection");
+  const titleDisplay = document.getElementById("movieTitleDisplay");
+
+  iframe.src = `https://drive.google.com/file/d/${driveId}/preview`;
+  playerSection.style.display = "flex";
+  window.scrollTo({ top: 0, behavior: "smooth" });
+
+  const movieTitle = movieData[driveId] || title || "Không rõ tên phim";
+  titleDisplay.textContent = movieTitle;
+}
+
+    function createSakura() {
+    const sakura = document.createElement('div');
+    sakura.classList.add('sakura');
+    sakura.style.left = Math.random() * 100 + 'vw';
+    sakura.style.animationDuration = (5 + Math.random() * 5) + 's';
+    document.body.appendChild(sakura);
+
+    setTimeout(() => {
+      sakura.remove();
+    }, 10000);
+  }
+
+  document.querySelectorAll(".welcome-content button").forEach((btn) => {
+  btn.addEventListener("click", function (e) {
+    const ripple = document.createElement("span");
+    ripple.classList.add("ripple");
+    this.appendChild(ripple);
+    setTimeout(() => ripple.remove(), 600);
+  });
+});
+
+  setInterval(createSakura, 3000);
+    document.addEventListener('DOMContentLoaded', () => {
+      const modal = document.getElementById('welcomeModal');
+      const btnClose = document.getElementById('closeWelcome');
+      setTimeout(() => {
+        modal.classList.add('active');
+      }, 300);
+      btnClose.addEventListener('click', () => {
+        modal.classList.remove('active');
+      });
+      modal.addEventListener('click', (e) => {
+        if (e.target === modal) {
+          modal.classList.remove('active');
+        }
+      });
+    });
+
     const movieData = {
       "1xqew_LWw2zhqljjpNcYutpn220wbM8NL": "Nhà Gia Tiên - Full HD",
       "16fzMYxAGil4Nih1vK84FAzJcR33iuw1c": "Chị Dâu - Full HD",
       "1JNJo8PYjCbLRbzS1noAoSB8hmo9WPN66": "Con Nhót Mót Chồng - Full HD",
       "1SPiQZYqJYe6IP3mel9WpZNapK6tnmPu_": "Đất Rừng Phương Nam Full HD",
       "11fdIwCxj2GaxgdUG3SyokArC7890vsnJ": "Công Tử Bạc Liêu - Full HD",
-      "1qkyNzvQVUV_bFB5lGAP6-cP4WfSJoX-p": "Thanh Gươm Diệt Quỷ: Vô Hạn Thành  - Tập Full"
+      "1qkyNzvQVUV_bFB5lGAP6-cP4WfSJoX-p": "Thanh Gươm Diệt Quỷ: Vô Hạn Thành - Tập Full"
     };
 
-    function playMovie(driveId) {
-      const iframe = document.getElementById("videoFrame");
-      const playerSection = document.getElementById("playerSection");
-      const titleDisplay = document.getElementById("movieTitleDisplay");
+    // Fullscreen button handling
+    var fullscreenBtn = document.getElementById('fullscreenBtn');
+    var exitFullscreenBtn = document.getElementById('exitFullscreenBtn');
+    var videoPlayer = document.getElementById('videoPlayer');
 
-      iframe.src = `https://drive.google.com/file/d/${driveId}/preview`;
-      playerSection.style.display = "flex";
-      window.scrollTo({ top: 0, behavior: "smooth" });
-
-      const title = movieData[driveId] || "Không rõ tên phim";
-      titleDisplay.textContent = `Đang xem: ${title}`;
-    }
-
-    function isMobile() {
-      return window.innerWidth <= 768;
-    }
-
-    function toggleFullScreen() {
-      const player = document.getElementById("videoPlayer");
-      const notice = document.getElementById("fullscreenNotice");
-
-      if (!document.fullscreenElement) {
-        if (isMobile()) document.body.classList.add('mobile-fullscreen');
-        player.classList.add("fullscreen-active");
-        player.requestFullscreen?.();
-        notice.style.display = "block";
-        setTimeout(() => notice.style.display = "none", 4000);
-      } else {
-        document.exitFullscreen();
-      }
-    }
-
-    document.addEventListener("fullscreenchange", () => {
-      const player = document.getElementById("videoPlayer");
-      if (!document.fullscreenElement) {
-        player.classList.remove("fullscreen-active");
-        document.body.classList.remove('mobile-fullscreen');
+    fullscreenBtn.addEventListener('click', function() {
+      if (videoPlayer.requestFullscreen) {
+        videoPlayer.requestFullscreen();
+      } else if (videoPlayer.webkitRequestFullscreen) {
+        videoPlayer.webkitRequestFullscreen();
+      } else if (videoPlayer.msRequestFullscreen) {
+        videoPlayer.msRequestFullscreen();
       }
     });
+
+    document.querySelectorAll(".movie-card").forEach(card => {
+  card.addEventListener("click", () => {
+    const driveId = card.getAttribute("onclick").match(/'([^']+)'/)[1];
+    const title = card.querySelector(".movie-title").textContent.trim();
+    playMovie(driveId, title);
+  });
+});
+
+    exitFullscreenBtn.addEventListener('click', function() {
+      if (document.exitFullscreen) {
+        document.exitFullscreen();
+      } else if (document.webkitExitFullscreen) {
+        document.webkitExitFullscreen();
+      } else if (document.msExitFullscreen) {
+        document.msExitFullscreen();
+      }
+    });
+
+    function updateFullscreenButtons() {
+      if (document.fullscreenElement || document.webkitFullscreenElement || document.msFullscreenElement) {
+        fullscreenBtn.style.display = 'none';
+        exitFullscreenBtn.style.display = 'inline-block';
+      } else {
+        fullscreenBtn.style.display = 'inline-block';
+        exitFullscreenBtn.style.display = 'none';
+      }
+    }
+
+    document.addEventListener('fullscreenchange', updateFullscreenButtons);
+    document.addEventListener('webkitfullscreenchange', updateFullscreenButtons);
+    document.addEventListener('mozfullscreenchange', updateFullscreenButtons);
+    document.addEventListener('MSFullscreenChange', updateFullscreenButtons);
   </script>
 </body>
 </html>
