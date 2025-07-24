@@ -1,5 +1,6 @@
 // Danh sách bài nhạc và ảnh tương ứng
 const songs = [
+    { src: "music/1111.mp3", image: "https://png.pngtree.com/png-vector/20241205/ourmid/pngtree-have-a-good-day-png-image_280238.png" },
     { src: "music/59.mp3", image: "https://i.pinimg.com/236x/7b/11/fd/7b11fdb62a0e4ab598aa5cb96c9026c9.jpg" },
     { src: "music/100.mp3", image: "https://i.pinimg.com/474x/93/14/c1/9314c1fe0d89328cefd0fa1b6d1c7bf6.jpg" },
     { src: "music/33.mp3", image: "https://i.pinimg.com/236x/ab/74/06/ab7406cb7f396e0866a45db00af7d624.jpg" },
@@ -30,6 +31,7 @@ const songs = [
     { src: "music/89.mp3", image: "https://i.pinimg.com/474x/e7/dc/77/e7dc7786be4b2faad53e5b40344d7eef.jpg" },
     { src: "music/24.mp3", image: "https://i.pinimg.com/236x/8f/15/04/8f1504db6ccf5479efa335e2147e522c.jpg" },
     { src: "music/61.mp3", image: "https://i.pinimg.com/236x/0e/ca/8b/0eca8b61ff85eba45e102ed5ca48385d.jpg" },
+   { src: "music/1111.mp3", image: "https://png.pngtree.com/png-vector/20241205/ourmid/pngtree-have-a-good-day-png-image_280238.png" },
     { src: "music/31.mp3", image: "https://i.pinimg.com/236x/8f/e6/2e/8fe62e8940c26e4eb5559ad7034b9d06.jpg" },
     { src: "music/65.mp3", image: "https://i.pinimg.com/474x/bb/cc/08/bbcc08af5806d982bab5c20537575714.jpg" },
     { src: "music/62.mp3", image: "https://i.pinimg.com/236x/90/b3/1a/90b31a45447f556306ca8cbf853054f1.jpg" },
@@ -71,6 +73,7 @@ const songs = [
     { src: "music/74.mp3", image: "https://i.pinimg.com/236x/60/75/ad/6075ad700bd16ea3fb7b26b979ee8081.jpg" },
     { src: "music/67.mp3", image: "https://i.pinimg.com/474x/62/a5/e4/62a5e4451b32f1d9ace7c319d419cbea.jpg" },
     { src: "music/36.mp3", image: "https://i.pinimg.com/236x/9c/70/b9/9c70b925624763a4b9ed23fdd0e8a0a6.jpg" },
+    { src: "music/1111.mp3", image: "https://png.pngtree.com/png-vector/20241205/ourmid/pngtree-have-a-good-day-png-image_280238.png" },
     { src: "music/88.mp3", image: "https://i.pinimg.com/236x/96/1b/10/961b10c845a1772cf4a0e00b1d5a35dd.jpg" },
     { src: "music/12.mp3", image: "https://i.pinimg.com/236x/2d/70/34/2d703462fcadb5c8ee1c219372c0d0fb.jpg" },
     { src: "music/50.mp3", image: "https://i.pinimg.com/236x/ea/74/74/ea7474713f5aa4849b927bcd38b2b231.jpg" },
@@ -101,6 +104,7 @@ const songs = [
     { src: "music/84.mp3", image: "https://i.pinimg.com/236x/c2/a7/44/c2a744ecbb75f2c4ee3aa3681866fda4.jpg" },
     { src: "music/41.mp3", image: "https://i.pinimg.com/236x/d6/80/3e/d6803e4cece581ab57aee8317f4ab47f.jpg" },
     { src: "music/69.mp3", image: "https://i.pinimg.com/236x/53/6f/59/536f5939a0d33b9b364eff921e46b9a2.jpg" },
+  { src: "music/1111.mp3", image: "https://png.pngtree.com/png-vector/20241205/ourmid/pngtree-have-a-good-day-png-image_280238.png" },
     { src: "music/101.mp3", image: "https://i.pinimg.com/736x/13/d3/c7/13d3c7f925a21adc7a82d4ebd466a6f7.jpg" },
     { src: "music/34.mp3", image: "https://i.pinimg.com/236x/2c/45/f7/2c45f7ffdfb9b3bf94be58148315cead.jpg" },
     { src: "music/25.mp3", image: "https://i.pinimg.com/474x/64/4b/5d/644b5d581a4fb29e91523c1318f9e32c.jpg" }
