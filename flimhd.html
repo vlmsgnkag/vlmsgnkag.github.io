@@ -7,6 +7,34 @@
   <link rel="icon" type="image/png" href="https://i.imgur.com/usVXBsO.png">
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700&display=swap" rel="stylesheet" />
   <style>
+    /* Fullscreen riêng cho mobile */
+@media only screen and (max-width: 768px) {
+  .video-player.fullscreen-mobile {
+    position: fixed !important;
+    top: 0; left: 0;
+    width: 100vw;
+    height: 100vh;
+    border-radius: 0;
+    z-index: 9999;
+    background: #000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .video-player.fullscreen-mobile iframe {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
+
+  .fullscreen-mobile-hide-ui {
+    overflow: hidden;
+    height: 100vh;
+    position: fixed;
+  }
+}
+
     .sakura {
   position: fixed;
   top: -50px;
