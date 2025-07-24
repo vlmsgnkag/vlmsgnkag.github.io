@@ -420,6 +420,27 @@ window.addEventListener("click", () => {
   bgMusic?.play().catch(e => console.warn("Chặn autoplay:", e));
 }, { once: true });
 
+    const mobileFullscreenBtn = document.getElementById("mobileFullscreenBtn");
+const mobileExitFullscreenBtn = document.getElementById("mobileExitFullscreenBtn");
+
+mobileFullscreenBtn.addEventListener("click", () => {
+  videoPlayer.classList.add("fullscreen-mobile");
+  document.body.classList.add("fullscreen-mobile-hide-ui");
+  mobileFullscreenBtn.style.display = "none";
+  mobileExitFullscreenBtn.style.display = "inline-block";
+
+  // Ẩn thanh trình duyệt (tương đối)
+  window.scrollTo(0, 1);
+});
+
+mobileExitFullscreenBtn.addEventListener("click", () => {
+  videoPlayer.classList.remove("fullscreen-mobile");
+  document.body.classList.remove("fullscreen-mobile-hide-ui");
+  mobileFullscreenBtn.style.display = "inline-block";
+  mobileExitFullscreenBtn.style.display = "none";
+});
+
+
 movieLinks.forEach(link => {
   link.addEventListener("click", function(e) {
     e.preventDefault();
