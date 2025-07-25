@@ -13,6 +13,51 @@
 a:hover {
   cursor: url("https://cdn.custom-cursor.com/db/23686/32/mochi-mochi-peach-and-noodle-cursor.png") 16 16, auto; /* mochi click */
 }
+
+body::before {
+  content: "";
+  position: fixed;
+  top: 0; left: 0;
+  width: 100vw; height: 100vh;
+  background: radial-gradient(circle at top left, rgba(255, 0, 150, 0.2), transparent),
+              radial-gradient(circle at bottom right, rgba(0, 200, 255, 0.2), transparent),
+              linear-gradient(135deg, #1f1f1f, #0e0e0e);
+  z-index: -1;
+  animation: bgShift 10s infinite alternate ease-in-out;
+}
+
+@keyframes bgShift {
+  0% { background-position: 0% 50%; }
+  100% { background-position: 100% 50%; }
+}
+
+/* Logo góc trái */
+.logo-fixed {
+  position: fixed;
+  top: 20px;
+  left: 20px;
+  z-index: 9999;
+  width: 80px;
+  height: 80px;
+  background: rgba(255, 255, 255, 0.03);
+  backdrop-filter: blur(8px);
+  border-radius: 16px;
+  box-shadow: 0 0 12px rgba(255, 255, 255, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.logo-fixed:hover {
+  transform: scale(1.1);
+  box-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
+}
+.logo-fixed img {
+  max-width: 60%;
+  max-height: 60%;
+}
+
+
     /* Fullscreen riêng cho mobile */
 @media only screen and (max-width: 768px) {
   .video-player.fullscreen-mobile {
@@ -142,36 +187,57 @@ a:hover {
     .movie-card:hover .movie-info { opacity: 1; visibility: visible; transform: translateY(0); pointer-events: auto; }
 
     .welcome-modal {
-      position: fixed;
-      top: 0; left: 0; width: 100vw; height: 100vh;
-      background: rgba(0,0,0,0.75);
-      display: flex; align-items: center; justify-content: center;
-      opacity: 0; visibility: hidden;
-      transition: opacity 0.4s ease, visibility 0.4s;
-      z-index: 100000;
-    }
+  position: fixed;
+  top: 0; left: 0;
+  width: 100vw; height: 100vh;
+  background: rgba(0,0,0,0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.4s ease, visibility 0.4s;
+  z-index: 100000;
+  backdrop-filter: blur(4px);
+}
     .welcome-modal.active {
-      opacity: 1; visibility: visible;
-    }
+  opacity: 1;
+  visibility: visible;
+}
 
     
 
     .welcome-content {
-      background: #111;
-      padding: 30px 40px;
-      border-radius: 12px;
-      text-align: center;
-      max-width: 90%; width: 360px;
-      box-shadow: 0 6px 20px rgba(0,0,0,0.6);
-      animation: slideDown 0.5s ease-out;
-      position: relative;
-    }
+  background: #111;
+  padding: 32px 28px;
+  border-radius: 16px;
+  text-align: center;
+  max-width: 90%;
+  width: 380px;
+  box-shadow: 0 0 30px rgba(255, 0, 128, 0.2);
+  animation: slideIn 0.5s ease-out;
+  position: relative;
+  overflow: hidden;
+}
 
     @keyframes ripple {
   to {
     transform: translate(-50%, -50%) scale(3);
     opacity: 0;
   }
+
+  
+}
+
+@keyframes slideIn {
+  from { transform: translateY(-20px); opacity: 0; }
+  to   { transform: translateY(0); opacity: 1; }
+}
+
+@keyframes popIn {
+  0% { transform: scale(0); opacity: 0; }
+  60% { transform: scale(1.2); opacity: 1; }
+  100% { transform: scale(1); }
 }
 
     .welcome-content button::after {
@@ -190,21 +256,28 @@ a:hover {
 }
 
     .welcome-icon {
-      width: 80px;
-      margin: 0 auto 20px;
-      display: block;
-    }
+  width: 90px;
+  height: 90px;
+  object-fit: contain;
+  margin: 0 auto 20px;
+  border-radius: 50%;
+  animation: popIn 1s ease;
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.15);
+}
 
     .welcome-content h2 {
-      font-size: 1.8em;
-      margin-bottom: 10px;
-      color: #fff;
-    }
-    .welcome-content p {
-      font-size: 1em;
-      margin-bottom: 20px;
-      color: #ccc;
-    }
+  font-size: 1.6em;
+  margin-bottom: 12px;
+  color: #ff5e9c;
+  font-weight: 700;
+}
+
+.welcome-content p {
+  font-size: 1em;
+  margin-bottom: 24px;
+  color: #ccc;
+  line-height: 1.5;
+}
 
     .welcome-content button {
   display: inline-flex;
@@ -224,6 +297,20 @@ a:hover {
     .welcome-content button:hover {
   transform: scale(1.05);
   box-shadow: 0 6px 20px rgba(255, 106, 0, 0.5);
+}
+.welcome-content button::after {
+  content: "";
+  position: absolute;
+  width: 100px;
+  height: 100px;
+  top: 50%;
+  left: 50%;
+  pointer-events: none;
+  transform: translate(-50%, -50%) scale(0);
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.3);
+  animation: ripple 0.6s linear;
+  opacity: 0;
 }
 .welcome-content button:active {
   transform: scale(0.97);
@@ -270,6 +357,36 @@ a:hover {
   isolation: isolate;
 }
 
+   .marquee-wrapper {
+      overflow: hidden;
+      white-space: nowrap;
+      box-sizing: border-box;
+      background-color: #151515; /* Đồng nhất hoàn toàn với màu nền chính */
+      padding: 20px 0;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+      text-align: center;
+    }
+
+    .marquee-content {
+      display: inline-block;
+      padding-left: 100%;
+      font-size: 2em;
+      font-weight: 700;
+      background: linear-gradient(90deg, #ff6a00, #ff0080, #00f2fe);
+      background-size: 300% 300%;
+      background-clip: text;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      color: #fff;
+      animation: marqueeMove 15s linear infinite, gradientMove 6s ease infinite;
+      letter-spacing: 2px;
+    }
+
+    @keyframes marqueeMove {
+      0% { transform: translateX(0); }
+      100% { transform: translateX(-100%); }
+    }
+
 .now-watching::before {
   content: "";
   position: absolute;
@@ -287,6 +404,43 @@ a:hover {
   font-weight: 600;
   margin-right: 6px;
   animation: pulseGlow 2s infinite ease-in-out;
+}
+
+#unicorn-container {
+  position: relative;
+  width: 100%;
+  height: 80px;
+  overflow: visible;
+  pointer-events: none;
+}
+
+.unicorn {
+  position: absolute;
+  top: 0;
+  width: 60px;
+  height: 60px;
+  background-image: url('https://ask.libreoffice.org/uploads/asklibo/original/3X/0/d/0de586544bba6cc70466cd97b45686d5dcbca532.gif'); /* ảnh GIF kỳ lân */
+  background-size: contain;
+  background-repeat: no-repeat;
+  animation: unicorn-run 4s linear forwards;
+  z-index: 999;
+}
+
+@keyframes unicorn-run {
+  0% {
+    left: -80px;
+    opacity: 0;
+  }
+  10% {
+    opacity: 1;
+  }
+  90% {
+    opacity: 1;
+  }
+  100% {
+    left: 110%;
+    opacity: 0;
+  }
 }
 
 .now-watching strong {
@@ -310,7 +464,28 @@ a:hover {
   to   { transform: rotate(360deg); }
 }
 
-    footer { text-align: center; padding: 20px; font-size: 0.9em; color: #aaa; background: #111; margin-top: 40px; }
+ footer {
+  text-align: center;
+  padding: 20px;
+  font-size: 0.9em;
+  color: #fff;
+  background: linear-gradient(to right, #1f1f1f, #111111, #1f1f1f);
+  margin-top: 40px;
+  border-top: 1px solid #333;
+}
+
+footer span {
+  background: linear-gradient(to right, #ff416c, #ff4b2b);
+  
+  /* Background clip for text gradient compatibility */
+  background-clip: text;               /* Standard */
+  -webkit-background-clip: text;       /* Chrome, Safari */
+  -moz-background-clip: text;          /* Firefox (partial) */
+  
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+  font-weight: 600;
+}
   </style>
 </head>
 <body>
@@ -332,8 +507,11 @@ a:hover {
     </div>
   </div>
   <header>
-    <h1>Chúc Các Bạn Xem Phim Vui Vẻ!</h1>
-  </header>
+  <div class="marquee-wrapper">
+    <div class="marquee-content">Chúc Các Bạn Xem Phim Vui Vẻ!</div>
+      <div id="unicorn-container"></div>
+  </div>
+</header>
 
   <div class="notice" id="fullscreenNotice">Nhấn ESC hoặc F11 để thoát toàn màn hình</div>
 
@@ -351,6 +529,11 @@ a:hover {
 
     </div>
   </div>
+
+  <div class="logo-fixed">
+  <img src="https://i.imgur.com/usVXBsO.png" alt="Logo" />
+</div>
+
 
   <div class="movie-list">
     <div class="movie-card" onclick="playMovie('1xqew_LWw2zhqljjpNcYutpn220wbM8NL')">
@@ -497,6 +680,23 @@ window.addEventListener("orientationchange", () => {
     }, 500); // delay để browser cập nhật layout
   }
 });
+
+  function spawnUnicorn() {
+    const unicorn = document.createElement('div');
+    unicorn.classList.add('unicorn');
+
+    // Random chiều cao nhỏ để bay hơi lệch
+    unicorn.style.top = Math.random() * 20 + 'px';
+
+    document.getElementById('unicorn-container').appendChild(unicorn);
+
+    setTimeout(() => {
+      unicorn.remove();
+    }, 4000); // xóa sau khi animation chạy xong
+  }
+
+  // Gọi định kỳ mỗi 15s (bằng với thời gian chạy marquee)
+  setInterval(spawnUnicorn, 1000);
 
 document.querySelectorAll(".movie-card").forEach(card => {
   const img = card.querySelector(".movie-thumb");
