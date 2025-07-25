@@ -7,6 +7,12 @@
   <link rel="icon" type="image/png" href="https://i.imgur.com/usVXBsO.png">
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700&display=swap" rel="stylesheet" />
   <style>
+    	html, body {
+  cursor: url("https://cdn.custom-cursor.com/db/23685/32/mochi-mochi-peach-and-noodle-pointer.png") 16 16, auto; /* mochi pointer */
+}
+a:hover {
+  cursor: url("https://cdn.custom-cursor.com/db/23686/32/mochi-mochi-peach-and-noodle-cursor.png") 16 16, auto; /* mochi click */
+}
     /* Fullscreen riêng cho mobile */
 @media only screen and (max-width: 768px) {
   .video-player.fullscreen-mobile {
@@ -26,12 +32,6 @@
     width: 100%;
     height: 100%;
     object-fit: contain;
-  }
-
-  .fullscreen-mobile-hide-ui {
-    overflow: hidden;
-    height: 100vh;
-    position: fixed;
   }
 }
 
@@ -354,7 +354,7 @@
 
   <div class="movie-list">
     <div class="movie-card" onclick="playMovie('1xqew_LWw2zhqljjpNcYutpn220wbM8NL')">
-      <img class="movie-thumb" src="https://i.imgur.com/CiXEbw8.jpeg" alt="Phim 1">
+      <img class="movie-thumb" src="https://i.imgur.com/CiXEbw8.jpeg" data-gif="https://img-s-msn-com.akamaized.net/tenant/amp/entityid/AA1zIqjt.img?w=565&h=311&m=6" alt="Phim 1">
       <div class="movie-title">Nhà Gia Tiên - Full HD</div>
       <div class="movie-info">
         <strong>Thể loại:</strong> Tâm linh – Chính kịch – Hài<br>
@@ -365,7 +365,7 @@
     </div>
 
     <div class="movie-card" onclick="playMovie('16fzMYxAGil4Nih1vK84FAzJcR33iuw1c')">
-      <img class="movie-thumb" src="https://i.imgur.com/rnqG3ME.jpeg" alt="Phim 2">
+      <img class="movie-thumb" src="https://i.imgur.com/rnqG3ME.jpeg" data-gif="https://kenh14cdn.com/zoom/700_438/203336854389633024/2024/12/19/avatar1734599838164-17345998392531996999371-0-21-241-407-crop-1734599883023922280044.gif" alt="Phim 2">
       <div class="movie-title">Chị Dâu - Full HD</div>
       <div class="movie-info">
         <strong>Thể loại:</strong> Tâm lý, Hài hước<br>
@@ -376,7 +376,7 @@
     </div>
 
     <div class="movie-card" onclick="playMovie('1JNJo8PYjCbLRbzS1noAoSB8hmo9WPN66')">
-      <img class="movie-thumb" src="https://i.imgur.com/76EMXUH.jpeg" alt="Phim 3">
+      <img class="movie-thumb" src="https://i.imgur.com/76EMXUH.jpeg" data-gif="https://thegioidienanh.vn/stores/news_dataimages/thanhtan/052023/06/14/in_article/3833_4U9A5059_1.jpg?rt=20230506143939" alt="Phim 3">
       <div class="movie-title">Con Nhót Mót Chồng - Full HD</div>
       <div class="movie-info">
         <strong>Thể loại:</strong> Chính kịch, Hài Hước<br>
@@ -387,7 +387,7 @@
     </div>
 
     <div class="movie-card" onclick="playMovie('1SPiQZYqJYe6IP3mel9WpZNapK6tnmPu_')">
-      <img class="movie-thumb" src="https://i.imgur.com/rV7LHuQ.jpeg" alt="Phim 4">
+      <img class="movie-thumb" src="https://i.imgur.com/rV7LHuQ.jpeg" data-gif="https://kenh14cdn.com/zoom/640_360/203336854389633024/2023/9/22/photo1695396361713-1695396362037553093888.gif" alt="Phim 4">
       <div class="movie-title">Đất Rừng Phương Nam - Full HD</div>
       <div class="movie-info">
         <strong>Thể loại:</strong> Chiến Tranh, Chính kịch, Gia Đình<br>
@@ -398,7 +398,7 @@
     </div>
 
     <div class="movie-card" onclick="playMovie('11fdIwCxj2GaxgdUG3SyokArC7890vsnJ')">
-      <img class="movie-thumb" src="https://i.imgur.com/NZkvEEU.jpeg" alt="Phim 5">
+      <img class="movie-thumb" src="https://i.imgur.com/NZkvEEU.jpeg" data-gif="https://cdn2.tuoitre.vn/thumb_w/480/471584752817336320/2024/9/4/song-luan-cong-tu-bac-lieu-1725421503468604873781.gif" alt="Phim 5">
       <div class="movie-title">Công Tử Bạc Liêu - Full HD</div>
       <div class="movie-info">
         <strong>Thể loại:</strong> Gia Đình, Hài Hước<br>
@@ -409,7 +409,8 @@
     </div>
 
     <div class="movie-card" onclick="playMovie('1qkyNzvQVUV_bFB5lGAP6-cP4WfSJoX-p')">
-      <img class="movie-thumb" src="https://i.imgur.com/zmQcsRn.jpeg" alt="Phim 6">
+      <img class="movie-thumb" src="https://i.imgur.com/zmQcsRn.jpeg"
+      data-gif="https://cdn2.tuoitre.vn/zoom/600_315/471584752817336320/2025/1/17/gif-3-463-17371074392071377109147-0-0-259-495-crop-17371074553861808929608.gif" alt="Phim 6">
       <div class="movie-title">Thanh Gươm Diệt Quỷ: Vô Hạn Thành - Tập Full VietSub</div>
       <div class="movie-info">
         <strong>Thể loại:</strong> Shonen, Hành động, Phiêu lưu, Kỳ ảo đen tối và Kiếm thuật<br>
@@ -420,13 +421,24 @@
     </div>
 
     <div class="movie-card" onclick="playMovie('1xrxkuwi3UsfOqZuhIUTGePno7qhvkZjt')">
-      <img class="movie-thumb" src="https://i.imgur.com/Duf9vHu.jpeg" alt="Phim 7">
+      <img class="movie-thumb" src="https://i.imgur.com/Duf9vHu.jpeg" data-gif="https://static-images.vnncdn.net/vps_images_publish/000001/000003/2025/6/16/bi-kip-luyen-rong-de-bep-phim-kinh-di-viet-duoi-day-ho-33581.gif?width=0&s=Q0NWi2Q14bE791BJsX-tQA"  alt="Phim 7">
       <div class="movie-title">Bí Kíp Luyện Rồng - Full HD VietSub</div>
       <div class="movie-info">
-        <strong>Thể loại:</strong> Chính kịch, Gia Đình, Hành Động, Tâm Lý, Viễn Tưởng,<br>
+        <strong>Thể loại:</strong> Chính kịch, Gia Đình, Hành Động, Tâm Lý, Viễn Tưởng<br>
         <strong>Thời lượng:</strong> 125 phút<br>
         <strong>Năm:</strong> 2025<br>
         <strong>Đạo Diễn :</strong> Dean DeBlois
+      </div>
+    </div>
+
+    <div class="movie-card" onclick="playMovie('1eFJTN1Si1vvz5prhi-iNlzO20f4K8gja')">
+      <img class="movie-thumb" src="https://i.imgur.com/wxoFoSo.jpeg" data-gif="https://64.media.tumblr.com/f2c6761c6c084199086d0a357a4b7e31/e1ee07706a790130-8e/s640x960/bb4a486620e019cfaaeee670da028f4a748919d4.gif"  alt="Phim 8">
+      <div class="movie-title">Thám Tử Lừng Danh Conan: Ngôi Sao 5 Cánh 1 Triệu Đô - Full HD VietSub</div>
+      <div class="movie-info">
+        <strong>Thể loại:</strong> Bí ẩn, Hành Động, Hình Sự, Trẻ Em<br>
+        <strong>Thời lượng:</strong> 110 phút<br>
+        <strong>Năm:</strong> 2024<br>
+        <strong>Đạo Diễn :</strong> Chika Nagaoka
       </div>
     </div>
 
@@ -454,7 +466,6 @@ const mobileExitFullscreenBtn = document.getElementById("mobileExitFullscreenBtn
 
 mobileFullscreenBtn.addEventListener("click", () => {
   videoPlayer.classList.add("fullscreen-mobile");
-  document.body.classList.add("fullscreen-mobile-hide-ui");
   mobileFullscreenBtn.style.display = "none";
   mobileExitFullscreenBtn.style.display = "inline-block";
 
@@ -464,7 +475,6 @@ mobileFullscreenBtn.addEventListener("click", () => {
 
 mobileExitFullscreenBtn.addEventListener("click", () => {
   videoPlayer.classList.remove("fullscreen-mobile");
-  document.body.classList.remove("fullscreen-mobile-hide-ui");
   mobileFullscreenBtn.style.display = "inline-block";
   mobileExitFullscreenBtn.style.display = "none";
 });
@@ -485,6 +495,30 @@ window.addEventListener("orientationchange", () => {
     setTimeout(() => {
       window.scrollTo(0, 1);
     }, 500); // delay để browser cập nhật layout
+  }
+});
+
+document.querySelectorAll(".movie-card").forEach(card => {
+  const img = card.querySelector(".movie-thumb");
+  const originalSrc = img.src;
+  const gifSrc = img.getAttribute("data-gif");
+
+  let gifTimeout;
+
+  if (gifSrc) {
+    card.addEventListener("mouseenter", () => {
+      img.src = gifSrc;
+      clearTimeout(gifTimeout);
+      // Sau 3 giây (hoặc thời lượng GIF), trở lại ảnh tĩnh
+      gifTimeout = setTimeout(() => {
+        img.src = originalSrc;
+      }, 3000); // Thời gian bằng độ dài GIF (ms)
+    });
+
+    card.addEventListener("mouseleave", () => {
+      clearTimeout(gifTimeout);
+      img.src = originalSrc;
+    });
   }
 });
 
@@ -550,7 +584,10 @@ function playMovie(driveId, title) {
       "1JNJo8PYjCbLRbzS1noAoSB8hmo9WPN66": "Con Nhót Mót Chồng - Full HD",
       "1SPiQZYqJYe6IP3mel9WpZNapK6tnmPu_": "Đất Rừng Phương Nam Full HD",
       "11fdIwCxj2GaxgdUG3SyokArC7890vsnJ": "Công Tử Bạc Liêu - Full HD",
-      "1qkyNzvQVUV_bFB5lGAP6-cP4WfSJoX-p": "Thanh Gươm Diệt Quỷ: Vô Hạn Thành - Tập Full"
+      "1qkyNzvQVUV_bFB5lGAP6-cP4WfSJoX-p": "Thanh Gươm Diệt Quỷ: Vô Hạn Thành - Tập Full",
+      "1xrxkuwi3UsfOqZuhIUTGePno7qhvkZjt": "Bí Kíp Luyện Rồng - Full HD VietSub",
+      "1eFJTN1Si1vvz5prhi-iNlzO20f4K8gja": "Thám Tử Lừng Danh Conan: Ngôi Sao 5 Cánh 1 Triệu Đô - Full HD VietSub"
+
     };
 
     // Fullscreen button handling
