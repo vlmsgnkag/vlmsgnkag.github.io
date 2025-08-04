@@ -11,6 +11,7 @@ const songs = [
     { src: "music/21.mp3", image: "https://i.pinimg.com/236x/5f/45/79/5f4579526f4391c230d2dbc4c5ab91c7.jpg" },
     { src: "music/4.mp3", image: "https://i.pinimg.com/736x/97/31/3a/97313a30e351a86f099fa636ca9a4685.jpg" },
     { src: "music/82.mp3", image: "https://i.pinimg.com/236x/5b/b1/b3/5bb1b33c6cd7654274cb3df2997405d4.jpg" },
+    { src: "music/108.mp3", image: "https://i.pinimg.com/736x/72/8a/69/728a69b420c64aad866be3fbe409965e.jpg" },
     { src: "music/52.mp3", image: "https://i.pinimg.com/236x/23/45/99/234599f7ce757dcfbabf12f525ea969e.jpg" },
     { src: "music/93.mp3", image: "https://i.pinimg.com/474x/39/02/e7/3902e7a3e2e57df9dc5e254e41cde03d.jpg" },
     { src: "music/46.mp3", image: "https://i.pinimg.com/236x/2f/b2/c4/2fb2c4bec0fd90d0abe57c9c022c26c9.jpg" },
@@ -31,7 +32,7 @@ const songs = [
     { src: "music/89.mp3", image: "https://i.pinimg.com/474x/e7/dc/77/e7dc7786be4b2faad53e5b40344d7eef.jpg" },
     { src: "music/24.mp3", image: "https://i.pinimg.com/236x/8f/15/04/8f1504db6ccf5479efa335e2147e522c.jpg" },
     { src: "music/61.mp3", image: "https://i.pinimg.com/236x/0e/ca/8b/0eca8b61ff85eba45e102ed5ca48385d.jpg" },
-   { src: "music/1111.mp3", image: "https://png.pngtree.com/png-vector/20241205/ourmid/pngtree-have-a-good-day-png-image_280238.png" },
+    { src: "music/1111.mp3", image: "https://png.pngtree.com/png-vector/20241205/ourmid/pngtree-have-a-good-day-png-image_280238.png" },
     { src: "music/31.mp3", image: "https://i.pinimg.com/236x/8f/e6/2e/8fe62e8940c26e4eb5559ad7034b9d06.jpg" },
     { src: "music/65.mp3", image: "https://i.pinimg.com/474x/bb/cc/08/bbcc08af5806d982bab5c20537575714.jpg" },
     { src: "music/62.mp3", image: "https://i.pinimg.com/236x/90/b3/1a/90b31a45447f556306ca8cbf853054f1.jpg" },
@@ -39,6 +40,7 @@ const songs = [
     { src: "music/49.mp3", image: "https://i.pinimg.com/474x/ce/bc/90/cebc9015e0570fc15407dbbf406e0a7d.jpg" },
     { src: "music/64.mp3", image: "https://i.pinimg.com/236x/cf/0f/21/cf0f21e4a44f17467660e04c5a6aad5e.jpg" },
     { src: "music/53.mp3", image: "https://i.pinimg.com/236x/e6/6c/15/e66c158fe4fea36836262e8a101fb6f1.jpg" },
+    { src: "music/107.mp3", image: "https://i.pinimg.com/736x/4c/e7/0b/4ce70bc0978e40cb7f5bff0ad9ad5455.jpg" },
     { src: "music/11.mp3", image: "https://i.pinimg.com/236x/56/d8/97/56d897b2111421c942be05bcd55ffac4.jpg" },
     { src: "music/81.mp3", image: "https://i.pinimg.com/236x/df/f0/e9/dff0e950ba846a39ba0ae4fb1fff044f.jpg" },
     { src: "music/97.mp3", image: "https://i.pinimg.com/736x/1c/26/34/1c263496654b4f2c570e4fbf6eba9761.jpg" },
@@ -72,6 +74,7 @@ const songs = [
     { src: "music/102.mp3", image: "https://i.pinimg.com/474x/8c/7d/81/8c7d81764c649d1407a62591b08667cd.jpg" },
     { src: "music/74.mp3", image: "https://i.pinimg.com/236x/60/75/ad/6075ad700bd16ea3fb7b26b979ee8081.jpg" },
     { src: "music/67.mp3", image: "https://i.pinimg.com/474x/62/a5/e4/62a5e4451b32f1d9ace7c319d419cbea.jpg" },
+    { src: "music/105.mp3", image: "https://i.pinimg.com/736x/56/2e/82/562e8279df23225f058db275e6902bb9.jpg" },
     { src: "music/36.mp3", image: "https://i.pinimg.com/236x/9c/70/b9/9c70b925624763a4b9ed23fdd0e8a0a6.jpg" },
     { src: "music/1111.mp3", image: "https://png.pngtree.com/png-vector/20241205/ourmid/pngtree-have-a-good-day-png-image_280238.png" },
     { src: "music/88.mp3", image: "https://i.pinimg.com/236x/96/1b/10/961b10c845a1772cf4a0e00b1d5a35dd.jpg" },
@@ -83,6 +86,7 @@ const songs = [
     { src: "music/42.mp3", image: "https://i.pinimg.com/236x/3c/bb/1b/3cbb1bcc30e004cb9a19683afdb17d8c.jpg" },
     { src: "music/96.mp3", image: "https://i.pinimg.com/474x/c5/87/fc/c587fca11c5a2129a33d0f5705a9ad95.jpg" },
     { src: "music/10.mp3", image: "https://i.pinimg.com/236x/89/d7/9d/89d79d342a284d3b13033da7e197a31e.jpg" },
+    { src: "music/106.mp3", image: "https://i.pinimg.com/736x/89/3e/2d/893e2de3507229bb27bfb54918155d7a.jpg" },
     { src: "music/94.mp3", image: "https://i.pinimg.com/474x/cb/44/4e/cb444e2ff7fbf9b1f6c6653f9b5550a9.jpg" },
     { src: "music/56.mp3", image: "https://i.pinimg.com/236x/bb/55/04/bb55049e34a47845add5253c9b85f1bb.jpg" },
     { src: "music/43.mp3", image: "https://i.pinimg.com/236x/ff/a0/0b/ffa00ba82944ea775f66a614d045834a.jpg" },
@@ -99,25 +103,19 @@ const songs = [
     { src: "music/13.mp3", image: "https://i.pinimg.com/474x/c0/19/a7/c019a76c1677ffc989f6c1d8c503fe0e.jpg" },
     { src: "music/58.mp3", image: "https://i.pinimg.com/474x/3c/a5/9c/3ca59c87b2d1d4afcf0d27c4683d94b5.jpg" },
     { src: "music/91.mp3", image: "https://i.pinimg.com/236x/ae/33/28/ae3328e1e373e36f60a3cbce66359477.jpg" },
+    { src: "music/109.mp3", image: "https://i.pinimg.com/736x/0e/46/05/0e4605337d3851c0100b9680b90f1ced.jpg" },
     { src: "music/44.mp3", image: "https://i.pinimg.com/236x/5e/9d/ea/5e9deaa039eb8fbbc8a8be06eb07478b.jpg" },
     { src: "music/17.mp3", image: "https://i.pinimg.com/236x/98/c7/04/98c7042ec11ebc0e0dd6e62769949109.jpg" },
     { src: "music/84.mp3", image: "https://i.pinimg.com/236x/c2/a7/44/c2a744ecbb75f2c4ee3aa3681866fda4.jpg" },
     { src: "music/41.mp3", image: "https://i.pinimg.com/236x/d6/80/3e/d6803e4cece581ab57aee8317f4ab47f.jpg" },
     { src: "music/69.mp3", image: "https://i.pinimg.com/236x/53/6f/59/536f5939a0d33b9b364eff921e46b9a2.jpg" },
-  { src: "music/1111.mp3", image: "https://png.pngtree.com/png-vector/20241205/ourmid/pngtree-have-a-good-day-png-image_280238.png" },
+    { src: "music/1111.mp3", image: "https://png.pngtree.com/png-vector/20241205/ourmid/pngtree-have-a-good-day-png-image_280238.png" },
     { src: "music/101.mp3", image: "https://i.pinimg.com/736x/13/d3/c7/13d3c7f925a21adc7a82d4ebd466a6f7.jpg" },
     { src: "music/34.mp3", image: "https://i.pinimg.com/236x/2c/45/f7/2c45f7ffdfb9b3bf94be58148315cead.jpg" },
     { src: "music/25.mp3", image: "https://i.pinimg.com/474x/64/4b/5d/644b5d581a4fb29e91523c1318f9e32c.jpg" }
-        
-        
-    
-    
         // Thêm các bài nhạc và ảnh tương ứng ở đây
     ];
-    
-    // Lấy các đối tượng HTML cần thiết
-// Lấy các đối tượng HTML cần thiết
-// Lấy các đối tượng HTML cần thiết
+
 const playButton = document.getElementById("playButton");
 const songImage = document.getElementById("songImage");
 const songInfo = document.getElementById("songInfo");
@@ -126,7 +124,7 @@ const durationTimeDisplay = document.getElementById("durationTime");
 const downloadButton = document.getElementById("downloadButton");
 const progressBar = document.getElementById("progress");
 
-// Tạo đối tượng âm thanh toàn cục
+
 let audio = new Audio();
 
 // Thiết lập canvas và vẽ hiệu ứng sóng
@@ -166,17 +164,17 @@ function drawWave() {
 }
 drawWave();
 
-// Danh sách bài hát chưa phát
+
 let unplayedSongs = [...songs];
 
-// Hàm format thời gian từ giây sang định dạng mm:ss
+
 function formatTime(seconds) {
     let min = Math.floor(seconds / 60);
     let sec = Math.floor(seconds % 60);
     return `${min < 10 ? "0" + min : min}:${sec < 10 ? "0" + sec : sec}`;
 }
 
-// Cập nhật thời gian bài hát
+
 function updateTime() {
     if (!isNaN(audio.duration)) {
         currentTimeDisplay.innerText = formatTime(audio.currentTime);
@@ -188,34 +186,33 @@ function updateTime() {
 audio.addEventListener("timeupdate", updateTime);
 audio.addEventListener("loadedmetadata", updateTime);
 
-// Hàm phát bài ngẫu nhiên và cập nhật giao diện
+
 function playRandomSong() {
     if (unplayedSongs.length === 0) {
-        // Làm mới danh sách khi đã phát hết tất cả bài hát
         unplayedSongs = [...songs];
     }
     const randomIndex = Math.floor(Math.random() * unplayedSongs.length);
     const selectedSong = unplayedSongs.splice(randomIndex, 1)[0];
 
-    // Cập nhật nguồn bài hát, ảnh và link tải xuống
+   
     audio.src = selectedSong.src;
     songImage.src = selectedSong.image;
     downloadButton.href = selectedSong.src;
 
     audio.play();
 
-    // Tính vị trí bài hát hiện tại dựa trên mảng gốc
+
     const currentIndex = songs.indexOf(selectedSong) + 1;
     songInfo.innerText = `Đang phát bài: ${currentIndex} / ${songs.length}`;
 }
 
-// Khi bài nhạc kết thúc, tự động phát bài mới
+
 audio.addEventListener("ended", playRandomSong);
 
-// Gán sự kiện cho nút Play Song
+
 playButton.addEventListener("click", playRandomSong);
 
-// Tự động phát nhạc khi tải trang (nếu được trình duyệt cho phép)
+
 window.addEventListener("load", () => {
     const playPromise = audio.play();
     if (playPromise !== undefined) {
@@ -228,3 +225,4 @@ window.addEventListener("load", () => {
             });
     }
 });
+
