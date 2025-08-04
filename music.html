@@ -11,7 +11,7 @@
   <div class="container">
     <canvas id="waveCanvas"></canvas>
     <div class="content">
-      <img id="songImage" src="https://i.pinimg.com/736x/39/03/89/390389f56f2f295dc8d7f2cc84e8f205.jpg" alt="Song Thumbnail">
+      <img id="songImage" class="fade-image" src="https://i.pinimg.com/736x/39/03/89/390389f56f2f295dc8d7f2cc84e8f205.jpg" alt="Song Thumbnail">
       <div id="timeDisplayContainer">
         <span id="currentTime">00:00</span>
         <div id="progressBar"><div id="progress"></div></div>
@@ -22,10 +22,14 @@
         <img src="https://i.imgur.com/bec5Mvf.png" alt="Download" class="download-icon">
       </a>
       <div class="play-section">
-        <p id="songInfo" class="hidden">Đang phát bài 0 / 109</p>
+        <p id="songInfo" class="hidden">Đang phát bài 0 / 113</p>
         <button id="playButton">Play Song</button>
       </div>
     </div>
+        <div class="clock-wrapper">
+  <div id="currentClock" class="clock-glass"></div>
+</div>
+
   </div>
   <script src="script.js"></script>
 </body>

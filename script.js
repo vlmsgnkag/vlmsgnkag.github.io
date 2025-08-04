@@ -174,6 +174,24 @@ function formatTime(seconds) {
     return `${min < 10 ? "0" + min : min}:${sec < 10 ? "0" + sec : sec}`;
 }
 
+function showToast(message) {
+  const toast = document.createElement("div");
+  toast.className = "toast";
+  toast.innerText = message;
+  document.body.appendChild(toast);
+  setTimeout(() => toast.remove(), 2500);
+}
+
+function updateClock() {
+  const now = new Date();
+  const hours = now.getHours().toString().padStart(2, "0");
+  const minutes = now.getMinutes().toString().padStart(2, "0");
+  const seconds = now.getSeconds().toString().padStart(2, "0");
+  document.getElementById("currentClock").innerText = `${hours}:${minutes}:${seconds}`;
+}
+setInterval(updateClock, 1000);
+updateClock();
+
 
 function updateTime() {
     if (!isNaN(audio.duration)) {
@@ -187,6 +205,8 @@ audio.addEventListener("timeupdate", updateTime);
 audio.addEventListener("loadedmetadata", updateTime);
 
 
+
+
 function playRandomSong() {
     if (unplayedSongs.length === 0) {
         unplayedSongs = [...songs];
@@ -194,16 +214,28 @@ function playRandomSong() {
     const randomIndex = Math.floor(Math.random() * unplayedSongs.length);
     const selectedSong = unplayedSongs.splice(randomIndex, 1)[0];
 
-   
-    audio.src = selectedSong.src;
-    songImage.src = selectedSong.image;
-    downloadButton.href = selectedSong.src;
+    // Ẩn ảnh và info cũ để chuẩn bị hiệu ứng mới
+    songImage.classList.remove("show");
+    songInfo.classList.remove("show");
 
-    audio.play();
+    // Delay nhỏ để tạo hiệu ứng fade
+    setTimeout(() => {
+        audio.src = selectedSong.src;
+        songImage.src = selectedSong.image;
+        downloadButton.href = selectedSong.src;
 
+        audio.play();
 
-    const currentIndex = songs.indexOf(selectedSong) + 1;
-    songInfo.innerText = `Đang phát bài: ${currentIndex} / ${songs.length}`;
+        const currentIndex = songs.indexOf(selectedSong) + 1;
+        songInfo.innerText = `Đang phát bài: ${currentIndex} / ${songs.length}`;
+
+        // Hiển thị lại sau khi nội dung thay đổi
+        songImage.classList.add("show");
+        songInfo.classList.add("show");
+
+        // Toast hiệu ứng mini
+        showToast(` Đang phát bài ${currentIndex} / ${songs.length}`);
+    }, 200);
 }
 
 
@@ -225,4 +257,3 @@ window.addEventListener("load", () => {
             });
     }
 });
-

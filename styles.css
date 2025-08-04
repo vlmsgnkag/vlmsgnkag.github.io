@@ -26,6 +26,57 @@ body, html {
     overflow: hidden;
 }
 
+.clock-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 15px;
+  margin-bottom: 15px;
+  animation: fadeInClock 1.5s ease forwards;
+}
+
+@keyframes fadeInClock {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.clock-glass {
+  font-size: 32px;
+  font-weight: 700;
+  color: #ffffff;
+  padding: 12px 30px;
+  border-radius: 30px;
+  background: linear-gradient(135deg, rgba(255, 126, 179, 0.2), rgba(255, 117, 140, 0.25));
+  box-shadow: 0 0 20px rgba(255, 117, 140, 0.6), inset 0 0 8px rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(12px);
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  text-shadow: 0 0 6px #fff, 0 0 12px #ff7eb3, 0 0 24px #ff7eb3;
+  transition: transform 0.3s ease;
+  animation: pulseClock 2.5s infinite ease-in-out;
+}
+
+@keyframes pulseClock {
+  0% {
+    transform: scale(1);
+    box-shadow: 0 0 20px rgba(255, 117, 140, 0.6);
+  }
+  50% {
+    transform: scale(1.05);
+    box-shadow: 0 0 30px rgba(255, 117, 140, 0.8);
+  }
+  100% {
+    transform: scale(1);
+    box-shadow: 0 0 20px rgba(255, 117, 140, 0.6);
+  }
+}
+
+
 /* Floating bubbles effect */
 .container::after {
     content: "";
@@ -150,6 +201,7 @@ button:hover {
 /* Ảnh bài hát với hiệu ứng phóng to và xoay nhẹ khi hover */
 #songImage {
     width: 320px;
+    box-shadow: 0 0 25px rgba(255, 117, 140, 0.6), 0 0 50px rgba(255, 117, 140, 0.3);
     height: 320px;
     object-fit: cover;
     border-radius: 20px;
@@ -268,12 +320,52 @@ button:hover {
     transform: translateY(-3px);
     box-shadow: 0 12px 30px rgba(255, 117, 140, 0.8);
   }
+
+  /* Ảnh fade in */
+.fade-image {
+  opacity: 0;
+  transform: scale(0.95);
+  transition: opacity 0.8s ease, transform 0.8s ease;
+}
+
+.fade-image.show {
+  opacity: 1;
+  transform: scale(1);
+}
+
+/* Text chuyển mượt */
+.fade-text {
+  opacity: 0;
+  transform: translateY(10px);
+  transition: opacity 0.6s ease, transform 0.6s ease;
+}
+
+.fade-text.show {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Toast mini khi chuyển bài */
+.toast {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  background: rgba(0,0,0,0.7);
+  color: #fff;
+  padding: 10px 20px;
+  border-radius: 15px;
+  font-weight: 600;
+  box-shadow: 0 0 10px rgba(255, 117, 140, 0.8);
+  animation: fadeIn 0.5s;
+  z-index: 9999;
+}
 /* Responsive cho màn hình nhỏ */
 @media (max-width: 768px) {
     h1 {
         font-size: 2.5rem;
     }
     #songImage {
+        box-shadow: 0 0 25px rgba(255, 117, 140, 0.6), 0 0 50px rgba(255, 117, 140, 0.3);
         width: 280px;
         height: 280px;
     }
