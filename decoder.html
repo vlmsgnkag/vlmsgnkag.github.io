@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Giải Mã Mật Khẩu Tự Động</title>
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
+    :root{
+      --bg1: #071021;
+      --bg2: #081827;
+      --card: rgba(255,255,255,0.03);
+      --accent1: #06b6d4;
+      --accent2: #3b82f6;
+      --glass: rgba(255,255,255,0.04);
+      --muted: rgba(255,255,255,0.6);
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+        margin:0;
+        font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+        background: radial-gradient(1200px 600px at 10% 10%, rgba(59,130,246,0.06), transparent),
+                    linear-gradient(135deg, var(--bg1), var(--bg2));
+        color:#e6eef8;
+        display:flex;
+        align-items:center;
+        justify-content:center;
+        padding:24px;
+    }
+    .wrap{
+        width:100%;
+        max-width:760px;
+        border-radius:14px;
+        padding:20px;
+        background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+        box-shadow: 0 10px 40px rgba(2,6,23,0.7), inset 0 1px 0 rgba(255,255,255,0.02);
+        backdrop-filter: blur(6px);
+    }
+    header{display:flex;justify-content:space-between;align-items:center;gap:12px}
+    h1{margin:0;font-size:18px}
+    .sub{color:var(--muted);font-size:13px}
+    .grid{display:grid;grid-template-columns:1fr 320px;gap:16px;margin-top:16px}
+    @media (max-width:880px){ .grid{grid-template-columns:1fr} }
+    textarea{
+        width:100%;
+        min-height:140px;
+        resize:vertical;
+        padding:14px;
+        border-radius:10px;
+        border:1px solid rgba(255,255,255,0.03);
+        background: linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.00));
+        color:inherit;
+        font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, "Roboto Mono", monospace;
+        font-size:15px;
+        outline:none;
+    }
+    .controls{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}
+    .btn{
+        padding:10px 12px;border-radius:10px;border:none;cursor:pointer;font-weight:600;
+        background:linear-gradient(90deg,var(--accent2),var(--accent1));color:#fff;
+        box-shadow: 0 6px 18px rgba(11,78,121,0.12);
+    }
+    .btn.ghost{background:transparent;border:1px solid rgba(255,255,255,0.04);color:var(--muted);font-weight:500}
+    .result-card{
+        background:var(--card);
+        padding:12px;border-radius:10px;border:1px solid rgba(255,255,255,0.02);
+        min-height:120px;
+        display:flex;flex-direction:column;gap:8px;
+    }
+    .result{
+        font-family: ui-monospace, monospace;
+        font-size:15px;
+        white-space:pre-wrap;
+        word-break:break-word;
+        color:#eaf4ff;
+        flex:1;
+        padding:6px;
+        border-radius:8px;
+        background: linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.00));
+    }
+    .meta{display:flex;justify-content:space-between;align-items:center;gap:8px}
+    .badge{background:rgba(255,255,255,0.03);padding:6px 8px;border-radius:8px;font-size:13px;color:var(--muted)}
+    .history{margin-top:12px;max-height:220px;overflow:auto}
+    .history-item{padding:8px;border-radius:8px;background:rgba(255,255,255,0.02);margin-bottom:8px;font-family:ui-monospace,monospace;font-size:13px;display:flex;justify-content:space-between;gap:8px;align-items:center}
+    .small{font-size:13px;padding:8px 10px;border-radius:8px}
+    footer{margin-top:12px;color:var(--muted);font-size:13px;text-align:center}
+</style>
+</head>
+<body>
+  <div class="wrap" role="main">
+    <header>
+      <div>
+        <h1>🔐 Giải Mã Tự Động — 1 Click</h1>
+        <div class="sub">Dán chuỗi → nhấn "Giải mã" → trang sẽ tự thử nhiều kiểu (hex/base64/url/binary/decimal/ROT13) cho tới khi ra kết quả.</div>
+      </div>
+      <div class="meta">
+        <div class="badge">Auto multi-layer</div>
+      </div>
+    </header>
+
+    <div class="grid">
+      <div>
+        <label class="sub" for="input">Chuỗi cần giải mã</label>
+        <textarea id="input" placeholder="Dán chuỗi ở đây... (ví dụ: 36313533323430363231 hoặc QmFzZTY0IHNhbXBsZQ==)"></textarea>
+        <div class="controls">
+          <button id="decodeBtn" class="btn">Giải mã</button>
+          <button id="decodeAutoBtn" class="btn ghost">Giải mã liên tục (Auto)</button>
+          <button id="pasteBtn" class="btn ghost small">Dán</button>
+          <button id="clearBtn" class="btn ghost small">Xoá</button>
+        </div>
+        <div class="sub" style="margin-top:8px">Mẹo: nhấn Ctrl/Cmd+V rồi nhấn Enter hoặc bấm "Dán" → "Giải mã".</div>
+      </div>
+
+      <div>
+        <div class="result-card">
+          <div style="display:flex;justify-content:space-between;align-items:center">
+            <div class="sub">Kết quả</div>
+            <div>
+              <button id="copyBtn" class="small">Sao chép</button>
+            </div>
+          </div>
+
+          <div id="result" class="result">Chưa có kết quả</div>
+
+          <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:6px">
+            <button id="saveBtn" class="small">Lưu</button>
+            <button id="viewBtn" class="small">Lịch sử</button>
+            <button id="downloadBtn" class="small">Tải TXT</button>
+          </div>
+
+          <div id="history" class="history" style="display:none"></div>
+        </div>
+      </div>
+    </div>
+
+    <footer>Không dùng để vượt bảo mật trái phép. Chỉ dùng cho mục đích hợp pháp.</footer>
+  </div>
+
+<script>
+/* ------- Decoders ------- */
+function isHex(s){
+  const t = s.replace(/\\s+/g,'');
+  return /^[0-9a-fA-F]+$/.test(t) && (t.length % 2 === 0);
+}
+function hexToAscii(hex){
+  hex = hex.replace(/\\s+/g,'');
+  let out = '';
+  for(let i=0;i<hex.length;i+=2){
+    out += String.fromCharCode(parseInt(hex.substr(i,2),16));
+  }
+  return out;
+}
+function isBase64(s){
+  s = s.trim();
+  if(s.length === 0) return false;
+  return /^[A-Za-z0-9+\\/=_-\\s]+$/.test(s);
+}
+function base64Decode(s){
+  s = s.trim().replace(/-/g,'+').replace(/_/g,'/');
+  while(s.length % 4 !== 0) s += '=';
+  try{
+    const bin = atob(s);
+    // try decode utf-8
+    try{
+      let pct = '';
+      for(let i=0;i<bin.length;i++){
+        pct += '%' + ('00' + bin.charCodeAt(i).toString(16)).slice(-2);
+      }
+      return decodeURIComponent(pct);
+    }catch(e){
+      return bin;
+    }
+  }catch(e){
+    throw new Error('Invalid base64');
+  }
+}
+function isUrlEncoded(s){
+  return /%[0-9A-Fa-f]{2}/.test(s) || /\+/.test(s);
+}
+function urlDecode(s){
+  try{ return decodeURIComponent(s.replace(/\\+/g,' ')); }catch(e){ throw new Error('Invalid URL'); }
+}
+function isBinary(s){
+  return /^[01\\s]+$/.test(s.trim());
+}
+function binaryToAscii(s){
+  const parts = s.trim().split(/\\s+/);
+  let out = '';
+  for(const p of parts){
+    out += String.fromCharCode(parseInt(p,2));
+  }
+  return out;
+}
+function isDecimalAscii(s){
+  return /^[0-9,\\s]+$/.test(s.trim());
+}
+function decimalToAscii(s){
+  const parts = s.trim().split(/[\\s,]+/);
+  let out = '';
+  for(const p of parts){ out += String.fromCharCode(parseInt(p,10)); }
+  return out;
+}
+function rot13(s){
+  return s.replace(/[A-Za-z]/g, function(c){
+    const base = c <= 'Z' ? 65 : 97;
+    return String.fromCharCode((c.charCodeAt(0) - base + 13) % 26 + base);
+  });
+}
+
+/* Attempt a single layer decode using heuristics */
+function decodeOnce(text){
+  const t = text.trim();
+  if(t.length === 0) return {fmt:'empty', out:''};
+
+  // Try hex first
+  if(isHex(t)){
+    try{ return {fmt:'hex', out: hexToAscii(t)}; }catch(e){}
+  }
+  // base64
+  if(isBase64(t)){
+    try{ return {fmt:'base64', out: base64Decode(t)}; }catch(e){}
+  }
+  // url
+  if(isUrlEncoded(t)){
+    try{ return {fmt:'url', out: urlDecode(t)}; }catch(e){}
+  }
+  // binary
+  if(isBinary(t) && t.replace(/\\s+/g,'').length >= 8){
+    try{ return {fmt:'binary', out: binaryToAscii(t)}; }catch(e){}
+  }
+  // decimal
+  if(isDecimalAscii(t) && t.split(/[\\s,]+/).length < 40){
+    try{ return {fmt:'decimal', out: decimalToAscii(t)}; }catch(e){}
+  }
+  // rot13 fallback (only if letters present)
+  if(/[A-Za-z]/.test(t)){
+    try{ return {fmt:'rot13', out: rot13(t)}; }catch(e){}
+  }
+  // fallback: return as text (no change)
+  return {fmt:'text', out: text};
+}
+
+/* Multi-layer decode until stable */
+function autoDecode(text, maxSteps=8){
+  let prev = null;
+  let cur = text;
+  const steps = [];
+  for(let i=0;i<maxSteps;i++){
+    const r = decodeOnce(cur);
+    steps.push(r);
+    if(r.out === cur) break;
+    prev = cur;
+    cur = r.out;
+  }
+  return {final: cur, steps};
+}
+
+/* ------- UI & history ------- */
+const inputEl = document.getElementById('input');
+const decodeBtn = document.getElementById('decodeBtn');
+const decodeAutoBtn = document.getElementById('decodeAutoBtn');
+const pasteBtn = document.getElementById('pasteBtn');
+const clearBtn = document.getElementById('clearBtn');
+const resultEl = document.getElementById('result');
+const copyBtn = document.getElementById('copyBtn');
+const saveBtn = document.getElementById('saveBtn');
+const viewBtn = document.getElementById('viewBtn');
+const downloadBtn = document.getElementById('downloadBtn');
+const historyEl = document.getElementById('history');
+
+let history = JSON.parse(localStorage.getItem('decoder_history_v1') || '[]');
+
+function renderHistory(){
+  historyEl.innerHTML = '';
+  if(history.length === 0){
+    historyEl.innerHTML = '<div class="sub" style="padding:8px;color:var(--muted)">Chưa có mục lịch sử.</div>';
+    return;
+  }
+  history.forEach((h, idx) => {
+    const div = document.createElement('div');
+    div.className = 'history-item';
+    div.innerHTML = '<div style="flex:1;min-width:0"><div style="font-size:13px;font-family:ui-monospace,monospace">'+escapeHtml(h.input).slice(0,120)+'</div><div class="sub" style="margin-top:6px">→ <strong>'+escapeHtml(h.output).slice(0,80)+'</strong> · '+new Date(h.time).toLocaleString()+'</div></div><div style="display:flex;flex-direction:column;gap:6px"><button class="small" data-load="'+idx+'">Load</button><button class="small" data-del="'+idx+'">Del</button></div>';
+    historyEl.appendChild(div);
+  });
+  // attach events
+  historyEl.querySelectorAll('[data-load]').forEach(b=>{
+    b.addEventListener('click', e=>{
+      const idx = parseInt(b.getAttribute('data-load'));
+      const item = history[idx];
+      inputEl.value = item.input;
+      displayResult(item.output, item.steps || []);
+    });
+  });
+  historyEl.querySelectorAll('[data-del]').forEach(b=>{
+    b.addEventListener('click', e=>{
+      const idx = parseInt(b.getAttribute('data-del'));
+      history.splice(idx,1);
+      localStorage.setItem('decoder_history_v1', JSON.stringify(history));
+      renderHistory();
+    });
+  });
+}
+
+function saveHistory(input, output, steps){
+  history.push({input, output, steps, time: Date.now()});
+  if(history.length > 80) history.shift();
+  localStorage.setItem('decoder_history_v1', JSON.stringify(history));
+}
+
+function displayResult(finalText, steps){
+  resultEl.textContent = finalText || '';
+  // optional: show steps below result (compact)
+  if(Array.isArray(steps) && steps.length){
+    let s = '\\n--- Steps ---\\n';
+    steps.forEach((st,i)=> s += (i+1)+'. ['+st.fmt+'] → '+st.out+'\\n');
+    resultEl.textContent += s;
+  }
+}
+
+function escapeHtml(s){ return String(s).replace(/[&<>"']/g, function(m){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]; }); }
+
+/* Events */
+decodeBtn.addEventListener('click', ()=>{
+  const text = inputEl.value || '';
+  if(!text.trim()){ resultEl.textContent = 'Input rỗng'; return; }
+  const res = autoDecode(text, 10);
+  displayResult(res.final, res.steps);
+  saveHistory(text, res.final, res.steps);
+});
+
+decodeAutoBtn.addEventListener('click', ()=>{
+  // same as decode but show more pronounced animation (not necessary)
+  decodeBtn.click();
+});
+
+pasteBtn.addEventListener('click', async ()=>{
+  try{
+    const t = await navigator.clipboard.readText();
+    inputEl.value = t;
+  }catch(e){
+    alert('Không thể đọc clipboard: ' + e);
+  }
+});
+
+clearBtn.addEventListener('click', ()=>{
+  inputEl.value = '';
+  resultEl.textContent = 'Chưa có kết quả';
+});
+
+copyBtn.addEventListener('click', async ()=>{
+  try{
+    await navigator.clipboard.writeText(resultEl.textContent || '');
+    copyBtn.textContent = 'Đã sao chép';
+    setTimeout(()=>copyBtn.textContent = 'Sao chép',1200);
+  }catch(e){ alert('Không thể sao chép: '+e); }
+});
+
+saveBtn.addEventListener('click', ()=>{
+  const input = inputEl.value || '';
+  const output = resultEl.textContent || '';
+  if(!input) { alert('Input rỗng'); return; }
+  saveHistory(input, output, []);
+  renderHistory();
+});
+
+viewBtn.addEventListener('click', ()=>{
+  historyEl.style.display = historyEl.style.display === 'none' ? 'block' : 'none';
+  renderHistory();
+});
+
+downloadBtn.addEventListener('click', ()=>{
+  const blob = new Blob([resultEl.textContent || ''], {type:'text/plain;charset=utf-8'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = 'decoded.txt'; a.click();
+  URL.revokeObjectURL(url);
+});
+
+/* keyboard shortcuts */
+inputEl.addEventListener('keydown', (e)=>{
+  if((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'v'){
+    // pasted via shortcut; do nothing special
+  }
+  if(e.key === 'Enter' && (e.ctrlKey || e.metaKey)){
+    decodeBtn.click();
+  }
+  if(e.key === 'Enter' && !e.shiftKey){
+    // simple Enter triggers decode
+    e.preventDefault();
+    decodeBtn.click();
+  }
+});
+
+/* init */
+inputEl.value = '36313533323430363231';
+renderHistory();
+</script>
+</body>
+</html>
