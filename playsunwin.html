@@ -1,0 +1,90 @@
+
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dự đoán Tài Xỉu</title>
+<style>
+    body {
+        font-family: 'Segoe UI', sans-serif;
+        background: linear-gradient(135deg, #1e3c72, #2a5298);
+        color: white;
+        text-align: center;
+        padding: 20px;
+        margin: 0;
+    }
+    h1 {
+        color: #ffcc00;
+        text-shadow: 2px 2px 8px rgba(0,0,0,0.5);
+        margin-bottom: 20px;
+    }
+    .card {
+        background: rgba(255, 255, 255, 0.1);
+        padding: 25px;
+        border-radius: 15px;
+        display: inline-block;
+        min-width: 280px;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+        transition: transform 0.3s ease;
+    }
+    .card:hover {
+        transform: scale(1.05);
+    }
+    .result {
+        font-size: 2em;
+        font-weight: bold;
+        margin: 15px 0;
+        color: #ffeb3b;
+    }
+    .dice {
+        font-size: 1.5em;
+        margin: 8px 0;
+    }
+    .footer {
+        margin-top: 20px;
+        font-size: 0.85em;
+        color: #ccc;
+    }
+</style>
+</head>
+<body>
+<h1>Kết Quả & Dự Đoán Tài Xỉu</h1>
+<div class="card">
+    <div id="phien">Phiên: ...</div>
+    <div class="dice" id="xucxac">Xúc xắc: ...</div>
+    <div id="tong">Tổng: ...</div>
+    <div class="result" id="ketqua">Kết quả: ...</div>
+    <div id="prediction">Dự đoán: ...</div>
+    <div id="confidence">Độ tin cậy: ...%</div>
+</div>
+<div class="footer">© 2025 - Hệ thống dự đoán Tài Xỉu</div>
+
+<script>
+    const API_URL = "http://160.250.247.18:8001/latest";
+
+    async function fetchData() {
+        try {
+            const res = await fetch(API_URL);
+            const data = await res.json();
+
+            // Sửa lỗi tiếng Việt
+            const ketqua = data.ketqua.replace("Xá»‰u", "Xỉu").replace("TÃ i", "Tài");
+            const prediction = data.prediction.replace("Xá»‰u", "Xỉu").replace("TÃ i", "Tài");
+
+            document.getElementById("phien").innerText = "Phiên: " + data.phien;
+            document.getElementById("xucxac").innerText = "Xúc xắc: " + data.xucxac.join(", ");
+            document.getElementById("tong").innerText = "Tổng: " + data.tong;
+            document.getElementById("ketqua").innerText = "Kết quả: " + ketqua;
+            document.getElementById("prediction").innerText = "Dự đoán: " + prediction;
+            document.getElementById("confidence").innerText = "Độ tin cậy: " + data.confidence + "%";
+        } catch (err) {
+            console.error("Lỗi khi lấy dữ liệu:", err);
+        }
+    }
+
+    fetchData();
+    setInterval(fetchData, 5000);
+</script>
+</body>
+</html>
