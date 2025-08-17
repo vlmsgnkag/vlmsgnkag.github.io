@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>证书信息 / Certificate Info</title>
+  <style>
+    :root {
+      --bg: rgba(255,255,255,0.7);
+      --text: #111;
+      --card: rgba(255,255,255,0.3);
+      --accent1: #4facfe;
+      --accent2: #00f2fe;
+      --glass-border: rgba(255,255,255,0.6);
+    }
+    body.dark {
+      --bg: rgba(18,18,18,0.85);
+      --text: #f0f0f0;
+      --card: rgba(30,30,30,0.55);
+      --glass-border: rgba(255,255,255,0.08);
+    }
+    body {
+      font-family: "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      margin: 0; padding: 0;
+      display: flex; align-items: center; justify-content: center;
+      min-height: 100vh;
+      background: linear-gradient(135deg, rgba(255,255,255,0.9), rgba(240,246,255,0.7));
+      color: var(--text);
+      transition: background 0.4s, color 0.4s;
+    }
+    body.dark {
+      background: linear-gradient(135deg, rgba(8,10,12,1), rgba(18,20,25,0.95));
+    }
+    .wrap {
+      width: 100%;
+      max-width: 760px;
+      padding: 28px;
+    }
+    .card {
+      background: var(--card);
+      border-radius: 16px;
+      padding: 24px;
+      backdrop-filter: blur(12px) saturate(120%);
+      border: 1px solid var(--glass-border);
+      box-shadow: 0 12px 40px rgba(8,10,12,0.12);
+    }
+    .top {
+      display: flex; justify-content: space-between; align-items: center; gap: 12px;
+      margin-bottom: 18px;
+    }
+    .brand {
+      display:flex; align-items:center; gap:12px;
+    }
+    .logo {
+      width:46px; height:46px; border-radius:10px;
+      background: linear-gradient(135deg,var(--accent1),var(--accent2));
+      display:flex; align-items:center; justify-content:center; color:white; font-weight:700;
+      box-shadow: 0 8px 18px rgba(0,0,0,0.12);
+    }
+    h1 { font-size:18px; margin:0; }
+    .controls { display:flex; gap:8px; align-items:center; }
+    select, button.btn, a.btn {
+      padding:8px 12px; border-radius:10px; border:1px solid var(--glass-border);
+      background: rgba(255,255,255,0.5); cursor:pointer; font-weight:600;
+    }
+    body.dark select, body.dark button.btn, body.dark a.btn {
+      background: rgba(255,255,255,0.05);
+      color:var(--text);
+    }
+    .status {
+      display:inline-flex; align-items:center; gap:10px; padding:10px 14px; border-radius:999px;
+      background: linear-gradient(90deg, rgba(46,213,115,0.12), rgba(46,213,115,0.06));
+      font-weight:700;
+      margin-bottom:16px;
+      border:1px solid rgba(46,213,115,0.08);
+    }
+    .dot { width:12px; height:12px; border-radius:50%; background:#2ED573; box-shadow: 0 0 0 6px rgba(46,213,115,0); animation:pulse 2s infinite; }
+    @keyframes pulse { 0%{box-shadow:0 0 0 0 rgba(46,213,115,0.6);} 70%{box-shadow:0 0 0 12px rgba(46,213,115,0);} 100%{box-shadow:0 0 0 0 rgba(46,213,115,0);} }
+
+    .grid { display:grid; grid-template-columns: 1fr; gap:12px; }
+    @media(min-width:700px){ .grid{ grid-template-columns: 1fr 1fr; } }
+
+    .field {
+      padding:12px; border-radius:12px; background: linear-gradient(180deg, rgba(255,255,255,0.25), rgba(255,255,255,0.06));
+      display:flex; align-items:center; gap:10px; justify-content:space-between; border:1px solid var(--glass-border);
+    }
+    body.dark .field { background: linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01)); }
+
+    .label { color: #60677a; font-weight:700; min-width:120px; }
+    .value { font-weight:800; word-break:break-word; }
+
+    .copy-btn { padding:8px 10px; border-radius:10px; border:1px solid var(--glass-border); background: rgba(255,255,255,0.5); cursor:pointer; }
+    .download-btn {
+      display:inline-flex; align-items:center; gap:10px; padding:12px 18px; border-radius:12px; color:white; text-decoration:none;
+      background: linear-gradient(135deg,#667eea,#764ba2); font-weight:800; box-shadow: 0 8px 20px rgba(102,126,234,0.2);
+      border: none;
+    }
+    .download-wrap { display:flex; justify-content:center; margin-top:16px; }
+
+    .muted { color: #9aa3b2; font-size:13px; text-align:center; margin-top:10px; }
+
+    .toast {
+      position: fixed; left:50%; transform: translateX(-50%); bottom:26px; background: rgba(0,0,0,0.85);
+      color:white; padding:10px 14px; border-radius:10px; opacity:0; pointer-events:none; transition: .18s;
+    }
+    .toast.show { opacity:1; pointer-events:auto; }
+
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="card" role="main" aria-live="polite">
+      <div class="top">
+        <div class="brand">
+          <div class="logo">AP</div>
+          <div>
+            <h1 id="title">证书 · GLOBAL TAKEOFF, INC</h1>
+            <div class="muted" id="subtitle">Apple P12 证书状态展示</div>
+          </div>
+        </div>
+
+        <div class="controls" role="navigation" aria-label="Controls">
+          <select id="langSel" aria-label="语言选择">
+            <option value="zh">中文</option>
+            <option value="en">English</option>
+            <option value="vi">Tiếng Việt</option>
+          </select>
+          <button class="btn" id="themeBtn" aria-pressed="false">🌓</button>
+          <button class="btn" id="printBtn">🖨️</button>
+        </div>
+      </div>
+
+      <p class="status"><span class="dot" aria-hidden="true"></span><span id="statusText">🟢 良好 / Good</span></p>
+
+      <div class="grid" id="fields">
+        <div class="field">
+          <div>
+            <div class="label" id="labelPass">密码 / Pass</div>
+            <div class="value" id="pass">AppleP12.com</div>
+          </div>
+          <div>
+            <button class="copy-btn" data-target="pass">复制</button>
+          </div>
+        </div>
+
+        <div class="field">
+          <div>
+            <div class="label" id="labelCert">证书名称 / CertName</div>
+            <div class="value" id="cert">GLOBAL TAKEOFF, INC</div>
+          </div>
+          <div>
+            <button class="copy-btn" data-target="cert">复制</button>
+          </div>
+        </div>
+
+        <div class="field">
+          <div>
+            <div class="label" id="labelUpload">上传时间 / UploadTime</div>
+            <div class="value" id="upload">2025-08-15 23:57:48 GMT+08:00</div>
+          </div>
+          <div>
+            <button class="copy-btn" data-target="upload">复制</button>
+          </div>
+        </div>
+
+        <div class="field">
+          <div>
+            <div class="label" id="labelStatus">状态 / Status</div>
+            <div class="value" id="stat">🟢 良好 / Good</div>
+          </div>
+          <div>
+            <button class="copy-btn" data-target="stat">复制</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="download-wrap">
+        <a id="downloadBtn" class="download-btn" href="GLOBAL_TAKEOFF_INC.zip" download>
+          ⬇️ <span id="downloadText">下载证书 (ZIP)</span>
+        </a>
+      </div>
+
+      <div class="muted">提示：请妥善保管证书与密码。</div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast" role="status" aria-live="polite">已复制到剪贴板</div>
+
+<script>
+  // Elements
+  const themeBtn = document.getElementById('themeBtn');
+  const langSel = document.getElementById('langSel');
+  const printBtn = document.getElementById('printBtn');
+  const toast = document.getElementById('toast');
+  const copyBtns = document.querySelectorAll('.copy-btn');
+
+  // Load theme from localStorage
+  const savedTheme = localStorage.getItem('cert_theme');
+  if (savedTheme === 'dark') document.body.classList.add('dark');
+
+  themeBtn.addEventListener('click', () => {
+    const isDark = document.body.classList.toggle('dark');
+    localStorage.setItem('cert_theme', isDark ? 'dark' : 'light');
+    themeBtn.setAttribute('aria-pressed', isDark);
+  });
+
+  printBtn.addEventListener('click', () => window.print());
+
+  // Copy functionality
+  function showToast(msg='已复制到剪贴板') {
+    toast.textContent = msg;
+    toast.classList.add('show');
+    setTimeout(() => toast.classList.remove('show'), 1400);
+  }
+
+  copyBtns.forEach(btn => {
+    btn.addEventListener('click', async () => {
+      const targetId = btn.dataset.target;
+      const el = document.getElementById(targetId);
+      if (!el) return showToast('复制失败');
+      try {
+        await navigator.clipboard.writeText(el.textContent.trim());
+        showToast('已复制到剪贴板');
+      } catch (e) {
+        // fallback
+        const range = document.createRange();
+        range.selectNodeContents(el);
+        const sel = window.getSelection();
+        sel.removeAllRanges();
+        sel.addRange(range);
+        try {
+          document.execCommand('copy');
+          sel.removeAllRanges();
+          showToast('已复制到剪贴板');
+        } catch (err) {
+          showToast('复制失败，请手动复制');
+        }
+      }
+    });
+  });
+
+  // i18n strings
+  const i18n = {
+    zh: {
+      title: '证书 · GLOBAL TAKEOFF, INC',
+      subtitle: 'Apple P12 证书状态展示',
+      status: '🟢 良好 / Good',
+      labelPass: '密码 / Pass',
+      labelCert: '证书名称 / CertName',
+      labelUpload: '上传时间 / UploadTime',
+      labelStatus: '状态 / Status',
+      download: '下载证书 (ZIP)',
+      copy: '复制'
+    },
+    en: {
+      title: 'Certificate · GLOBAL TAKEOFF, INC',
+      subtitle: 'Apple P12 certificate status',
+      status: '🟢 Good',
+      labelPass: 'Password / Pass',
+      labelCert: 'Certificate Name',
+      labelUpload: 'Upload Time',
+      labelStatus: 'Status',
+      download: 'Download certificate (ZIP)',
+      copy: 'Copy'
+    },
+    vi: {
+      title: 'Chứng chỉ · GLOBAL TAKEOFF, INC',
+      subtitle: 'Trạng thái chứng chỉ Apple P12',
+      status: '🟢 Tốt',
+      labelPass: 'Mật khẩu / Pass',
+      labelCert: 'Tên chứng chỉ',
+      labelUpload: 'Thời gian tải lên',
+      labelStatus: 'Trạng thái',
+      download: 'Tải chứng chỉ (ZIP)',
+      copy: 'Sao chép'
+    }
+  };
+
+  function applyLang(lang) {
+    const t = i18n[lang] || i18n.en;
+    document.getElementById('title').textContent = t.title;
+    document.getElementById('subtitle').textContent = t.subtitle;
+    document.getElementById('statusText').textContent = t.status;
+    document.getElementById('labelPass').textContent = t.labelPass;
+    document.getElementById('labelCert').textContent = t.labelCert;
+    document.getElementById('labelUpload').textContent = t.labelUpload;
+    document.getElementById('labelStatus').textContent = t.labelStatus;
+    document.getElementById('downloadText').textContent = t.download;
+
+    // update copy buttons text (if you want button labels to change)
+    document.querySelectorAll('.copy-btn').forEach(b => b.textContent = t.copy);
+  }
+
+  // Initial language (try to detect, default to zh)
+  const savedLang = localStorage.getItem('cert_lang');
+  if (savedLang) {
+    langSel.value = savedLang;
+  } else {
+    // prefer zh if browser language contains zh, else en
+    const nav = navigator.language || navigator.userLanguage || 'en';
+    if (nav.startsWith('zh')) langSel.value = 'zh';
+    else if (nav.startsWith('vi')) langSel.value = 'vi';
+    else langSel.value = 'en';
+  }
+  applyLang(langSel.value);
+
+  langSel.addEventListener('change', () => {
+    const v = langSel.value;
+    localStorage.setItem('cert_lang', v);
+    applyLang(v);
+  });
+</script>
+</body>
+</html>
