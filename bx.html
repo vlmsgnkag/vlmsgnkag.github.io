@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <title>Dịch Biển Số Xe & Làm Thơ</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #74ebd5 0%, #ACB6E5 100%);
+      min-height: 100vh;
+      margin: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    .container {
+      background: white;
+      padding: 30px;
+      border-radius: 15px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+      max-width: 600px;
+      width: 100%;
+    }
+    h1 {
+      text-align: center;
+      color: #333;
+    }
+    input, select, button {
+      width: 100%;
+      padding: 12px;
+      margin: 10px 0;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      font-size: 16px;
+    }
+    button {
+      background: #4CAF50;
+      color: white;
+      border: none;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+    button:hover {
+      background: #45a049;
+    }
+    .result {
+      margin-top: 20px;
+      padding: 15px;
+      background: #f9f9f9;
+      border-radius: 8px;
+      border: 1px solid #eee;
+      min-height: 100px;
+    }
+    .result h3 {
+      margin-top: 0;
+    }
+    .error {
+      color: red;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Dịch Biển Số Xe & Làm Thơ</h1>
+    <input type="text" id="plateInput" placeholder="Nhập biển số xe (VD: 51A-123.45)">
+    <select id="styleSelect">
+      <option value="langman">Lãng mạn</option>
+      <option value="haihuoc">Hài hước</option>
+      <option value="codien">Cổ điển</option>
+    </select>
+    <button onclick="renderAll()">Phân tích & Làm thơ</button>
+    <div class="result" id="result"></div>
+  </div>
+
+<script>
+const provinces = {
+  "11": "Cao Bằng", "12": "Lạng Sơn", "14": "Quảng Ninh", "15": "Hải Phòng", "16": "Hải Phòng",
+  "17": "Thái Bình", "18": "Nam Định", "19": "Phú Thọ", "20": "Thái Nguyên", "21": "Yên Bái",
+  "22": "Tuyên Quang", "23": "Hà Giang", "24": "Lào Cai", "25": "Lai Châu", "26": "Sơn La",
+  "27": "Điện Biên", "28": "Hòa Bình", "29": "Hà Nội", "30": "Hà Nội", "31": "Hà Nội",
+  "32": "Hà Nội", "33": "Hà Nội", "34": "Hải Dương", "35": "Ninh Bình", "36": "Thanh Hóa",
+  "37": "Nghệ An", "38": "Hà Tĩnh", "43": "Đà Nẵng", "47": "Đắk Lắk", "48": "Đắk Nông",
+  "49": "Lâm Đồng", "50": "TP. HCM", "51": "TP. HCM", "52": "TP. HCM", "53": "TP. HCM",
+  "54": "TP. HCM", "55": "TP. HCM", "56": "TP. HCM", "57": "TP. HCM", "58": "TP. HCM",
+  "59": "TP. HCM", "60": "Đồng Nai", "61": "Bình Dương", "62": "Long An", "63": "Tiền Giang",
+  "64": "Vĩnh Long", "65": "Cần Thơ", "66": "Đồng Tháp", "67": "An Giang", "68": "Kiên Giang",
+  "69": "Cà Mau", "70": "Tây Ninh", "71": "Bến Tre", "72": "Bà Rịa - Vũng Tàu", "73": "Quảng Bình",
+  "74": "Quảng Trị", "75": "Thừa Thiên Huế", "76": "Quảng Ngãi", "77": "Bình Định", "78": "Phú Yên",
+  "79": "Khánh Hòa", "81": "Gia Lai", "82": "Kon Tum", "83": "Sóc Trăng", "84": "Trà Vinh",
+  "85": "Ninh Thuận", "86": "Bình Thuận", "88": "Vĩnh Phúc", "89": "Hưng Yên", "90": "Hà Nam",
+  "92": "Quảng Nam", "93": "Bình Phước", "94": "Bạc Liêu", "95": "Hậu Giang", "97": "Bắc Kạn",
+  "98": "Bắc Giang", "99": "Bắc Ninh"
+};
+
+function normalizePlate(raw){
+  if(!raw) return '';
+  let s = String(raw).toUpperCase();
+  return s.replace(/[^A-Z0-9]/g,'');
+}
+
+function getProvince(plate){
+  let code2 = plate.slice(0,2);
+  return provinces[code2] || "Không rõ tỉnh";
+}
+
+function getMeaning(num){
+  const meanings = {
+    "68": "Lộc phát, phát lộc",
+    "79": "Thần tài lớn",
+    "39": "Thần tài nhỏ",
+    "38": "Ông địa",
+    "86": "Phát lộc",
+    "29": "Mãi mãi",
+    "56": "Tài lộc",
+    "66": "Song lộc",
+    "88": "Phát phát",
+    "99": "Trường thọ, vĩnh cửu"
+  };
+  return meanings[num] || "Con số bình thường";
+}
+
+function makePoem(num, style){
+  let poems = {
+    langman: [
+      `Biển số ${num}, tình em như gió,\\nXe lăn bánh, hồn anh bay theo.`,
+      `${num} lấp lánh nắng chiều,\\nNhư tình yêu mãi còn sớm mai.`
+    ],
+    haihuoc: [
+      `Số ${num} chạy ngoài phố,\\nGặp công an nhớ vẫy tay chào.`,
+      `Biển ${num} như con gà gáy,\\nNổ máy kêu: đi thôi nào!`
+    ],
+    codien: [
+      `Biển số ${num} khắc trong đá tạc,\\nTrăm năm còn vọng tiếng xe qua.`,
+      `${num} như hạc bay ngang,\\nLưu danh trên vạn nẻo đường.`
+    ]
+  };
+  let arr = poems[style] || poems.langman;
+  return arr[Math.floor(Math.random()*arr.length)];
+}
+
+function renderAll(){
+  let plateRaw = document.getElementById('plateInput').value.trim();
+  if(!plateRaw){
+    document.getElementById('result').innerHTML = '<p class="error">⚠️ Vui lòng nhập biển số xe!</p>';
+    return;
+  }
+
+  let plate = normalizePlate(plateRaw);
+  if(plate.length < 4){
+    document.getElementById('result').innerHTML = '<p class="error">⚠️ Biển số không hợp lệ, vui lòng nhập đúng định dạng!</p>';
+    return;
+  }
+
+  let province = getProvince(plate);
+  let digits = plate.replace(/[^0-9]/g,'');
+  let lastTwo = digits.slice(-2);
+  if(!lastTwo) lastTwo = "00";
+
+  let meaning = getMeaning(lastTwo);
+  let style = document.getElementById('styleSelect').value;
+  let poem = makePoem(lastTwo, style);
+
+  document.getElementById('result').innerHTML = `
+    <h3>Kết quả phân tích</h3>
+    <p><b>Biển số:</b> ${plateRaw}</p>
+    <p><b>Tỉnh:</b> ${province}</p>
+    <p><b>Ý nghĩa số cuối (${lastTwo}):</b> ${meaning}</p>
+    <p><b>Bài thơ (${style}):</b><br>${poem.replace(/\\n/g,"<br>")}</p>
+  `;
+}
+</script>
+</body>
+</html>
